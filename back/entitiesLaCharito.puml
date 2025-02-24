@@ -1,0 +1,245 @@
+@startuml
+class com.tesis.queseria_la_charito.entities.controlStock.ControlStockEntity {
+  - Long id
+  - LocalDate fecha
+  - Integer cantidadEnterosEsperada
+  - Integer cantidadEnterosObtenida
+  - Integer cantidadMediosEsperada
+  - Integer cantidadMediosObtenida
+  - Integer cantidadCuartosEsperada
+  - Integer cantidadCuartosObtenida
+  - boolean nuevo
+  - List<InsumoControlEntity> controlesInsumosEsperados
+  - List<InsumoControlEntity> controlesInsumosObtenidos
+  - String observaciones
+  - UsuarioEntity usuario
+}
+
+class com.tesis.queseria_la_charito.entities.LoteEntity {
+  - String id
+  - ItemEntity item
+  - String estado
+  - Integer unidades
+  - boolean mostrar
+  - List<ModificacionLoteEntity> listaModificaciones
+  - ElaboracionEntity elaboracion
+  - List<DetalleDespachoEntity> lstDetallesDespachos
+  - DetalleComprobanteEntity detalleComprobante
+}
+
+class com.tesis.queseria_la_charito.entities.compra.ComprobanteCompraEntity {
+  - Long id
+  - LocalDate fecha
+  - Integer total
+  - List<DetalleComprobanteEntity> listaDetalles
+}
+
+class com.tesis.queseria_la_charito.entities.procesosElaboracion.ControlCalidadEntity {
+  - Long id
+  - LocalDate fecha
+  - String pruebaSabor
+  - String pruebaConcistencia
+  - String pruebaAroma
+  - String observacion
+  - ElaboracionEntity elaboracion
+}
+
+class com.tesis.queseria_la_charito.entities.despacho.DespachoEntity {
+  - Long id
+  - LocalDate fecha
+  - String queso
+  - Integer cantidadTotal
+  - String estado
+  - DestinoEntity destino
+  - VehiculoEntity vehiculo
+  - List<DetalleDespachoEntity> lstDetallesDespacho
+  - UsuarioEntity usuario
+}
+
+class com.tesis.queseria_la_charito.entities.despacho.DetalleDespachoEntity {
+  - Long id
+  - LoteEntity lote
+  - Integer cantidadEnteros
+  - Integer cantidadMedios
+  - Integer cantidadCuartos
+  - DespachoEntity despacho
+}
+
+class com.tesis.queseria_la_charito.entities.formula.TipoQuesoEntity {
+  - Long id
+  - ItemEntity item
+  - Integer diasMaduracion
+  - List<FormulaEntity> listaFormulas
+}
+
+class com.tesis.queseria_la_charito.entities.ItemEntity {
+  - Long id
+  - String nombre
+  - String tipo
+  - String unidadMedida
+  - TipoQuesoEntity tipoQueso
+  - List<DetalleFormulaEntity> listaDetalles
+  - List<LoteEntity> listaLotes
+  - List<ProveedorEntity> listaProveedores
+  - List<InsumoControlEntity> listaControlesInsumo
+}
+
+class com.tesis.queseria_la_charito.entities.despacho.VehiculoEntity {
+  - Long id
+  - String matricula
+  - Boolean disponible
+  - List<DespachoEntity> lstDespachos
+}
+
+class com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity {
+  - Long id
+  - String username
+  - String password
+  - RolEntity rol
+  - Boolean mostrar
+  - Boolean isDispatching
+  - List<ElaboracionEntity> lstElaboraciones
+  - List<ModificacionLoteEntity> lstModificacionesLotes
+  - List<ControlStockEntity> lstControlesStock
+  - List<DespachoEntity> lstDespachos
+}
+
+class com.tesis.queseria_la_charito.entities.formula.DetalleFormulaEntity {
+  - Long id
+  - FormulaEntity formula
+  - ItemEntity insumo
+  - Integer cantidad
+}
+
+class com.tesis.queseria_la_charito.entities.formula.FormulaEntity {
+  - String codigo
+  - Integer cantidadLeche
+  - TipoQuesoEntity tipoQueso
+  - List<DetalleFormulaEntity> detallesFormulas
+  - List<ElaboracionEntity> listaElaboraciones
+}
+
+class com.tesis.queseria_la_charito.entities.compra.ProveedorEntity {
+  - Long id
+  - String nombre
+  - String email
+  - String alias
+  - String cuit
+  - String banco
+  - String tipoCuenta
+  - Long telefono
+  - ItemEntity insumo
+  - Integer cantidadMedida
+  - String unidadMedida
+  - Integer costo
+  - boolean mostrar
+  - List<DetalleComprobanteEntity> listaDetallesComprobante
+}
+
+class com.tesis.queseria_la_charito.entities.compra.DetalleComprobanteEntity {
+  - Long id
+  - ComprobanteCompraEntity comprobante
+  - LoteEntity lote
+  - Integer cantidad
+  - Integer subtotal
+  - ProveedorEntity proveedor
+}
+
+class com.tesis.queseria_la_charito.entities.usuario.RolEntity {
+  - Long id
+  - String rol
+}
+
+class com.tesis.queseria_la_charito.entities.controlStock.InsumoControlEntity {
+  - Long id
+  - ControlStockEntity controlStock
+  - ItemEntity insumo
+  - Integer cantidad
+  - String tipo
+}
+
+class com.tesis.queseria_la_charito.entities.ElaboracionEntity {
+  - String id
+  - LocalDate fecha
+  - Integer cantidadLeche
+  - LoteEntity lote
+  - UsuarioEntity usuario
+  - FormulaEntity formula
+  - Integer tiempoSalado
+  - LocalDate fechaEntradaMaduracion
+  - LocalDate fechaSalidaMaduracion
+  - LocalDate fechaEmbolsado
+  - LocalDate fechaPintado
+  - DetalleCorteEntity detalleCorte
+  - ControlCalidadEntity controlCalidad
+}
+
+class com.tesis.queseria_la_charito.entities.ModificacionLoteEntity {
+  - Long id
+  - String motivo
+  - LocalDate fecha
+  - Integer cantidadPrevia
+  - Integer cantidadPosterior
+  - boolean nuevo
+  - LoteEntity lote
+  - UsuarioEntity usuario
+}
+
+class com.tesis.queseria_la_charito.entities.procesosElaboracion.DetalleCorteEntity {
+  - Integer id
+  - ElaboracionEntity elaboracion
+  - Integer cantidad
+  - Double peso
+  - String corte
+}
+
+class com.tesis.queseria_la_charito.entities.despacho.DestinoEntity {
+  - Long id
+  - String calle
+  - Integer numero
+  - String barrio
+  ~ List<DespachoEntity> lstDespachos
+}
+
+ControlStockEntity *-- InsumoControlEntity
+
+LoteEntity *-- ModificacionLoteEntity
+LoteEntity --> ElaboracionEntity
+LoteEntity --> DetalleDespachoEntity
+LoteEntity --> DetalleComprobanteEntity
+
+ComprobanteCompraEntity *-- DetalleComprobanteEntity
+
+DespachoEntity *-- DetalleDespachoEntity
+
+TipoQuesoEntity --> FormulaEntity
+
+ItemEntity --> TipoQuesoEntity
+ItemEntity --> DetalleFormulaEntity
+ItemEntity --> LoteEntity
+ItemEntity --> ProveedorEntity
+ItemEntity --> InsumoControlEntity
+
+VehiculoEntity --> DespachoEntity
+
+UsuarioEntity --> ElaboracionEntity
+UsuarioEntity --> ModificacionLoteEntity
+UsuarioEntity --> ControlStockEntity
+UsuarioEntity --> DespachoEntity
+
+FormulaEntity *-- DetalleFormulaEntity
+FormulaEntity --> ElaboracionEntity
+
+ProveedorEntity --> DetalleComprobanteEntity
+
+DetalleComprobanteEntity --> ComprobanteCompraEntity
+
+InsumoControlEntity --> ItemEntity
+
+ElaboracionEntity --> LoteEntity
+ElaboracionEntity *-- DetalleCorteEntity
+ElaboracionEntity *-- ControlCalidadEntity
+
+DestinoEntity --> DespachoEntity
+
+@enduml
