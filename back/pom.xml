@@ -75,6 +75,14 @@
 			<version>${springdoc-openapi.version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>6.4.3</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
