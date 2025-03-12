@@ -32,8 +32,6 @@ public class SecurityConfig {
   private CustomUserDetailsService customUserDetailsService;
 
 
-//  TODO: Cambiar los requestMatchers
-//  TODO: Ver como reemplazar el formulario de login por el de la app
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http

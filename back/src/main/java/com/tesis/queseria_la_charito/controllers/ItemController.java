@@ -14,6 +14,7 @@ public class ItemController {
   @Autowired
   private ItemService service;
 
+//  TODO: Confirmar roles requeridos
   @GetMapping()
   List<String> getNames() { return service.getNames(); }
 }
