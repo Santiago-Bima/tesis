@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.lotes;
+package com.tesis.queseria_la_charito.services;
 
 import com.tesis.queseria_la_charito.dtos.request.controlStock.ControlStockRequest;
 import com.tesis.queseria_la_charito.dtos.request.controlStock.InsumoControlRequest;
@@ -18,6 +18,7 @@ import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.controlStock.InsumoControlRepository;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
 import com.tesis.queseria_la_charito.services.formulas.InsumosService;
+import com.tesis.queseria_la_charito.services.lotes.LoteService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

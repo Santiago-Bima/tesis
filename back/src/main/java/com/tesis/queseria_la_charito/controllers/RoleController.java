@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/roles")
-public class RolController {
+public class RoleController {
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @GetMapping()

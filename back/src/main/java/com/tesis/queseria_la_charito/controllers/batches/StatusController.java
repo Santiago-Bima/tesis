@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.lote;
+package com.tesis.queseria_la_charito.controllers.batches;
 
 import com.tesis.queseria_la_charito.models.Estado;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/estados")
-public class EstadosController {
+public class StatusController {
     @PreAuthorize("hasRole('ROLE_Operario'")
     @GetMapping()
     List<Estado> get() { return Arrays.asList(Estado.values()) ;}

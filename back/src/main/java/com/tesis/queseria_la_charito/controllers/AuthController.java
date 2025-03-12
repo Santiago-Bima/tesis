@@ -19,26 +19,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthController {
   @Autowired
-  private UsuarioService usuarioService;
+  private UsuarioService userService;
 
   @Autowired
   private final AuthService authService;
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @PutMapping("/usuarios/{username}")
-  public UsuarioResponse put(@PathVariable String username, @RequestParam String nombre) { return usuarioService.update(nombre, username); }
+  public UsuarioResponse put(@PathVariable String username, @RequestParam String nombre) { return userService.update(nombre, username); }
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @DeleteMapping("/usuarios/{username}")
-  public UsuarioResponse delete(@PathVariable String username) { return usuarioService.delete(username); }
+  public UsuarioResponse delete(@PathVariable String username) { return userService.delete(username); }
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @GetMapping("/usuarios")
-  public List<UsuarioResponse> getAll() { return usuarioService.getAll(); }
+  public List<UsuarioResponse> getAll() { return userService.getAll(); }
 
 //  TODO: Confirmar roles requeridos
   @GetMapping("/usuarios/{id}")
-  public UsuarioResponse getById(@PathVariable Long id) { return usuarioService.getById(id); }
+  public UsuarioResponse getById(@PathVariable Long id) { return userService.getById(id); }
 
 
 //  Rutas de jwt

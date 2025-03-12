@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.formula;
+package com.tesis.queseria_la_charito.controllers.formulas;
 
 import com.tesis.queseria_la_charito.dtos.response.formula.TipoQuesoResponse;
 import com.tesis.queseria_la_charito.services.formulas.ProductosService;

@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.formula;
+package com.tesis.queseria_la_charito.controllers.formulas;
 
 import com.tesis.queseria_la_charito.dtos.request.ItemRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
@@ -11,28 +11,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("insumos")
-public class InsumoController {
+public class SupplyController {
     @Autowired
-    private InsumosService insumosService;
+    private InsumosService service;
 
 
     @PreAuthorize("hasAnyRole('ROLE_Subgerente', 'ROLE_Operario'")
     @GetMapping("")
-    public List<ItemResponse> getInsumos() { return insumosService.getItems(); }
+    public List<ItemResponse> getAll() { return service.getItems(); }
 
     @PreAuthorize("hasRole('ROLE_Operario'")
     @GetMapping("/{id}")
-    public ItemResponse getInsumo(@PathVariable final Long id) { return insumosService.getItemById(id); }
+    public ItemResponse getById(@PathVariable final Long id) { return service.getItemById(id); }
 
     @PreAuthorize("hasRole('ROLE_Subgerente'")
     @PostMapping("")
-    public ItemResponse postInsumo(@RequestBody final ItemRequest item) throws Exception { return insumosService.postItem(item); }
+    public ItemResponse post(@RequestBody final ItemRequest item) throws Exception { return service.postItem(item); }
 
     @PreAuthorize("hasRole('ROLE_Subgerente'")
     @DeleteMapping("/{id}")
-    public ItemResponse deleteInsumo(@PathVariable final Long id) { return insumosService.deleteItem(id); }
+    public ItemResponse delete(@PathVariable final Long id) { return service.deleteItem(id); }
 
     @PreAuthorize("hasRole('ROLE_Subgerente'")
     @PutMapping("/{id}")
-    public  ItemResponse putInsumo(@RequestBody final ItemRequest item, @PathVariable Long id) { return insumosService.putItem(item, id); }
+    public  ItemResponse put(@RequestBody final ItemRequest item, @PathVariable Long id) { return service.putItem(item, id); }
 }

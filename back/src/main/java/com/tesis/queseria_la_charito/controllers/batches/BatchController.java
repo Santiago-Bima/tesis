@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.lote;
+package com.tesis.queseria_la_charito.controllers.batches;
 
 import com.tesis.queseria_la_charito.dtos.request.LoteRequest;
 import com.tesis.queseria_la_charito.dtos.response.lote.ModificacionLoteResponse;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("lotes")
-public class LoteController {
+public class BatchController {
     @Autowired
     private LoteService service;
 
@@ -35,13 +35,13 @@ public class LoteController {
 
     @PreAuthorize("hasRole('ROLE_Subgerente'")
     @GetMapping("/controlStock/{item}")
-    public List<LoteControlResponse> getUnidades(@PathVariable String item) { return service.getUnidades(item); }
+    public List<LoteControlResponse> getQuantity(@PathVariable String item) { return service.getUnidades(item); }
 
     @PreAuthorize("hasRole('ROLE_Subgerente'")
     @GetMapping("/modificaciones")
-    public List<ModificacionLoteResponse> getModificaciones() { return service.getModificaciones(false); }
+    public List<ModificacionLoteResponse> getModifications() { return service.getModificaciones(false); }
 
     @PreAuthorize("hasRole('ROLE_Subgerente'")
     @GetMapping("/modificaciones/validate")
-    public List<ModificacionLoteResponse> getModificacionesValidate() { return service.getModificaciones(true); }
+    public List<ModificacionLoteResponse> getModificationsValidate() { return service.getModificaciones(true); }
 }

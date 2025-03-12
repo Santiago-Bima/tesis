@@ -3,7 +3,7 @@ package com.tesis.queseria_la_charito.controllers;
 import com.tesis.queseria_la_charito.dtos.request.controlStock.ControlStockRequest;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.CantidadesEsperadasResponse;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.ControlStockResponse;
-import com.tesis.queseria_la_charito.services.lotes.ControlStockService;
+import com.tesis.queseria_la_charito.services.ControlStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("controles")
-public class ControlStockController {
+public class StockControlController {
   @Autowired
   private ControlStockService service;
 
@@ -31,5 +31,5 @@ public class ControlStockController {
 
   @PreAuthorize("hasRole('ROLE_Operario')")
   @GetMapping("/valoresEsperados")
-  CantidadesEsperadasResponse getEsperadas() { return service.getEsperado(); }
+  CantidadesEsperadasResponse getExpected() { return service.getEsperado(); }
 }
