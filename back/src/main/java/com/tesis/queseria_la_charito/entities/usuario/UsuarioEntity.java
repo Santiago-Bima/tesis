@@ -13,8 +13,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Data
@@ -58,10 +60,12 @@ public class UsuarioEntity implements UserDetails {
   private List<DespachoEntity> lstDespachos;
 
 
-  @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(rol.getRol()));
+    return Arrays.stream(rol.getRol().split(","))
+        .map(role -> new SimpleGrantedAuthority("ROLE_" + rol.getRol()))
+        .collect(Collectors.toList());
   }
+
 
   @Override
   public boolean isAccountNonExpired() {

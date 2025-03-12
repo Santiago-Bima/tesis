@@ -1,5 +1,6 @@
 package com.tesis.queseria_la_charito;
 
+import com.tesis.queseria_la_charito.services.CustomUserDetailsService;
 import com.tesis.queseria_la_charito.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -27,7 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private JwtService jwtService;
 
   @Autowired
-  private UserDetailsService userDetailsService;
+  private CustomUserDetailsService userDetailsService;
+
+
 
 
   @Override
