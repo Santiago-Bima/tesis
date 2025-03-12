@@ -7,72 +7,57 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Spring Doc configuration class.
- */
 @Configuration
 public class SpringDocConfig {
 
-    /**
-     * The app name mapped from application config.
-     */
-    @Value("${app.url}") private String url;
+    @Value("${app.url}")
+    private String url;
 
-    /**
-     * The developer name mapped from application config.
-     */
-    @Value("${app.dev-name}")private String devName;
+    @Value("${app.dev-name}")
+    private String devName;
 
-    /**
-     * The developer email mapped from application config.
-     */
-    @Value("${app.dev-email}")private String devEmail;
+    @Value("${app.dev-email}")
+    private String devEmail;
 
-    /**
-     * The open api bean.
-     * @param appName the name of this app to be added in Open API
-     * @param appDescription the description to be added in Open API
-     * @param appVersion the version to be added in Open API
-     * @return the open api configuration.
-     */
     @Bean
-    public OpenAPI openApi(@Value("${app.name}")
-                            final String appName,
-                            @Value("${app.desc}")
-                            final String appDescription,
-                            @Value("${app.version}")
-                            final String appVersion) {
+    public OpenAPI openApi(@Value("${app.name}") final String appName,
+                           @Value("${app.desc}") final String appDescription,
+                           @Value("${app.version}") final String appVersion) {
+
         Info info = new Info()
-                .title(appName)
-                .version(appVersion)
-                .description(appDescription)
-                .contact(
-                        new Contact()
-                                .name(devName)
-                                .email(devEmail));
+            .title(appName)
+            .version(appVersion)
+            .description(appDescription)
+            .contact(new Contact()
+                         .name(devName)
+                         .email(devEmail));
 
         Server server = new Server()
-                .url(url)
-                .description(appDescription);
+            .url(url)
+            .description(appDescription);
 
+        // Configuración de Bearer Token
+        SecurityScheme securityScheme = new SecurityScheme()
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT");
+
+        // Añadir el esquema de seguridad en la configuración global
         return new OpenAPI()
-                .components(new Components())
-                .info(info)
-                .addServersItem(server);
+            .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
+            .info(info)
+            .addServersItem(server)
+            .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     }
 
-    /**
-     * The Model Resolver bean.
-     * @param objectMapper The object mapper
-     * @return the modelResolver to use in Open API
-     */
     @Bean
-    public ModelResolver modelResolver(final
-                                           ObjectMapper objectMapper) {
+    public ModelResolver modelResolver(final ObjectMapper objectMapper) {
         return new ModelResolver(objectMapper);
     }
 }

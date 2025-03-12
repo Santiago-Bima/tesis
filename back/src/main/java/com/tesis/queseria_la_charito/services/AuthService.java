@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +30,9 @@ public class AuthService {
   @Autowired
   private AuthenticationManager authenticationManager;
 
+  @Autowired
+  private BCryptPasswordEncoder passwordEncoder;
+
 
   public AuthResponse login(LoginRequest request) {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
@@ -44,9 +48,11 @@ public class AuthService {
   public AuthResponse register(RegisterRequest request) {
     RolEntity rol = rolRepository.findByRol(request.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
+    String hashedPassword = passwordEncoder.encode(request.getPassword());
+
     UsuarioEntity user = UsuarioEntity.builder()
         .username(request.getUsername())
-        .password(request.getPassword())
+        .password(hashedPassword)
         .isDispatching(false)
         .mostrar(true)
         .rol(rol).build();

@@ -25,20 +25,6 @@ public class AuthController {
   @Autowired
   private final AuthService authService;
 
-  @PostMapping("/registro")
-  public ResponseEntity<?> registrarUsuario(@RequestBody UsuarioRequest request) {
-    return ResponseEntity.ok(usuarioService.registrarUsuario(request));
-  }
-
-  @PostMapping("/login")
-  public ResponseEntity<?> autenticarUsuario(@RequestBody AuthenticationRequest loginRequest) {
-    UsuarioResponse usuario = usuarioService.obtenerUsuarioPorNombreYContrasena(loginRequest.getUsername(), loginRequest.getPassword());
-    if (!usuario.getUsername().isEmpty()) {
-      return ResponseEntity.ok(usuario);
-    }
-
-    return ResponseEntity.badRequest().body("Los datos ingresados son incorrectos");
-  }
 
   @PutMapping("/usuarios/{username}")
   public UsuarioResponse put(@PathVariable String username, @RequestParam String nombre) { return usuarioService.update(nombre, username); }
@@ -54,12 +40,12 @@ public class AuthController {
 
 
 //  Rutas de jwt
-  @PostMapping("/login2")
+  @PostMapping("/login")
   public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
     return ResponseEntity.ok(authService.login(request));
   }
 
-  @PostMapping("/refister")
+  @PostMapping("/registro")
   public  ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
     return ResponseEntity.ok(authService.register(request));
   }
