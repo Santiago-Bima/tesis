@@ -1,12 +1,10 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.formulas;
 
 import com.tesis.queseria_la_charito.dtos.request.ItemRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.models.TipoItem;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.LoteRepository;
-import com.tesis.queseria_la_charito.services.InsumoService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +17,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class InsumosServiceImpl implements InsumoService {
+public class InsumosService {
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
     private ItemRepository itemRepository;
 
-    @Override
+
     public List<ItemResponse> getItems() {
         List<ItemResponse> listaInsumosResponse = new ArrayList<>();
         List<ItemEntity> listaInsumosEntity = itemRepository.findByTipo(TipoItem.Insumo.name());
@@ -41,7 +39,6 @@ public class InsumosServiceImpl implements InsumoService {
         return listaInsumosResponse;
     }
 
-    @Override
     public ItemResponse getItemById(Long id) {
         Optional<ItemEntity> itemEntityOptional = itemRepository.findById(id);
         if (itemEntityOptional.isEmpty()) {
@@ -51,7 +48,6 @@ public class InsumosServiceImpl implements InsumoService {
         return modelMapper.map(itemEntityOptional.get(), ItemResponse.class);
     }
 
-    @Override
     public ItemResponse postItem(ItemRequest item) throws Exception {
         ItemEntity itemEntity = modelMapper.map(item, ItemEntity.class);
         itemEntity.setTipo(TipoItem.Insumo.name());
@@ -64,7 +60,6 @@ public class InsumosServiceImpl implements InsumoService {
         return modelMapper.map(itemRepository.save(itemEntity), ItemResponse.class);
     }
 
-    @Override
     public ItemResponse deleteItem(Long id) {
         Optional<ItemEntity> itemEntityOptional = itemRepository.findById(id);
         if (itemEntityOptional.isEmpty()) {
@@ -85,7 +80,6 @@ public class InsumosServiceImpl implements InsumoService {
         }
     }
 
-    @Override
     public ItemResponse putItem(ItemRequest item, Long id) {
         ItemEntity itemEntity = modelMapper.map(item, ItemEntity.class);
         itemEntity.setId(id);

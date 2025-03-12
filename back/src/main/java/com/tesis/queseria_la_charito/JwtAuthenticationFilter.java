@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito;
 
-import com.tesis.queseria_la_charito.services.CustomUserDetailsService;
-import com.tesis.queseria_la_charito.services.JwtService;
+import com.tesis.queseria_la_charito.services.Auth.CustomUserDetailsService;
+import com.tesis.queseria_la_charito.services.Auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

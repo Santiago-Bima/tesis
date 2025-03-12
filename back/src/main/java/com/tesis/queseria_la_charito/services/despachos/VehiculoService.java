@@ -1,9 +1,8 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.despachos;
 
 import com.tesis.queseria_la_charito.dtos.response.despacho.VehiculoResponse;
 import com.tesis.queseria_la_charito.entities.despacho.VehiculoEntity;
 import com.tesis.queseria_la_charito.repositories.despacho.VehiculoRepository;
-import com.tesis.queseria_la_charito.services.VehiculoService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -15,14 +14,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class VehiculoServiceImpl implements VehiculoService {
+public class VehiculoService {
   @Autowired
   private ModelMapper modelMapper;
 
   @Autowired
   private VehiculoRepository vehiculoRepository;
 
-  @Override
+
+
   public List<VehiculoResponse> getAll() {
     List<VehiculoResponse> lstVehiculosResponse = new ArrayList<>();
     List<VehiculoEntity> lstVehiculosEntities = vehiculoRepository.findAll();
@@ -38,7 +38,6 @@ public class VehiculoServiceImpl implements VehiculoService {
     return lstVehiculosResponse;
   }
 
-  @Override
   public VehiculoResponse getById(Long id) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if (vehiculoEntityOptional.isEmpty()) {
@@ -48,7 +47,6 @@ public class VehiculoServiceImpl implements VehiculoService {
     return modelMapper.map(vehiculoEntityOptional.get(), VehiculoResponse.class);
   }
 
-  @Override
   public VehiculoResponse post(String matricula) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findByMatricula(matricula);
     if (vehiculoEntityOptional.isPresent()) {
@@ -62,7 +60,6 @@ public class VehiculoServiceImpl implements VehiculoService {
     return modelMapper.map(vehiculoRepository.save(vehiculoEntity), VehiculoResponse.class);
   }
 
-  @Override
   public VehiculoResponse delete(Long id) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if(vehiculoEntityOptional.isEmpty()) {
@@ -83,7 +80,6 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
   }
 
-  @Override
   public VehiculoResponse put(Long id) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if (vehiculoEntityOptional.isEmpty()) {

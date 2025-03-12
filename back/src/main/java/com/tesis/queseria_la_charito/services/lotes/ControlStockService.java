@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.lotes;
 
 import com.tesis.queseria_la_charito.dtos.request.controlStock.ControlStockRequest;
 import com.tesis.queseria_la_charito.dtos.request.controlStock.InsumoControlRequest;
@@ -17,9 +17,7 @@ import com.tesis.queseria_la_charito.repositories.controlStock.ControlStockRepos
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.controlStock.InsumoControlRepository;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
-import com.tesis.queseria_la_charito.services.ControlStockService;
-import com.tesis.queseria_la_charito.services.InsumoService;
-import com.tesis.queseria_la_charito.services.LoteService;
+import com.tesis.queseria_la_charito.services.formulas.InsumosService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ControlStockServiceImpl implements ControlStockService {
+public class ControlStockService {
   @Autowired
   private ControlStockRepository repository;
 
@@ -38,7 +36,7 @@ public class ControlStockServiceImpl implements ControlStockService {
   private LoteService loteService;
 
   @Autowired
-  private InsumoService insumoService;
+  private InsumosService insumoService;
 
   @Autowired
   private ItemRepository itemRepository;
@@ -54,7 +52,6 @@ public class ControlStockServiceImpl implements ControlStockService {
 
 
 
-  @Override
   public List<ControlStockResponse> getAll(boolean validate) {
     List<ControlStockResponse> responses = new ArrayList<>();
 
@@ -100,7 +97,6 @@ public class ControlStockServiceImpl implements ControlStockService {
     return responses;
   }
 
-  @Override
   public ControlStockResponse post(ControlStockRequest data) {
     ControlStockEntity controlStockEntity = modelMapper.map(data, ControlStockEntity.class);
 
@@ -183,7 +179,6 @@ public class ControlStockServiceImpl implements ControlStockService {
     return response;
   }
 
-  @Override
   public CantidadesEsperadasResponse getEsperado() {
     List<LoteControlResponse> listaLotes = loteService.getUnidades(null);
     if (listaLotes.isEmpty()) {

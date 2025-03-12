@@ -4,7 +4,7 @@ import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoRequest;
 import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoUpdateRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DespachoResponse;
 import com.tesis.queseria_la_charito.dtos.response.despacho.InformeDespachoResponse;
-import com.tesis.queseria_la_charito.services.DespachoService;
+import com.tesis.queseria_la_charito.services.despachos.DespachoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

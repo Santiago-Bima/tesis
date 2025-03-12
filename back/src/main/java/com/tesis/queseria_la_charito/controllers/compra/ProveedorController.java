@@ -2,7 +2,7 @@ package com.tesis.queseria_la_charito.controllers.compra;
 
 import com.tesis.queseria_la_charito.dtos.request.compra.ProveedorRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ProveedorResponse;
-import com.tesis.queseria_la_charito.services.impls.ProveedorServiceImpl;
+import com.tesis.queseria_la_charito.services.compras.ProveedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("proveedores")
 public class ProveedorController {
   @Autowired
-  private ProveedorServiceImpl service;
+  private ProveedorService service;
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @GetMapping("/insumos/{insumo}")

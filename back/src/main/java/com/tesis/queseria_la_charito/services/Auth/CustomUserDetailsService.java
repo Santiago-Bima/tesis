@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services;
+package com.tesis.queseria_la_charito.services.Auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

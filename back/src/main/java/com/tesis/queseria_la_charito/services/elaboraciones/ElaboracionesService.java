@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.elaboraciones;
 
 import com.tesis.queseria_la_charito.dtos.request.ElaboracionRequest;
 import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.ControlCalidadRequest;
@@ -24,9 +24,8 @@ import com.tesis.queseria_la_charito.repositories.formula.FormulaRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.LoteRepository;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
-import com.tesis.queseria_la_charito.services.ElaboracionService;
-import com.tesis.queseria_la_charito.services.InsumoService;
-import com.tesis.queseria_la_charito.services.LoteService;
+import com.tesis.queseria_la_charito.services.formulas.InsumosService;
+import com.tesis.queseria_la_charito.services.lotes.LoteService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
-public class ElaboracionesServiceImpl implements ElaboracionService {
+public class ElaboracionesService {
   @Autowired
   private ModelMapper modelMapper;
 
@@ -63,10 +62,9 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
   private LoteRepository loteRepository;
 
   @Autowired
-  private InsumoService insumoService;
+  private InsumosService insumoService;
 
 
-  @Override
   public List<ElaboracionResponse> getAll(String username, LocalDate fechaInicio, LocalDate fechaFin, Long productId) {
     Optional<ItemEntity> itemEntityOptional = itemRepository.findById(productId);
     if(itemEntityOptional.isEmpty()) {
@@ -98,7 +96,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return elaboracionResponses;
   }
 
-  @Override
   public ElaboracionResponse getById(String username, String id) {
     Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
     if (usuarioEntityOptional.isEmpty()) {
@@ -113,7 +110,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return modelMapper.map(elaboracionEntityOptional.get(), ElaboracionResponse.class);
   }
 
-  @Override
   public ElaboracionResponse post(ElaboracionRequest elaboracionRequest) {
     ElaboracionEntity elaboracionEntity = new ElaboracionEntity();
     Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsername(elaboracionRequest.getUsuario());
@@ -178,7 +174,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  @Override
   public ElaboracionResponse updateCortes(DetalleCorteRequest detalleCorteRequest, String idElaboracion) throws Exception{
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
@@ -203,7 +198,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  @Override
   public ElaboracionResponse updateEmbolsado(LocalDate fechaEmbolsado, String idElaboracion) throws Exception {
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
@@ -227,7 +221,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  @Override
   public ElaboracionResponse updateMaduracion(MaduracionRequest maduracionRequest, String idElaboracion) throws Exception {
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
@@ -252,7 +245,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  @Override
   public ElaboracionResponse updatePintado(LocalDate fechaPintado, String idElaboracion) throws Exception {
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
@@ -276,7 +268,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  @Override
   public ElaboracionResponse updateControl(ControlCalidadRequest controlCalidadRequest, String idElaboracion) throws Exception {
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
@@ -308,7 +299,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  @Override
   public ElaboracionResponse deleteElaboracion(String id) {
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(id);
     if (elaboracionEntityOptional.isEmpty()) {
@@ -329,7 +319,6 @@ public class ElaboracionesServiceImpl implements ElaboracionService {
     }
   }
 
-  @Override
   public InformeElaboracionResponse generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
     List<ElaboracionEntity> elaboracionEntities = elaboracionRepository.findByFechaBetween(fechaInicio, fechaFin);
     if (elaboracionEntities.isEmpty()) {

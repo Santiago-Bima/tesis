@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.controllers.despacho;
 
 import com.tesis.queseria_la_charito.dtos.response.despacho.VehiculoResponse;
-import com.tesis.queseria_la_charito.services.impls.VehiculoServiceImpl;
+import com.tesis.queseria_la_charito.services.despachos.VehiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("vehiculos")
 public class VehiculoController {
   @Autowired
-  private VehiculoServiceImpl vehiculoService;
+  private VehiculoService vehiculoService;
 
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")

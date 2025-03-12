@@ -2,7 +2,7 @@ package com.tesis.queseria_la_charito.controllers.despacho;
 
 import com.tesis.queseria_la_charito.dtos.request.despacho.DestinoRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DestinoResponse;
-import com.tesis.queseria_la_charito.services.impls.DestinoServiceImpl;
+import com.tesis.queseria_la_charito.services.despachos.DestinoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/destinos")
 public class DestinoController {
   @Autowired
-  private DestinoServiceImpl destinoService;
+  private DestinoService destinoService;
 
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")

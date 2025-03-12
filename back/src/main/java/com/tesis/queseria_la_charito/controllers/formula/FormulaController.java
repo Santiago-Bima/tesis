@@ -2,7 +2,7 @@ package com.tesis.queseria_la_charito.controllers.formula;
 
 import com.tesis.queseria_la_charito.dtos.request.formula.FormulaRequest;
 import com.tesis.queseria_la_charito.dtos.response.formula.FormulaResponse;
-import com.tesis.queseria_la_charito.services.impls.FormulaServiceImpl;
+import com.tesis.queseria_la_charito.services.formulas.FormulaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("formulas")
 public class FormulaController {
     @Autowired
-    private FormulaServiceImpl formulaService;
+    private FormulaService formulaService;
 
     @PreAuthorize("hasAnyRole('ROLE_Operario', 'ROLE_Subgerente'")
     @GetMapping("/listarBy/{tipoProductoId}")

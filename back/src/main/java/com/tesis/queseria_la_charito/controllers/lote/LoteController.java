@@ -4,7 +4,7 @@ import com.tesis.queseria_la_charito.dtos.request.LoteRequest;
 import com.tesis.queseria_la_charito.dtos.response.lote.ModificacionLoteResponse;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.LoteControlResponse;
 import com.tesis.queseria_la_charito.dtos.response.lote.LoteResponse;
-import com.tesis.queseria_la_charito.services.LoteService;
+import com.tesis.queseria_la_charito.services.lotes.LoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

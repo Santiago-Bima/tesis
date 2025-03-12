@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services;
+package com.tesis.queseria_la_charito.services.Auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

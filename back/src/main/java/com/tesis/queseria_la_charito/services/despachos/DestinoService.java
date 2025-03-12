@@ -1,10 +1,9 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.despachos;
 
 import com.tesis.queseria_la_charito.dtos.request.despacho.DestinoRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DestinoResponse;
 import com.tesis.queseria_la_charito.entities.despacho.DestinoEntity;
 import com.tesis.queseria_la_charito.repositories.despacho.DestinoRepository;
-import com.tesis.queseria_la_charito.services.DestinoService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -16,14 +15,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DestinoServiceImpl implements DestinoService {
+public class DestinoService {
   @Autowired
   private ModelMapper modelMapper;
 
   @Autowired
   private DestinoRepository destinoRepository;
 
-  @Override
+
+
   public DestinoResponse getById(Long id) {
     Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(id);
     if(destinoEntityOptional.isEmpty()) {
@@ -33,7 +33,6 @@ public class DestinoServiceImpl implements DestinoService {
     return modelMapper.map(destinoEntityOptional.get(), DestinoResponse.class);
   }
 
-  @Override
   public List<DestinoResponse> getAll() {
     List<DestinoResponse> lstDestinosResponse = new ArrayList<>();
     List<DestinoEntity> lstDestinosEntity = destinoRepository.findAll();
@@ -49,7 +48,6 @@ public class DestinoServiceImpl implements DestinoService {
     return lstDestinosResponse;
   }
 
-  @Override
   public DestinoResponse put(Long id, DestinoRequest destinoRequest) {
     Optional<DestinoEntity> existenteDestinoEntity = destinoRepository.findByCalleAndNumeroAndBarrio(destinoRequest.getCalle(), destinoRequest.getNumero(), destinoRequest.getBarrio());
     if(existenteDestinoEntity.isPresent()) {
@@ -69,7 +67,6 @@ public class DestinoServiceImpl implements DestinoService {
     return modelMapper.map(destinoRepository.save(destinoEntity), DestinoResponse.class);
   }
 
-  @Override
   public DestinoResponse post(DestinoRequest destinoRequest) {
     DestinoEntity destinoEntity = modelMapper.map(destinoRequest, DestinoEntity.class);
 
@@ -81,7 +78,6 @@ public class DestinoServiceImpl implements DestinoService {
     return modelMapper.map(destinoRepository.save(destinoEntity), DestinoResponse.class);
   }
 
-  @Override
   public DestinoResponse delete(Long id) {
     Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(id);
     if(destinoEntityOptional.isEmpty()) {

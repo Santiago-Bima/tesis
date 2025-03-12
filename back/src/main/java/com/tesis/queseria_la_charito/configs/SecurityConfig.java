@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.configs;
 
 import com.tesis.queseria_la_charito.JwtAuthenticationFilter;
-import com.tesis.queseria_la_charito.services.CustomUserDetailsService;
+import com.tesis.queseria_la_charito.services.Auth.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

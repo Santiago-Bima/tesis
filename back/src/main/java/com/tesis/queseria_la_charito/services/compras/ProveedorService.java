@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.compras;
 
 import com.tesis.queseria_la_charito.dtos.request.compra.ProveedorRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ProveedorResponse;
@@ -7,7 +7,6 @@ import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
 import com.tesis.queseria_la_charito.models.TipoCuenta;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.compra.ProveedorRepository;
-import com.tesis.queseria_la_charito.services.ProveedorService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProveedorServiceImpl implements ProveedorService {
+public class ProveedorService {
   @Autowired
   private ModelMapper modelMapper;
 
@@ -30,7 +29,6 @@ public class ProveedorServiceImpl implements ProveedorService {
 
 
 
-  @Override
   public List<ProveedorResponse> getAll(Long idInsumo) {
     Optional<ItemEntity> itemEntityOptional = itemRepository.findById(idInsumo);
     if (itemEntityOptional.isEmpty()) {
@@ -47,7 +45,6 @@ public class ProveedorServiceImpl implements ProveedorService {
     return lstProveedoresResponse;
   }
 
-  @Override
   public ProveedorResponse getById(Long id) {
     Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if (proveedorEntityOptional.isEmpty()) {
@@ -57,7 +54,6 @@ public class ProveedorServiceImpl implements ProveedorService {
     return modelMapper.map(proveedorEntityOptional.get(), ProveedorResponse.class);
   }
 
-  @Override
   public ProveedorResponse post(ProveedorRequest proveedor) {
     ProveedorEntity proveedorEntity = new ProveedorEntity();
     proveedorEntity.setCuit(proveedor.getCuit());
@@ -82,7 +78,6 @@ public class ProveedorServiceImpl implements ProveedorService {
     return modelMapper.map(repository.save(proveedorEntity), ProveedorResponse.class);
   }
 
-  @Override
   public ProveedorResponse put(ProveedorRequest proveedor, Long id) {
     Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if(proveedorEntityOptional.isEmpty()) {
@@ -111,7 +106,6 @@ public class ProveedorServiceImpl implements ProveedorService {
     return modelMapper.map(repository.save(proveedorEntity), ProveedorResponse.class);
   }
 
-  @Override
   public ProveedorResponse delete(Long id) {
     Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if (proveedorEntityOptional.isEmpty()) {

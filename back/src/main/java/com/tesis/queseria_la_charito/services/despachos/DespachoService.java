@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.despachos;
 
 import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoRequest;
 import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoUpdateRequest;
@@ -24,7 +24,6 @@ import com.tesis.queseria_la_charito.repositories.despacho.DestinoRepository;
 import com.tesis.queseria_la_charito.repositories.despacho.DetalleDespachoRepository;
 import com.tesis.queseria_la_charito.repositories.despacho.VehiculoRepository;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
-import com.tesis.queseria_la_charito.services.DespachoService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
-public class DespachoServiceImpl implements DespachoService {
+public class DespachoService {
   @Autowired
   private ModelMapper modelMapper;
 
@@ -67,7 +66,6 @@ public class DespachoServiceImpl implements DespachoService {
 
 
 //  TODO: Ver de cambiar el tipo de retorno
-  @Override
   public List<DespachoResponse> getByUser(String username) {
     List<DespachoResponse> despachoResponses = new ArrayList<>();
 
@@ -87,7 +85,6 @@ public class DespachoServiceImpl implements DespachoService {
     return despachoResponses;
   }
 
-  @Override
   public List<DespachoResponse> getAll(LocalDate fecha, Long destinoId) {
     Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(destinoId);
     if (destinoEntityOptional.isEmpty()) {
@@ -110,7 +107,6 @@ public class DespachoServiceImpl implements DespachoService {
     return lstDespachoResponse;
   }
 
-  @Override
   public DespachoResponse getById(Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
@@ -120,7 +116,6 @@ public class DespachoServiceImpl implements DespachoService {
     return modelMapper.map(despachoEntityOptional.get(), DespachoResponse.class);
   }
 
-  @Override
   public DespachoResponse post(DespachoRequest despachoRequest) {
     DespachoEntity despachoEntity = new DespachoEntity();
     despachoEntity.setLstDetallesDespacho(new ArrayList<>());
@@ -243,7 +238,6 @@ public class DespachoServiceImpl implements DespachoService {
     return modelMapper.map(despachoRepository.save(despachoEntity), DespachoResponse.class);
   }
 
-  @Override
   public DespachoResponse put(DespachoUpdateRequest despachoRequest, Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
@@ -274,7 +268,6 @@ public class DespachoServiceImpl implements DespachoService {
     return modelMapper.map(despachoRepository.save(despachoEntity), DespachoResponse.class);
   }
 
-  @Override
   public DespachoResponse delete(Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
@@ -327,7 +320,6 @@ public class DespachoServiceImpl implements DespachoService {
     }
   }
 
-  @Override
   public InformeDespachoResponse generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
     InformeDespachoResponse informeDespachoResponse = new InformeDespachoResponse();
     informeDespachoResponse.setCantidadDespachos(0);
@@ -398,7 +390,6 @@ public class DespachoServiceImpl implements DespachoService {
     return informeDespachoResponse;
   }
 
-  @Override
   public DespachoResponse changeEstado(Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {

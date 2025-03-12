@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.lotes;
 
 import com.tesis.queseria_la_charito.dtos.request.LoteRequest;
 import com.tesis.queseria_la_charito.dtos.response.lote.ModificacionLoteResponse;
@@ -15,7 +15,6 @@ import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.LoteRepository;
 import com.tesis.queseria_la_charito.repositories.ModificacionLoteRepository;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
-import com.tesis.queseria_la_charito.services.LoteService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class LoteServiceImpl implements LoteService {
+public class LoteService {
     @Autowired
     private ModelMapper modelMapper;
 
@@ -43,7 +42,7 @@ public class LoteServiceImpl implements LoteService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Override
+
     public List<LoteResponse> getAll(Long idItem, String estado) {
         Optional<ItemEntity> itemEntityOptional = itemRepository.findById(idItem);
         if(itemEntityOptional.isEmpty()){
@@ -63,7 +62,6 @@ public class LoteServiceImpl implements LoteService {
         return listaLotesResponse;
     }
 
-    @Override
     public LoteResponse getLoteById(String id) {
         Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
@@ -73,7 +71,6 @@ public class LoteServiceImpl implements LoteService {
         return modelMapper.map(loteEntityOptional.get(), LoteResponse.class);
     }
 
-    @Override
     public LoteResponse postLote(Long id_item, Integer unidades) {
         LoteEntity loteEntity = new LoteEntity();
 
@@ -103,7 +100,6 @@ public class LoteServiceImpl implements LoteService {
         return modelMapper.map(loteRepository.save(loteEntity), LoteResponse.class);
     }
 
-    @Override
     public LoteResponse putLote(LoteRequest lote, String id) {
         ModificacionLoteEntity modificacionesLotesEntity = new ModificacionLoteEntity();
 
@@ -140,7 +136,6 @@ public class LoteServiceImpl implements LoteService {
         return modelMapper.map(loteRepository.save(loteEntity), LoteResponse.class);
     }
 
-    @Override
     public LoteResponse deleteLote(String id) {
         Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
@@ -161,7 +156,6 @@ public class LoteServiceImpl implements LoteService {
         }
     }
 
-    @Override
     public List<LoteControlResponse> getUnidades(String item) {
         List<LoteControlResponse> lotes = new ArrayList<>();
 
@@ -205,7 +199,6 @@ public class LoteServiceImpl implements LoteService {
         return lotes;
     }
 
-    @Override
     public List<ModificacionLoteResponse> getModificaciones(boolean validate) {
         List<ModificacionLoteEntity> modificacionesLotesEntityList = modificacionLotesRepository.findAllByOrderByFechaDescIdDesc();
         if (modificacionesLotesEntityList.isEmpty()) {

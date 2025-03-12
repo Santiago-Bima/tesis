@@ -2,7 +2,7 @@ package com.tesis.queseria_la_charito.controllers.formula;
 
 import com.tesis.queseria_la_charito.dtos.request.ItemRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
-import com.tesis.queseria_la_charito.services.impls.InsumosServiceImpl;
+import com.tesis.queseria_la_charito.services.formulas.InsumosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("insumos")
 public class InsumoController {
     @Autowired
-    private InsumosServiceImpl insumosService;
+    private InsumosService insumosService;
 
 
     @PreAuthorize("hasAnyRole('ROLE_Subgerente', 'ROLE_Operario'")

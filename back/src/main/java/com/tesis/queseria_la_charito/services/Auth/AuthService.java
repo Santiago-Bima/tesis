@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services;
+package com.tesis.queseria_la_charito.services.Auth;
 
 import com.tesis.queseria_la_charito.dtos.request.LoginRequest;
 import com.tesis.queseria_la_charito.dtos.request.RegisterRequest;

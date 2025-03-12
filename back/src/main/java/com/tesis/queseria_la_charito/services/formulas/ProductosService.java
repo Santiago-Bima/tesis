@@ -1,10 +1,9 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.formulas;
 
 import com.tesis.queseria_la_charito.dtos.response.formula.TipoQuesoResponse;
 import com.tesis.queseria_la_charito.entities.formula.TipoQuesoEntity;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.formula.TipoQuesoRepository;
-import com.tesis.queseria_la_charito.services.ProductoService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductosServiceImpl implements ProductoService {
+public class ProductosService {
     @Autowired
     private ModelMapper modelMapper;
 
@@ -25,7 +24,7 @@ public class ProductosServiceImpl implements ProductoService {
     @Autowired
     private TipoQuesoRepository tipoQuesoRepository;
 
-    @Override
+
     public List<TipoQuesoResponse> getAll() {
         List<TipoQuesoResponse> listaTiposQuesosResponse = new ArrayList<>();
 
@@ -41,7 +40,6 @@ public class ProductosServiceImpl implements ProductoService {
         return listaTiposQuesosResponse;
     }
 
-    @Override
     public TipoQuesoResponse getById(Long id) {
         Optional<TipoQuesoEntity> tipoQuesoResponseOptional = tipoQuesoRepository.findById(id);
         if (tipoQuesoResponseOptional.isEmpty()) {

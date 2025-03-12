@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.formulas;
 
 import com.tesis.queseria_la_charito.dtos.request.formula.DetalleFormulaRequest;
 import com.tesis.queseria_la_charito.dtos.request.formula.FormulaRequest;
@@ -12,7 +12,6 @@ import com.tesis.queseria_la_charito.repositories.formula.DetalleFormulaReposito
 import com.tesis.queseria_la_charito.repositories.formula.FormulaRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.formula.TipoQuesoRepository;
-import com.tesis.queseria_la_charito.services.FormulaService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class FormulaServiceImpl implements FormulaService {
+public class FormulaService {
     @Autowired
     private ModelMapper modelMapper;
 
@@ -40,7 +39,7 @@ public class FormulaServiceImpl implements FormulaService {
     @Autowired
     private ItemRepository itemRepository;
 
-    @Override
+
     public List<FormulaResponse> getFormulasByProducto(Long tipoProductoId) {
         Optional<TipoQuesoEntity> productoEntityOptional = tipoQuesoRepository.findById(tipoProductoId);
         if (productoEntityOptional.isEmpty()){
@@ -64,7 +63,6 @@ public class FormulaServiceImpl implements FormulaService {
         return listaFormulasResponse;
     }
 
-    @Override
     public FormulaResponse getFormulaById(String id) {
         Optional<FormulaEntity> formulaEntity = formulaRepository.findById(id);
         if(formulaEntity.isEmpty()){
@@ -84,7 +82,6 @@ public class FormulaServiceImpl implements FormulaService {
         return formulaResponse;
     }
 
-    @Override
     public FormulaResponse postFormula(FormulaRequest formulaRequest) {
         if (formulaRepository.findById(formulaRequest.getCodigo()).isPresent()) {
             throw new EntityExistsException("Ya existe una fórmula con el mismo código");
@@ -114,7 +111,6 @@ public class FormulaServiceImpl implements FormulaService {
         return modelMapper.map(formulaEntitySaved, FormulaResponse.class);
     }
 
-    @Override
     public FormulaResponse putFormula(FormulaRequest formulaRequest, String id) {
         Optional<FormulaEntity> formulaEntityAntigua = formulaRepository.findById(id);
         if (formulaEntityAntigua.isEmpty()) {
@@ -149,8 +145,6 @@ public class FormulaServiceImpl implements FormulaService {
         return modelMapper.map(formulaEntityFinal, FormulaResponse.class);
     }
 
-
-    @Override
     public FormulaResponse deleteFormula(String id) {
         Optional<FormulaEntity> formulaEntityOptional = formulaRepository.findById(id);
         if (formulaEntityOptional.isEmpty()) {

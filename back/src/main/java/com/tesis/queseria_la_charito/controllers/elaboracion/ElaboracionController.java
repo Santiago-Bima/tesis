@@ -6,7 +6,7 @@ import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.DetalleCor
 import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.MaduracionRequest;
 import com.tesis.queseria_la_charito.dtos.response.elaboracion.ElaboracionResponse;
 import com.tesis.queseria_la_charito.dtos.response.elaboracion.InformeElaboracionResponse;
-import com.tesis.queseria_la_charito.services.ElaboracionService;
+import com.tesis.queseria_la_charito.services.elaboraciones.ElaboracionesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/elaboraciones")
 public class ElaboracionController {
   @Autowired
-  private ElaboracionService elaboracionesService;
+  private ElaboracionesService elaboracionesService;
 
 
   @PreAuthorize("hasRole('ROLE_Operario'")

@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.impls;
+package com.tesis.queseria_la_charito.services.compras;
 
 import com.tesis.queseria_la_charito.dtos.request.compra.ComprobanteCompraRequest;
 import com.tesis.queseria_la_charito.dtos.request.compra.DetalleCompraRequest;
@@ -15,7 +15,7 @@ import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.compra.CompraRepository;
 import com.tesis.queseria_la_charito.repositories.compra.DetalleCompraRepository;
 import com.tesis.queseria_la_charito.repositories.compra.ProveedorRepository;
-import com.tesis.queseria_la_charito.services.CompraService;
+import com.tesis.queseria_la_charito.services.lotes.LoteService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CompraServiceImpl implements CompraService {
+public class CompraService {
   @Autowired
   private ModelMapper modelMapper;
 
   @Autowired
-  private LoteServiceImpl loteService;
+  private LoteService loteService;
 
   @Autowired
   private CompraRepository compraRepository;
@@ -46,7 +46,8 @@ public class CompraServiceImpl implements CompraService {
   @Autowired
   private ItemRepository itemRepository;
 
-  @Override
+
+
   public List<ComprobanteCompraResponse> getAll(LocalDate fecha) {
     List<ComprobanteCompraEntity> comprobanteCompraEntityList = compraRepository.findAllByFecha(fecha.plusDays(1));
     if (comprobanteCompraEntityList.isEmpty()) {
@@ -69,7 +70,6 @@ public class CompraServiceImpl implements CompraService {
     return comprobanteCompraResponses;
   }
 
-  @Override
   public ComprobanteCompraResponse post(ComprobanteCompraRequest comprobante) {
     ComprobanteCompraEntity comprobanteCompraEntity = new ComprobanteCompraEntity();
 
@@ -104,7 +104,6 @@ public class CompraServiceImpl implements CompraService {
     return modelMapper.map(compraRepository.save(comprobanteCompraEntity), ComprobanteCompraResponse.class);
   }
 
-  @Override
   public List<InformeCompraResponse> generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
     List<InformeCompraResponse> informes = new ArrayList<>();
 
