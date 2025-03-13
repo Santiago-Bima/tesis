@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.formulas;
+package com.tesis.queseria_la_charito.controllers.formula;
 
 import com.tesis.queseria_la_charito.dtos.request.ItemRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;

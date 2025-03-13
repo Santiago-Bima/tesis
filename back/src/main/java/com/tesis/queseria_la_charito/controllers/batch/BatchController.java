@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.batches;
+package com.tesis.queseria_la_charito.controllers.batch;
 
 import com.tesis.queseria_la_charito.dtos.request.LoteRequest;
 import com.tesis.queseria_la_charito.dtos.response.lote.ModificacionLoteResponse;

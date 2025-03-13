@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.despacho;
+package com.tesis.queseria_la_charito.controllers.dispatch;
 
 import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoRequest;
 import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoUpdateRequest;
@@ -14,39 +14,39 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/despachos")
-public class DespachoController {
+public class DispatchController {
   @Autowired
-  private DespachoService despachoService;
+  private DespachoService service;
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @GetMapping("")
-  List<DespachoResponse> getAll(@RequestParam(required = false) LocalDate fecha, @RequestParam Long destinoId) { return despachoService.getAll(fecha, destinoId); }
+  List<DespachoResponse> getAll(@RequestParam(required = false) LocalDate fecha, @RequestParam Long destinoId) { return service.getAll(fecha, destinoId); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @GetMapping("/{id}")
-  DespachoResponse getById(@PathVariable Long id) { return despachoService.getById(id); }
+  DespachoResponse getById(@PathVariable Long id) { return service.getById(id); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PostMapping("")
-  DespachoResponse post(@RequestBody DespachoRequest despachoRequest) { return despachoService.post(despachoRequest); }
+  DespachoResponse post(@RequestBody DespachoRequest despachoRequest) { return service.post(despachoRequest); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PutMapping("/{id}")
-  DespachoResponse put(@PathVariable Long id, @RequestBody DespachoUpdateRequest despachoUpdateRequest) { return despachoService.put(despachoUpdateRequest, id); }
+  DespachoResponse put(@PathVariable Long id, @RequestBody DespachoUpdateRequest despachoUpdateRequest) { return service.put(despachoUpdateRequest, id); }
 
   @PreAuthorize("hasAnyRole('ROLE_Subgerente', 'ROLE_Operario'")
   @DeleteMapping("/{id}")
-  DespachoResponse delete(@PathVariable Long id) { return despachoService.delete(id); }
+  DespachoResponse delete(@PathVariable Long id) { return service.delete(id); }
 
   @PreAuthorize("hasAnyRole('ROLE_Gerente'")
   @GetMapping("/informes")
-  InformeDespachoResponse generateInfome(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return despachoService.generateInforme(fechaInicio, fechaFin); }
+  InformeDespachoResponse generateReport(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return service.generateInforme(fechaInicio, fechaFin); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @GetMapping("/mi-despacho/{username}")
-  List<DespachoResponse> getByUser(@PathVariable String username) { return despachoService.getByUser(username); }
+  List<DespachoResponse> getByUser(@PathVariable String username) { return service.getByUser(username); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @PutMapping("/cambiar-estado/{id}")
-  DespachoResponse changeStatus(@PathVariable Long id) { return despachoService.changeEstado(id); }
+  DespachoResponse changeStatus(@PathVariable Long id) { return service.changeEstado(id); }
 }

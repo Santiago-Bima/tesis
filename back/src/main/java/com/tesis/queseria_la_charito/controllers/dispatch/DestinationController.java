@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.despacho;
+package com.tesis.queseria_la_charito.controllers.dispatch;
 
 import com.tesis.queseria_la_charito.dtos.request.despacho.DestinoRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DestinoResponse;
@@ -11,28 +11,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/destinos")
-public class DestinoController {
+public class DestinationController {
   @Autowired
-  private DestinoService destinoService;
+  private DestinoService service;
 
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @GetMapping("/{id}")
-  DestinoResponse getById(@PathVariable Long id) { return destinoService.getById(id); }
+  DestinoResponse getById(@PathVariable Long id) { return service.getById(id); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @GetMapping("")
-  List<DestinoResponse> getAll() { return destinoService.getAll(); }
+  List<DestinoResponse> getAll() { return service.getAll(); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PostMapping("")
-  DestinoResponse post(@RequestBody DestinoRequest destinoRequest) { return destinoService.post(destinoRequest); }
+  DestinoResponse post(@RequestBody DestinoRequest destinoRequest) { return service.post(destinoRequest); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PutMapping("/{id}")
-  DestinoResponse put(@RequestBody DestinoRequest destinoRequest, @PathVariable Long id) { return destinoService.put(id, destinoRequest); }
+  DestinoResponse put(@RequestBody DestinoRequest destinoRequest, @PathVariable Long id) { return service.put(id, destinoRequest); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @DeleteMapping("/{id}")
-  DestinoResponse delete(@PathVariable Long id) { return destinoService.delete(id); }
+  DestinoResponse delete(@PathVariable Long id) { return service.delete(id); }
 }

@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.formulas;
+package com.tesis.queseria_la_charito.controllers.formula;
 
 import com.tesis.queseria_la_charito.dtos.response.formula.TipoQuesoResponse;
 import com.tesis.queseria_la_charito.services.formulas.ProductosService;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("productos")
-public class ProductoController {
+public class ProductController {
     @Autowired
     private ProductosService productosService;
 

@@ -1,6 +1,6 @@
-package com.tesis.queseria_la_charito.controllers.elaboracion;
+package com.tesis.queseria_la_charito.controllers.batch;
 
-import com.tesis.queseria_la_charito.models.TipoCorte;
+import com.tesis.queseria_la_charito.models.Estado;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cortes")
-public class CorteController {
+@RequestMapping("/estados")
+public class StatusController {
     @PreAuthorize("hasRole('ROLE_Operario'")
     @GetMapping()
-    List<TipoCorte> getCortes() { return Arrays.asList(TipoCorte.values()); }
+    List<Estado> get() { return Arrays.asList(Estado.values()) ;}
 }

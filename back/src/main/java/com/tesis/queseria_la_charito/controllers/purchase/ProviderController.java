@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.compra;
+package com.tesis.queseria_la_charito.controllers.purchase;
 
 import com.tesis.queseria_la_charito.dtos.request.compra.ProveedorRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ProveedorResponse;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("proveedores")
-public class ProveedorController {
+public class ProviderController {
   @Autowired
   private ProveedorService service;
 

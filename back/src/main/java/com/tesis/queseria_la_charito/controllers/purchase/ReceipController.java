@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.controllers.compra;
+package com.tesis.queseria_la_charito.controllers.purchase;
 
 import com.tesis.queseria_la_charito.dtos.request.compra.ComprobanteCompraRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ComprobanteCompraResponse;
@@ -13,9 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("comprobantes")
-public class ComprobanteController {
+public class ReceipController {
   @Autowired
   private CompraService service;
+
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @GetMapping("")
@@ -27,5 +28,5 @@ public class ComprobanteController {
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @GetMapping("/informes")
-  List<InformeCompraResponse> generateInfome(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return service.generateInforme(fechaInicio, fechaFin); }
+  List<InformeCompraResponse> generateReport(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return service.generateInforme(fechaInicio, fechaFin); }
 }
