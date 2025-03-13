@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.services.formulas;
 
-import com.tesis.queseria_la_charito.dtos.request.formula.DetalleFormulaRequest;
+import com.tesis.queseria_la_charito.dtos.request.formula.FormulaDetailRequest;
 import com.tesis.queseria_la_charito.dtos.request.formula.FormulaRequest;
 import com.tesis.queseria_la_charito.dtos.response.formula.DetalleFormulaResponse;
 import com.tesis.queseria_la_charito.dtos.response.formula.FormulaResponse;
@@ -128,7 +128,7 @@ public class FormulaService {
 
         formulaEntity.getDetallesFormulas().clear();
 
-        for (DetalleFormulaRequest detalleFormulaRequest : formulaRequest.getDetallesFormulas()) {
+        for (FormulaDetailRequest detalleFormulaRequest : formulaRequest.getDetallesFormulas()) {
             Optional<ItemEntity> insumoEntity = itemRepository.findById(detalleFormulaRequest.getInsumo());
             if (insumoEntity.isEmpty()) {
                 throw new EntityNotFoundException("No se encontró el insumo");

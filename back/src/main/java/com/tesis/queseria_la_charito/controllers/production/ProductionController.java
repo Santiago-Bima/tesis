@@ -1,9 +1,9 @@
 package com.tesis.queseria_la_charito.controllers.production;
 
-import com.tesis.queseria_la_charito.dtos.request.ElaboracionRequest;
-import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.ControlCalidadRequest;
-import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.DetalleCorteRequest;
-import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.MaduracionRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.ProductionRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.QualityControlRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.CutDetailRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.MadurationRequest;
 import com.tesis.queseria_la_charito.dtos.response.elaboracion.ElaboracionResponse;
 import com.tesis.queseria_la_charito.dtos.response.elaboracion.InformeElaboracionResponse;
 import com.tesis.queseria_la_charito.services.elaboraciones.ElaboracionesService;
@@ -31,11 +31,11 @@ public class ProductionController {
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @PostMapping("")
-  ElaboracionResponse post(@RequestBody ElaboracionRequest elaboracionRequest) { return  service.post(elaboracionRequest); }
+  ElaboracionResponse post(@RequestBody ProductionRequest elaboracionRequest) { return  service.post(elaboracionRequest); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @PutMapping("/cortes/{id}")
-  ElaboracionResponse updateCuts(@RequestBody DetalleCorteRequest detalleCorteRequest , @PathVariable String id) throws Exception { return service.updateCortes(detalleCorteRequest, id); }
+  ElaboracionResponse updateCuts(@RequestBody CutDetailRequest detalleCorteRequest , @PathVariable String id) throws Exception { return service.updateCortes(detalleCorteRequest, id); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @PutMapping("/embolsado/{id}")
@@ -47,11 +47,11 @@ public class ProductionController {
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @PutMapping("/maduracion/{id}")
-  ElaboracionResponse updateMaturation(@RequestBody MaduracionRequest maduracionRequest , @PathVariable String id) throws Exception { return service.updateMaduracion(maduracionRequest, id); }
+  ElaboracionResponse updateMaturation(@RequestBody MadurationRequest maduracionRequest , @PathVariable String id) throws Exception { return service.updateMaduracion(maduracionRequest, id); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @PutMapping("/controles/{id}")
-  ElaboracionResponse updateQualityControl(@RequestBody ControlCalidadRequest controlCalidadRequest , @PathVariable String id) throws Exception { return service.updateControl(controlCalidadRequest, id); }
+  ElaboracionResponse updateQualityControl(@RequestBody QualityControlRequest controlCalidadRequest , @PathVariable String id) throws Exception { return service.updateControl(controlCalidadRequest, id); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @DeleteMapping("/{id}")

@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.services;
 
-import com.tesis.queseria_la_charito.dtos.request.controlStock.ControlStockRequest;
-import com.tesis.queseria_la_charito.dtos.request.controlStock.InsumoControlRequest;
+import com.tesis.queseria_la_charito.dtos.request.stockControl.StockControlRequest;
+import com.tesis.queseria_la_charito.dtos.request.stockControl.InsumoControlRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.CantidadesEsperadasResponse;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.ControlStockResponse;
@@ -98,7 +98,7 @@ public class ControlStockService {
     return responses;
   }
 
-  public ControlStockResponse post(ControlStockRequest data) {
+  public ControlStockResponse post(StockControlRequest data) {
     ControlStockEntity controlStockEntity = modelMapper.map(data, ControlStockEntity.class);
 
     Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsername(data.getUsuario());

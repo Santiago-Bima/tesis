@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ItemRequest {
     @JsonProperty("nombre")
-    private String nombre;
+    private String name;
 
     @JsonProperty("unidad_medida")
-    private String unidadMedida;
+    private String measurementUnit;
 }

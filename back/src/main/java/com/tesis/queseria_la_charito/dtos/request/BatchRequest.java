@@ -12,16 +12,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
-public class LoteRequest {
+public class BatchRequest {
     @JsonProperty("fecha")
-    private LocalDate fecha;
+    private LocalDate date;
 
     @JsonProperty("unidades")
-    private Integer unidades;
+    private Integer quantity;
 
     @JsonProperty("motivos")
-    private String motivos;
+    private String reasons;
 
     @JsonProperty("usuario")
-    private String usuario;
+    private String responsible;
 }

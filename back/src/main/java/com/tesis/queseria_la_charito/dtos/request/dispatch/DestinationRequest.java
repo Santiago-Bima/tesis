@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.despacho;
+package com.tesis.queseria_la_charito.dtos.request.dispatch;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DestinoRequest {
+public class DestinationRequest {
   @JsonProperty("calle")
-  private String calle;
+  private String street;
 
   @JsonProperty("numero")
-  private Integer numero;
+  private Integer number;
 
   @JsonProperty("barrio")
-  private String barrio;
+  private String neighborhood;
 }

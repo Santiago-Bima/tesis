@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers;
 
-import com.tesis.queseria_la_charito.dtos.request.controlStock.ControlStockRequest;
+import com.tesis.queseria_la_charito.dtos.request.stockControl.StockControlRequest;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.CantidadesEsperadasResponse;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.ControlStockResponse;
 import com.tesis.queseria_la_charito.services.ControlStockService;
@@ -27,7 +27,7 @@ public class StockControlController {
 
   @PreAuthorize("hasRole('ROLE_Operario')")
   @PostMapping()
-  ControlStockResponse post(@RequestBody ControlStockRequest data) { return service.post(data); }
+  ControlStockResponse post(@RequestBody StockControlRequest data) { return service.post(data); }
 
   @PreAuthorize("hasRole('ROLE_Operario')")
   @GetMapping("/valoresEsperados")

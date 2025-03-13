@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request;
+package com.tesis.queseria_la_charito.dtos.request.production;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,19 +12,19 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElaboracionRequest {
+public class ProductionRequest {
   @JsonProperty("fecha")
-  private LocalDate fecha;
+  private LocalDate date;
 
   @JsonProperty("cantidadLeche")
-  private Integer cantidadLeche;
+  private Integer milkQuantity;
 
   @JsonProperty("idFormula")
   private String idFormula;
 
   @JsonProperty("tiempoSalado")
-  private Integer tiempoSalado;
+  private Integer suteedTime;
 
   @JsonProperty("usuario")
-  private String usuario;
+  private String responsible;
 }

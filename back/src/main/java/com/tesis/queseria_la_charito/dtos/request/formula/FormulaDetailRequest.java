@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
-public class DetalleFormulaRequest {
+public class FormulaDetailRequest {
     @JsonProperty("insumo_id")
-    private Long insumo;
+    private Long idSupply;
 
     @JsonProperty("cantidad")
-    private Integer cantidad;
+    private Integer quantity;
 }

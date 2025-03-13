@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.services.compras;
 
-import com.tesis.queseria_la_charito.dtos.request.compra.ComprobanteCompraRequest;
-import com.tesis.queseria_la_charito.dtos.request.compra.DetalleCompraRequest;
+import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipRequest;
+import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipDetailRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ComprobanteCompraResponse;
 import com.tesis.queseria_la_charito.dtos.response.compra.DetalleComprobanteResponse;
 import com.tesis.queseria_la_charito.dtos.response.compra.InformeCompraResponse;
@@ -70,12 +70,12 @@ public class CompraService {
     return comprobanteCompraResponses;
   }
 
-  public ComprobanteCompraResponse post(ComprobanteCompraRequest comprobante) {
+  public ComprobanteCompraResponse post(ReceipRequest comprobante) {
     ComprobanteCompraEntity comprobanteCompraEntity = new ComprobanteCompraEntity();
 
 
     List<DetalleComprobanteEntity> detalleComprobanteEntities = new ArrayList<>();
-    for(DetalleCompraRequest detalle : comprobante.getListDetalles()) {
+    for(ReceipDetailRequest detalle : comprobante.getLstDetails()) {
       DetalleComprobanteEntity detalleComprobante = new DetalleComprobanteEntity();
       detalleComprobante.setCantidad(detalle.getCantidad());
       detalleComprobante.setSubtotal(detalle.getSubtotal());
@@ -98,7 +98,7 @@ public class CompraService {
     }
 
     comprobanteCompraEntity.setTotal(comprobante.getTotal());
-    comprobanteCompraEntity.setFecha(comprobante.getFecha());
+    comprobanteCompraEntity.setFecha(comprobante.getDate());
     comprobanteCompraEntity.setListaDetalles(detalleComprobanteEntities);
 
     return modelMapper.map(compraRepository.save(comprobanteCompraEntity), ComprobanteCompraResponse.class);
@@ -132,7 +132,7 @@ public class CompraService {
     return informes;
   }
 
-  private static Integer getCantidad(DetalleCompraRequest detalle, ItemEntity itemEntity, ProveedorEntity proveedor) {
+  private static Integer getCantidad(ReceipDetailRequest detalle, ItemEntity itemEntity, ProveedorEntity proveedor) {
     String unidadMedida = itemEntity.getUnidadMedida();
     String unidadMedidaCompra = proveedor.getUnidadMedida();
     int    cantidad           = 0;

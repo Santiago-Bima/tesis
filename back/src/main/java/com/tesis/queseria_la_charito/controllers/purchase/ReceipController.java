@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers.purchase;
 
-import com.tesis.queseria_la_charito.dtos.request.compra.ComprobanteCompraRequest;
+import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ComprobanteCompraResponse;
 import com.tesis.queseria_la_charito.dtos.response.compra.InformeCompraResponse;
 import com.tesis.queseria_la_charito.services.compras.CompraService;
@@ -24,7 +24,7 @@ public class ReceipController {
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @PostMapping("")
-  ComprobanteCompraResponse post(@RequestBody ComprobanteCompraRequest request) { return service.post(request); }
+  ComprobanteCompraResponse post(@RequestBody ReceipRequest request) { return service.post(request); }
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @GetMapping("/informes")

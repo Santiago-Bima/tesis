@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.controlStock;
+package com.tesis.queseria_la_charito.dtos.request.stockControl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -14,25 +14,25 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ControlStockRequest {
+public class StockControlRequest {
   @JsonProperty("fecha")
-  private LocalDate fecha;
+  private LocalDate date;
 
   @JsonProperty("cantidadEnterosObtenida")
-  private Integer cantidadEnterosObtenida;
+  private Integer obtainedWholeQuantity;
 
   @JsonProperty("cantidadMediosObtenida")
-  private Integer cantidadMediosObtenida;
+  private Integer obtainedHalfQuantity;
 
   @JsonProperty("cantidadCuartosObtenida")
-  private Integer cantidadCuartosObtenida;
+  private Integer obtainedQuarterQuantity;
 
   @JsonProperty("cantidadesInsumos")
-  private List<InsumoControlRequest> cantidadesInsumos;
+  private List<InsumoControlRequest> suppliesQuantities;
 
   @JsonProperty("observaciones")
-  private String observaciones;
+  private String observations;
 
   @JsonProperty("usuario")
-  private String usuario;
+  private String responsible;
 }

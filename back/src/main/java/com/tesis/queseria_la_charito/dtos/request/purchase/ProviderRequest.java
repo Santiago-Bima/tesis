@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.compra;
+package com.tesis.queseria_la_charito.dtos.request.purchase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProveedorRequest {
+public class ProviderRequest {
   @JsonProperty("id")
   private Long id;
 
   @JsonProperty("nombre")
-  private String nombre;
+  private String name;
 
   @JsonProperty("email")
   private String email;
@@ -28,26 +28,26 @@ public class ProveedorRequest {
   private String cuit;
 
   @JsonProperty("banco")
-  private String banco;
+  private String bank;
 
   @JsonProperty("tipoCuenta")
-  private String tipoCuenta;
+  private String accountType;
 
   @JsonProperty("telefono")
-  private Long telefono;
+  private Long phone;
 
   @JsonProperty("idInsumo")
-  private Long idInsumo;
+  private Long idSupply;
 
   @JsonProperty("insumo")
-  private ItemResponse insumo;
+  private ItemResponse supply;
 
   @JsonProperty("cantidadMedida")
-  private Integer cantidadMedida;
+  private Integer measurementQuantity;
 
   @JsonProperty("unidadMedida")
-  private String unidadMedida;
+  private String measurementUnit;
 
   @JsonProperty("costo")
-  private Integer costo;
+  private Integer cost;
 }

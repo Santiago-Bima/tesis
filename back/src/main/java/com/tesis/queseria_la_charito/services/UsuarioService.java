@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.services;
 
-import com.tesis.queseria_la_charito.dtos.request.usuario.UsuarioRequest;
+import com.tesis.queseria_la_charito.dtos.request.user.UserRequest;
 import com.tesis.queseria_la_charito.dtos.response.usuario.UsuarioResponse;
 import com.tesis.queseria_la_charito.entities.usuario.RolEntity;
 import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
@@ -29,7 +29,7 @@ public class UsuarioService {
   private ModelMapper modelMapper;
 
   @Transactional
-  public UsuarioResponse registrarUsuario(UsuarioRequest usuario) {
+  public UsuarioResponse registrarUsuario(UserRequest usuario) {
     if (usuarioRepository.findByUsernameAndMostrar(usuario.getUsername(), true).isPresent()) {
       throw new EntityExistsException("ya existe un usuario con el mismo nombre");
     }

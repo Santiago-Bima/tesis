@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.compra;
+package com.tesis.queseria_la_charito.dtos.request.purchase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DetalleCompraRequest {
+public class ReceipDetailRequest {
   @JsonProperty("idProveedor")
-  private Long idProveedor;
+  private Long idProvider;
 
   @JsonProperty("cantidad")
-  private Integer cantidad;
+  private Integer quantity;
 
   @JsonProperty("subtotal")
   private Integer subtotal;

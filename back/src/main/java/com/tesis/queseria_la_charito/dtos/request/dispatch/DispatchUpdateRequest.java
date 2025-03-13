@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.despacho;
+package com.tesis.queseria_la_charito.dtos.request.dispatch;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DespachoUpdateRequest {
+public class DispatchUpdateRequest {
   @JsonProperty("idVehiculo")
-  private Long idVehiculo;
+  private Long idVehicle;
 
   @JsonProperty("idDestino")
-  private Long idDestino;
+  private Long idDestination;
 
   @JsonProperty("usuario")
-  private String usuario;
+  private String responsible;
 }

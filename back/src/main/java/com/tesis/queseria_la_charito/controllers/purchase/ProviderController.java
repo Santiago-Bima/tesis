@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers.purchase;
 
-import com.tesis.queseria_la_charito.dtos.request.compra.ProveedorRequest;
+import com.tesis.queseria_la_charito.dtos.request.purchase.ProviderRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ProveedorResponse;
 import com.tesis.queseria_la_charito.services.compras.ProveedorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ public class ProviderController {
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @PostMapping("")
-  public ProveedorResponse post(@RequestBody ProveedorRequest proveedorRequest) { return service.post(proveedorRequest); }
+  public ProveedorResponse post(@RequestBody ProviderRequest proveedorRequest) { return service.post(proveedorRequest); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @PutMapping("/{id}")
-  public ProveedorResponse put(@RequestBody ProveedorRequest proveedorRequest, @PathVariable Long id) { return service.put(proveedorRequest, id); }
+  public ProveedorResponse put(@RequestBody ProviderRequest proveedorRequest, @PathVariable Long id) { return service.put(proveedorRequest, id); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @DeleteMapping("/{id}")

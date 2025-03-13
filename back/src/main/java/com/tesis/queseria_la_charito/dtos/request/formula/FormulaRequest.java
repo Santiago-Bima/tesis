@@ -14,14 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 public class FormulaRequest {
     @JsonProperty("codigo")
-    private String codigo;
+    private String code;
 
     @JsonProperty("cantidad_leche")
-    private Integer cantidadLeche;
+    private Integer milkQuantity;
 
     @JsonProperty("id_tipo_queso")
-    private Long tipoQueso;
+    private Long cheeseType;
 
     @JsonProperty("detalles")
-    private List<DetalleFormulaRequest> detallesFormulas;
+    private List<FormulaDetailRequest> lstDetails;
 }

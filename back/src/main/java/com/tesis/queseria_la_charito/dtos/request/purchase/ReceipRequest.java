@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.compra;
+package com.tesis.queseria_la_charito.dtos.request.purchase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -13,13 +13,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ComprobanteCompraRequest {
+public class ReceipRequest {
   @JsonProperty("fecha")
-  private LocalDate fecha;
+  private LocalDate date;
 
   @JsonProperty("total")
   private Integer total;
 
   @JsonProperty("listDetalles")
-  private List<DetalleCompraRequest> listDetalles;
+  private List<ReceipDetailRequest> lstDetails;
 }

@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.procesosElaboracion;
+package com.tesis.queseria_la_charito.dtos.request.production;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,19 +12,19 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ControlCalidadRequest {
+public class QualityControlRequest {
   @JsonProperty("fecha")
-  private LocalDate fecha;
+  private LocalDate date;
 
   @JsonProperty("pruebaSabor")
-  private String pruebaSabor;
+  private String tasteTest;
 
   @JsonProperty("pruebaConcistencia")
-  private String pruebaConcistencia;
+  private String consistencyTest;
 
   @JsonProperty("pruebaAroma")
-  private String pruebaAroma;
+  private String smellTest;
 
   @JsonProperty("observacion")
-  private String observacion;
+  private String observation;
 }

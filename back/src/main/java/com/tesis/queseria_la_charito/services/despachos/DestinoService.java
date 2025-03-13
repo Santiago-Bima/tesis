@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.services.despachos;
 
-import com.tesis.queseria_la_charito.dtos.request.despacho.DestinoRequest;
+import com.tesis.queseria_la_charito.dtos.request.dispatch.DestinationRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DestinoResponse;
 import com.tesis.queseria_la_charito.entities.despacho.DestinoEntity;
 import com.tesis.queseria_la_charito.repositories.despacho.DestinoRepository;
@@ -48,7 +48,7 @@ public class DestinoService {
     return lstDestinosResponse;
   }
 
-  public DestinoResponse put(Long id, DestinoRequest destinoRequest) {
+  public DestinoResponse put(Long id, DestinationRequest destinoRequest) {
     Optional<DestinoEntity> existenteDestinoEntity = destinoRepository.findByCalleAndNumeroAndBarrio(destinoRequest.getCalle(), destinoRequest.getNumero(), destinoRequest.getBarrio());
     if(existenteDestinoEntity.isPresent()) {
       throw new EntityExistsException("Ya existe un destino con dichos datos");
@@ -67,7 +67,7 @@ public class DestinoService {
     return modelMapper.map(destinoRepository.save(destinoEntity), DestinoResponse.class);
   }
 
-  public DestinoResponse post(DestinoRequest destinoRequest) {
+  public DestinoResponse post(DestinationRequest destinoRequest) {
     DestinoEntity destinoEntity = modelMapper.map(destinoRequest, DestinoEntity.class);
 
     Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findByCalleAndNumeroAndBarrio(destinoEntity.getCalle(), destinoEntity.getNumero(), destinoEntity.getBarrio());

@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.services.lotes;
 
-import com.tesis.queseria_la_charito.dtos.request.LoteRequest;
+import com.tesis.queseria_la_charito.dtos.request.BatchRequest;
 import com.tesis.queseria_la_charito.dtos.response.lote.ModificacionLoteResponse;
 import com.tesis.queseria_la_charito.dtos.response.controlStock.LoteControlResponse;
 import com.tesis.queseria_la_charito.dtos.response.lote.LoteResponse;
@@ -100,7 +100,7 @@ public class LoteService {
         return modelMapper.map(loteRepository.save(loteEntity), LoteResponse.class);
     }
 
-    public LoteResponse putLote(LoteRequest lote, String id) {
+    public LoteResponse putLote(BatchRequest lote, String id) {
         ModificacionLoteEntity modificacionesLotesEntity = new ModificacionLoteEntity();
 
         Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);

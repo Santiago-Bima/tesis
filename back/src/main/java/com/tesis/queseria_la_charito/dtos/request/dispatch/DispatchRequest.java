@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.despacho;
+package com.tesis.queseria_la_charito.dtos.request.dispatch;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,28 +12,28 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DespachoRequest {
+public class DispatchRequest {
   @JsonProperty("fecha")
-  private LocalDate fecha;
+  private LocalDate date;
 
   @JsonProperty("idDestino")
-  private Long destino;
+  private Long destination;
 
   @JsonProperty("idVehiculo")
-  private Long vehiculo;
+  private Long vehicle;
 
   @JsonProperty("queso")
-  private String queso;
+  private String cheese;
 
   @JsonProperty("totalEnteros")
-  private Integer totalEnteros;
+  private Integer totalWholes;
 
   @JsonProperty("totalMedios")
-  private Integer totalMedios;
+  private Integer totalHalfs;
 
   @JsonProperty("totalCuartos")
-  private Integer totalCuartos;
+  private Integer totalQuarters;
 
   @JsonProperty("usuario")
-  private String usuario;
+  private String responsible;
 }

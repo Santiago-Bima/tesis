@@ -1,9 +1,9 @@
 package com.tesis.queseria_la_charito.services.elaboraciones;
 
-import com.tesis.queseria_la_charito.dtos.request.ElaboracionRequest;
-import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.ControlCalidadRequest;
-import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.DetalleCorteRequest;
-import com.tesis.queseria_la_charito.dtos.request.procesosElaboracion.MaduracionRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.ProductionRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.QualityControlRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.CutDetailRequest;
+import com.tesis.queseria_la_charito.dtos.request.production.MadurationRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
 import com.tesis.queseria_la_charito.dtos.response.elaboracion.DetalleInsumoInformeElaboracion;
 import com.tesis.queseria_la_charito.dtos.response.elaboracion.ElaboracionResponse;
@@ -110,7 +110,7 @@ public class ElaboracionesService {
     return modelMapper.map(elaboracionEntityOptional.get(), ElaboracionResponse.class);
   }
 
-  public ElaboracionResponse post(ElaboracionRequest elaboracionRequest) {
+  public ElaboracionResponse post(ProductionRequest elaboracionRequest) {
     ElaboracionEntity elaboracionEntity = new ElaboracionEntity();
     Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsername(elaboracionRequest.getUsuario());
     if (usuarioEntityOptional.isEmpty()) {
@@ -174,7 +174,7 @@ public class ElaboracionesService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  public ElaboracionResponse updateCortes(DetalleCorteRequest detalleCorteRequest, String idElaboracion) throws Exception{
+  public ElaboracionResponse updateCortes(CutDetailRequest detalleCorteRequest, String idElaboracion) throws Exception{
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
@@ -221,7 +221,7 @@ public class ElaboracionesService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  public ElaboracionResponse updateMaduracion(MaduracionRequest maduracionRequest, String idElaboracion) throws Exception {
+  public ElaboracionResponse updateMaduracion(MadurationRequest maduracionRequest, String idElaboracion) throws Exception {
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
@@ -268,7 +268,7 @@ public class ElaboracionesService {
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ElaboracionResponse.class);
   }
 
-  public ElaboracionResponse updateControl(ControlCalidadRequest controlCalidadRequest, String idElaboracion) throws Exception {
+  public ElaboracionResponse updateControl(QualityControlRequest controlCalidadRequest, String idElaboracion) throws Exception {
     Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");

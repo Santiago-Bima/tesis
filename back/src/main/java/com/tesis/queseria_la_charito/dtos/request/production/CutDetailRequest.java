@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.procesosElaboracion;
+package com.tesis.queseria_la_charito.dtos.request.production;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DetalleCorteRequest {
+public class CutDetailRequest {
   @JsonProperty("cantidad")
-  private Integer cantidad;
+  private Integer quantity;
 
   @JsonProperty("peso")
-  private Double peso;
+  private Double weight;
 
   @JsonProperty("corte")
-  private String corte;
+  private String cut;
 }

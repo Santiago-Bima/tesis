@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.controllers.dispatch;
 
-import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoRequest;
-import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoUpdateRequest;
+import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchRequest;
+import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchUpdateRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DespachoResponse;
 import com.tesis.queseria_la_charito.dtos.response.despacho.InformeDespachoResponse;
 import com.tesis.queseria_la_charito.services.despachos.DespachoService;
@@ -28,11 +28,11 @@ public class DispatchController {
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PostMapping("")
-  DespachoResponse post(@RequestBody DespachoRequest despachoRequest) { return service.post(despachoRequest); }
+  DespachoResponse post(@RequestBody DispatchRequest despachoRequest) { return service.post(despachoRequest); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PutMapping("/{id}")
-  DespachoResponse put(@PathVariable Long id, @RequestBody DespachoUpdateRequest despachoUpdateRequest) { return service.put(despachoUpdateRequest, id); }
+  DespachoResponse put(@PathVariable Long id, @RequestBody DispatchUpdateRequest despachoUpdateRequest) { return service.put(despachoUpdateRequest, id); }
 
   @PreAuthorize("hasAnyRole('ROLE_Subgerente', 'ROLE_Operario'")
   @DeleteMapping("/{id}")

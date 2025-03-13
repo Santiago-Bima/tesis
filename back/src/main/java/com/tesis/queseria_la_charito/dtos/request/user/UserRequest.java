@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.usuario;
+package com.tesis.queseria_la_charito.dtos.request.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioRequest {
+public class UserRequest {
   @JsonProperty(namespace = "username")
   private String username;
 
@@ -18,5 +18,5 @@ public class UsuarioRequest {
   private String password;
 
   @JsonProperty(namespace = "rol")
-  private String rol;
+  private String role;
 }

@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.services.compras;
 
-import com.tesis.queseria_la_charito.dtos.request.compra.ProveedorRequest;
+import com.tesis.queseria_la_charito.dtos.request.purchase.ProviderRequest;
 import com.tesis.queseria_la_charito.dtos.response.compra.ProveedorResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
@@ -54,7 +54,7 @@ public class ProveedorService {
     return modelMapper.map(proveedorEntityOptional.get(), ProveedorResponse.class);
   }
 
-  public ProveedorResponse post(ProveedorRequest proveedor) {
+  public ProveedorResponse post(ProviderRequest proveedor) {
     ProveedorEntity proveedorEntity = new ProveedorEntity();
     proveedorEntity.setCuit(proveedor.getCuit());
     proveedorEntity.setEmail(proveedor.getEmail());
@@ -78,7 +78,7 @@ public class ProveedorService {
     return modelMapper.map(repository.save(proveedorEntity), ProveedorResponse.class);
   }
 
-  public ProveedorResponse put(ProveedorRequest proveedor, Long id) {
+  public ProveedorResponse put(ProviderRequest proveedor, Long id) {
     Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if(proveedorEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el proveedor");

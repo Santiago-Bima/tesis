@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers.dispatch;
 
-import com.tesis.queseria_la_charito.dtos.request.despacho.DestinoRequest;
+import com.tesis.queseria_la_charito.dtos.request.dispatch.DestinationRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DestinoResponse;
 import com.tesis.queseria_la_charito.services.despachos.DestinoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +26,11 @@ public class DestinationController {
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PostMapping("")
-  DestinoResponse post(@RequestBody DestinoRequest destinoRequest) { return service.post(destinoRequest); }
+  DestinoResponse post(@RequestBody DestinationRequest destinoRequest) { return service.post(destinoRequest); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @PutMapping("/{id}")
-  DestinoResponse put(@RequestBody DestinoRequest destinoRequest, @PathVariable Long id) { return service.put(id, destinoRequest); }
+  DestinoResponse put(@RequestBody DestinationRequest destinoRequest, @PathVariable Long id) { return service.put(id, destinoRequest); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @DeleteMapping("/{id}")

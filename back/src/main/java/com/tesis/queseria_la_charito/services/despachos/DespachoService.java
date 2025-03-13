@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.services.despachos;
 
-import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoRequest;
-import com.tesis.queseria_la_charito.dtos.request.despacho.DespachoUpdateRequest;
+import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchRequest;
+import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchUpdateRequest;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DespachoResponse;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DestinoResponse;
 import com.tesis.queseria_la_charito.dtos.response.despacho.DetalleInformeDespacho;
@@ -116,7 +116,7 @@ public class DespachoService {
     return modelMapper.map(despachoEntityOptional.get(), DespachoResponse.class);
   }
 
-  public DespachoResponse post(DespachoRequest despachoRequest) {
+  public DespachoResponse post(DispatchRequest despachoRequest) {
     DespachoEntity despachoEntity = new DespachoEntity();
     despachoEntity.setLstDetallesDespacho(new ArrayList<>());
     despachoEntity.setFecha(despachoRequest.getFecha());
@@ -238,7 +238,7 @@ public class DespachoService {
     return modelMapper.map(despachoRepository.save(despachoEntity), DespachoResponse.class);
   }
 
-  public DespachoResponse put(DespachoUpdateRequest despachoRequest, Long id) {
+  public DespachoResponse put(DispatchUpdateRequest despachoRequest, Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");

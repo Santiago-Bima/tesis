@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.dtos.request.controlStock;
+package com.tesis.queseria_la_charito.dtos.request.stockControl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
