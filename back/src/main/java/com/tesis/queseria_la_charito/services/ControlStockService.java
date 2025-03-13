@@ -3,10 +3,10 @@ package com.tesis.queseria_la_charito.services;
 import com.tesis.queseria_la_charito.dtos.request.stockControl.StockControlRequest;
 import com.tesis.queseria_la_charito.dtos.request.stockControl.InsumoControlRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
-import com.tesis.queseria_la_charito.dtos.response.controlStock.CantidadesEsperadasResponse;
-import com.tesis.queseria_la_charito.dtos.response.controlStock.ControlStockResponse;
-import com.tesis.queseria_la_charito.dtos.response.controlStock.InsumoControlResponse;
-import com.tesis.queseria_la_charito.dtos.response.controlStock.LoteControlResponse;
+import com.tesis.queseria_la_charito.dtos.response.stockControl.ExpectedQuantityResponse;
+import com.tesis.queseria_la_charito.dtos.response.stockControl.StockControlResponse;
+import com.tesis.queseria_la_charito.dtos.response.stockControl.SupplyControlResponse;
+import com.tesis.queseria_la_charito.dtos.response.stockControl.BatchControlResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.controlStock.ControlStockEntity;
 import com.tesis.queseria_la_charito.entities.controlStock.InsumoControlEntity;
@@ -53,8 +53,8 @@ public class ControlStockService {
 
 
 
-  public List<ControlStockResponse> getAll(boolean validate) {
-    List<ControlStockResponse> responses = new ArrayList<>();
+  public List<StockControlResponse> getAll(boolean validate) {
+    List<StockControlResponse> responses = new ArrayList<>();
 
     List<ControlStockEntity> controlStockEntities = repository.findAllByOrderByFechaDescIdDesc();
     if (controlStockEntities.isEmpty()) {
@@ -62,26 +62,26 @@ public class ControlStockService {
     }
 
     for (ControlStockEntity controlEntity : controlStockEntities) {
-      ControlStockResponse response = modelMapper.map(controlEntity, ControlStockResponse.class);
+      StockControlResponse response = modelMapper.map(controlEntity, StockControlResponse.class);
 
-      List<InsumoControlResponse> insumoControlResponsesEsperado = new ArrayList<>();
-      List<InsumoControlEntity> insumoControlEsperadoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, TipoControlItem.Esperado.name());
+      List<SupplyControlResponse> insumoControlResponsesEsperado  = new ArrayList<>();
+      List<InsumoControlEntity>   insumoControlEsperadoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, TipoControlItem.Esperado.name());
       if (insumoControlEsperadoEntityList.isEmpty()) {
         insumoControlEsperadoEntityList = new ArrayList<>();
       }
 
       for (InsumoControlEntity insumoControlEntity : insumoControlEsperadoEntityList) {
-        insumoControlResponsesEsperado.add(new InsumoControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
+        insumoControlResponsesEsperado.add(new SupplyControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
       }
 
-      List<InsumoControlResponse> insumoControlResponsesObtenido = new ArrayList<>();
-      List<InsumoControlEntity> insumoControlObtenidoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, TipoControlItem.Obtenido.name());
+      List<SupplyControlResponse> insumoControlResponsesObtenido  = new ArrayList<>();
+      List<InsumoControlEntity>   insumoControlObtenidoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, TipoControlItem.Obtenido.name());
       if (insumoControlObtenidoEntityList.isEmpty()) {
         insumoControlObtenidoEntityList = new ArrayList<>();
       }
 
       for (InsumoControlEntity insumoControlEntity : insumoControlObtenidoEntityList) {
-        insumoControlResponsesObtenido.add(new InsumoControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
+        insumoControlResponsesObtenido.add(new SupplyControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
       }
 
       response.setCantidadesInsumosEsperados(insumoControlResponsesEsperado);
@@ -98,7 +98,7 @@ public class ControlStockService {
     return responses;
   }
 
-  public ControlStockResponse post(StockControlRequest data) {
+  public StockControlResponse post(StockControlRequest data) {
     ControlStockEntity controlStockEntity = modelMapper.map(data, ControlStockEntity.class);
 
     Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsername(data.getUsuario());
@@ -127,11 +127,11 @@ public class ControlStockService {
       insumoControlEntityListObtenidos.add(insumoControlEntity);
     }
 
-    CantidadesEsperadasResponse cantidadesEsperadasResponse = getEsperado();
+    ExpectedQuantityResponse cantidadesEsperadasResponse = getEsperado();
 
     List<InsumoControlEntity> insumoControlEntityListEsperados = new ArrayList<>();
 
-    for (InsumoControlResponse insumoControlResponse : cantidadesEsperadasResponse.getCantidadesInsumos()) {
+    for (SupplyControlResponse insumoControlResponse : cantidadesEsperadasResponse.getCantidadesInsumos()) {
       InsumoControlEntity insumoControlEntity = modelMapper.map(insumoControlResponse, InsumoControlEntity.class);
 
       Optional<ItemEntity> itemEntityOptional = itemRepository.findByNombre(insumoControlResponse.getInsumo());
@@ -152,27 +152,27 @@ public class ControlStockService {
 
     controlStockEntity.setControlesInsumosObtenidos(insumoControlEntityListObtenidos);
 
-    ControlStockEntity controlEntitySaved = repository.save(controlStockEntity);
-    ControlStockResponse response = modelMapper.map(controlEntitySaved, ControlStockResponse.class);
+    ControlStockEntity   controlEntitySaved = repository.save(controlStockEntity);
+    StockControlResponse response           = modelMapper.map(controlEntitySaved, StockControlResponse.class);
 
-    List<InsumoControlResponse> insumoControlResponsesEsperado = new ArrayList<>();
-    List<InsumoControlEntity> insumoControlEsperadoEntityList = controlEntitySaved.getControlesInsumosEsperados();
+    List<SupplyControlResponse> insumoControlResponsesEsperado  = new ArrayList<>();
+    List<InsumoControlEntity>   insumoControlEsperadoEntityList = controlEntitySaved.getControlesInsumosEsperados();
     if (insumoControlEsperadoEntityList.isEmpty()) {
       insumoControlEsperadoEntityList = new ArrayList<>();
     }
 
     for (InsumoControlEntity insumoControlEntity : insumoControlEsperadoEntityList) {
-      insumoControlResponsesEsperado.add(new InsumoControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
+      insumoControlResponsesEsperado.add(new SupplyControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
     }
 
-    List<InsumoControlResponse> insumoControlResponsesObtenido = new ArrayList<>();
-    List<InsumoControlEntity> insumoControlObtenidoEntityList = controlEntitySaved.getControlesInsumosObtenidos();
+    List<SupplyControlResponse> insumoControlResponsesObtenido  = new ArrayList<>();
+    List<InsumoControlEntity>   insumoControlObtenidoEntityList = controlEntitySaved.getControlesInsumosObtenidos();
     if (insumoControlObtenidoEntityList.isEmpty()) {
       insumoControlObtenidoEntityList = new ArrayList<>();
     }
 
     for (InsumoControlEntity insumoControlEntity : insumoControlObtenidoEntityList) {
-      insumoControlResponsesObtenido.add(new InsumoControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
+      insumoControlResponsesObtenido.add(new SupplyControlResponse(insumoControlEntity.getInsumo().getNombre(), insumoControlEntity.getCantidad()));
     }
 
     response.setCantidadesInsumosEsperados(insumoControlResponsesEsperado);
@@ -180,17 +180,17 @@ public class ControlStockService {
     return response;
   }
 
-  public CantidadesEsperadasResponse getEsperado() {
-    List<LoteControlResponse> listaLotes = loteService.getUnidades(null);
+  public ExpectedQuantityResponse getEsperado() {
+    List<BatchControlResponse> listaLotes = loteService.getUnidades(null);
     if (listaLotes.isEmpty()) {
-      return new CantidadesEsperadasResponse();
+      return new ExpectedQuantityResponse();
     }
 
-    CantidadesEsperadasResponse cantidadesEsperadasResponse = getCantidadesEsperadasResponse();
+    ExpectedQuantityResponse cantidadesEsperadasResponse = getCantidadesEsperadasResponse();
 
-    for (LoteControlResponse loteControl : listaLotes) {
+    for (BatchControlResponse loteControl : listaLotes) {
       if (loteControl.getCorte() == null) {
-        for (InsumoControlResponse insumoControlRequest : cantidadesEsperadasResponse.getCantidadesInsumos()) {
+        for (SupplyControlResponse insumoControlRequest : cantidadesEsperadasResponse.getCantidadesInsumos()) {
           if (insumoControlRequest.getInsumo().equals(loteControl.getItem())) {
             insumoControlRequest.setCantidad(insumoControlRequest.getCantidad() + loteControl.getUnidades());
             break;
@@ -211,18 +211,18 @@ public class ControlStockService {
     return cantidadesEsperadasResponse;
   }
 
-  private CantidadesEsperadasResponse getCantidadesEsperadasResponse() {
-    List<ItemResponse> listaInsumos = insumoService.getItems();
-    List<InsumoControlResponse> listaInsumosControles = new ArrayList<>();
+  private ExpectedQuantityResponse getCantidadesEsperadasResponse() {
+    List<ItemResponse>          listaInsumos          = insumoService.getItems();
+    List<SupplyControlResponse> listaInsumosControles = new ArrayList<>();
 
     for (ItemResponse item : listaInsumos) {
-      InsumoControlResponse insumoControlRequest = new InsumoControlResponse();
+      SupplyControlResponse insumoControlRequest = new SupplyControlResponse();
       insumoControlRequest.setInsumo(item.getNombreItem());
       insumoControlRequest.setCantidad(0);
 
       listaInsumosControles.add(insumoControlRequest);
     }
 
-    return new CantidadesEsperadasResponse(0, 0, 0, listaInsumosControles);
+    return new ExpectedQuantityResponse(0, 0, 0, listaInsumosControles);
   }
 }

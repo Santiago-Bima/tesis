@@ -2,10 +2,10 @@ package com.tesis.queseria_la_charito.services.despachos;
 
 import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchRequest;
 import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchUpdateRequest;
-import com.tesis.queseria_la_charito.dtos.response.despacho.DespachoResponse;
-import com.tesis.queseria_la_charito.dtos.response.despacho.DestinoResponse;
-import com.tesis.queseria_la_charito.dtos.response.despacho.DetalleInformeDespacho;
-import com.tesis.queseria_la_charito.dtos.response.despacho.InformeDespachoResponse;
+import com.tesis.queseria_la_charito.dtos.response.dispatch.DispatchResponse;
+import com.tesis.queseria_la_charito.dtos.response.dispatch.DestinationResponse;
+import com.tesis.queseria_la_charito.dtos.response.dispatch.ReportDetailDespacho;
+import com.tesis.queseria_la_charito.dtos.response.dispatch.DispatchReportResponse;
 import com.tesis.queseria_la_charito.entities.*;
 import com.tesis.queseria_la_charito.entities.despacho.DespachoEntity;
 import com.tesis.queseria_la_charito.entities.despacho.DestinoEntity;
@@ -66,8 +66,8 @@ public class DespachoService {
 
 
 //  TODO: Ver de cambiar el tipo de retorno
-  public List<DespachoResponse> getByUser(String username) {
-    List<DespachoResponse> despachoResponses = new ArrayList<>();
+  public List<DispatchResponse> getByUser(String username) {
+    List<DispatchResponse> despachoResponses = new ArrayList<>();
 
     Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
     if (usuarioEntityOptional.isEmpty()) {
@@ -79,20 +79,20 @@ public class DespachoService {
       return new ArrayList<>();
     }
 
-    DespachoResponse despachoResponse = modelMapper.map(despachoEntityOptional.get(), DespachoResponse.class);
+    DispatchResponse despachoResponse = modelMapper.map(despachoEntityOptional.get(), DispatchResponse.class);
     despachoResponses.add(despachoResponse);
 
     return despachoResponses;
   }
 
-  public List<DespachoResponse> getAll(LocalDate fecha, Long destinoId) {
+  public List<DispatchResponse> getAll(LocalDate fecha, Long destinoId) {
     Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(destinoId);
     if (destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el destino");
     }
 
-    List<DespachoEntity> lstDespachosEntities;
-    List<DespachoResponse> lstDespachoResponse = new ArrayList<>();
+    List<DespachoEntity>   lstDespachosEntities;
+    List<DispatchResponse> lstDespachoResponse = new ArrayList<>();
     if(fecha != null) {
       lstDespachosEntities = despachoRepository.findByDestinoAndFecha(destinoEntityOptional.get(), fecha);
     } else {
@@ -102,21 +102,21 @@ public class DespachoService {
       return new ArrayList<>();
     }
 
-    lstDespachosEntities.forEach(entity -> lstDespachoResponse.add(modelMapper.map(entity, DespachoResponse.class)));
+    lstDespachosEntities.forEach(entity -> lstDespachoResponse.add(modelMapper.map(entity, DispatchResponse.class)));
 
     return lstDespachoResponse;
   }
 
-  public DespachoResponse getById(Long id) {
+  public DispatchResponse getById(Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el despacho");
     }
 
-    return modelMapper.map(despachoEntityOptional.get(), DespachoResponse.class);
+    return modelMapper.map(despachoEntityOptional.get(), DispatchResponse.class);
   }
 
-  public DespachoResponse post(DispatchRequest despachoRequest) {
+  public DispatchResponse post(DispatchRequest despachoRequest) {
     DespachoEntity despachoEntity = new DespachoEntity();
     despachoEntity.setLstDetallesDespacho(new ArrayList<>());
     despachoEntity.setFecha(despachoRequest.getFecha());
@@ -235,10 +235,10 @@ public class DespachoService {
 
     vehiculoRepository.save(vehiculoEntity);
     usuarioRepository.save(usuarioEntity);
-    return modelMapper.map(despachoRepository.save(despachoEntity), DespachoResponse.class);
+    return modelMapper.map(despachoRepository.save(despachoEntity), DispatchResponse.class);
   }
 
-  public DespachoResponse put(DispatchUpdateRequest despachoRequest, Long id) {
+  public DispatchResponse put(DispatchUpdateRequest despachoRequest, Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
@@ -265,10 +265,10 @@ public class DespachoService {
     }
     despachoEntity.setDestino(destinoEntityOptional.get());
 
-    return modelMapper.map(despachoRepository.save(despachoEntity), DespachoResponse.class);
+    return modelMapper.map(despachoRepository.save(despachoEntity), DispatchResponse.class);
   }
 
-  public DespachoResponse delete(Long id) {
+  public DispatchResponse delete(Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
@@ -314,14 +314,14 @@ public class DespachoService {
 
     try{
       despachoRepository.delete(despachoEntity);
-      return modelMapper.map(despachoEntity, DespachoResponse.class);
+      return modelMapper.map(despachoEntity, DispatchResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  public InformeDespachoResponse generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
-    InformeDespachoResponse informeDespachoResponse = new InformeDespachoResponse();
+  public DispatchReportResponse generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
+    DispatchReportResponse informeDespachoResponse = new DispatchReportResponse();
     informeDespachoResponse.setCantidadDespachos(0);
     informeDespachoResponse.setCantidadTotalBarra(0);
     informeDespachoResponse.setCantidadTotalCuartosCremoso(0);
@@ -336,11 +336,11 @@ public class DespachoService {
     }
 
 
-    List<DetalleInformeDespacho> detalleInformeDespachos = new ArrayList<>();
+    List<ReportDetailDespacho> detalleInformeDespachos = new ArrayList<>();
     informeDespachoResponse.setDetallesDespacho(detalleInformeDespachos);
     for (DestinoEntity destinoEntity : destinoEntities) {
-      DetalleInformeDespacho detalleInformeDespacho = new DetalleInformeDespacho();
-      detalleInformeDespacho.setDestino(modelMapper.map(destinoEntity, DestinoResponse.class));
+      ReportDetailDespacho detalleInformeDespacho = new ReportDetailDespacho();
+      detalleInformeDespacho.setDestino(modelMapper.map(destinoEntity, DestinationResponse.class));
       detalleInformeDespacho.setCantidadPategras(0);
       detalleInformeDespacho.setCantidadBarra(0);
       detalleInformeDespacho.setCantidadMediosCremoso(0);
@@ -390,7 +390,7 @@ public class DespachoService {
     return informeDespachoResponse;
   }
 
-  public DespachoResponse changeEstado(Long id) {
+  public DispatchResponse changeEstado(Long id) {
     Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
@@ -413,6 +413,6 @@ public class DespachoService {
     }
 
 
-    return modelMapper.map(despachoRepository.save(despachoEntity), DespachoResponse.class);
+    return modelMapper.map(despachoRepository.save(despachoEntity), DispatchResponse.class);
   }
 }

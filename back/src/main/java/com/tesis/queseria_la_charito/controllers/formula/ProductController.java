@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers.formula;
 
-import com.tesis.queseria_la_charito.dtos.response.formula.TipoQuesoResponse;
+import com.tesis.queseria_la_charito.dtos.response.formula.CheeseTypeResponse;
 import com.tesis.queseria_la_charito.services.formulas.ProductosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,9 +16,9 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_Operario'")
     @GetMapping("")
-    public List<TipoQuesoResponse> getAll() { return productosService.getAll(); }
+    public List<CheeseTypeResponse> getAll() { return productosService.getAll(); }
 
     @PreAuthorize("hasRole('ROLE_Operario'")
     @GetMapping("/{id}")
-    public TipoQuesoResponse getById(@PathVariable Long id) { return productosService.getById(id); }
+    public CheeseTypeResponse getById(@PathVariable Long id) { return productosService.getById(id); }
 }

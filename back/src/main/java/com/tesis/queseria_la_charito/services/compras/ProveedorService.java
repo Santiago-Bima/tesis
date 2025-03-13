@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.services.compras;
 
 import com.tesis.queseria_la_charito.dtos.request.purchase.ProviderRequest;
-import com.tesis.queseria_la_charito.dtos.response.compra.ProveedorResponse;
+import com.tesis.queseria_la_charito.dtos.response.purchase.ProviderResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
 import com.tesis.queseria_la_charito.models.TipoCuenta;
@@ -29,32 +29,32 @@ public class ProveedorService {
 
 
 
-  public List<ProveedorResponse> getAll(Long idInsumo) {
+  public List<ProviderResponse> getAll(Long idInsumo) {
     Optional<ItemEntity> itemEntityOptional = itemRepository.findById(idInsumo);
     if (itemEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el insumo");
     }
 
-    List<ProveedorEntity> lstProveedores = repository.findByInsumoAndMostrar(itemEntityOptional.get(), true);
-    List<ProveedorResponse> lstProveedoresResponse = new ArrayList<>();
+    List<ProveedorEntity>  lstProveedores         = repository.findByInsumoAndMostrar(itemEntityOptional.get(), true);
+    List<ProviderResponse> lstProveedoresResponse = new ArrayList<>();
     lstProveedores.forEach(proveedor -> {
-      ProveedorResponse proveedorResponse = modelMapper.map(proveedor, ProveedorResponse.class);
+      ProviderResponse proveedorResponse = modelMapper.map(proveedor, ProviderResponse.class);
       lstProveedoresResponse.add(proveedorResponse);
     });
 
     return lstProveedoresResponse;
   }
 
-  public ProveedorResponse getById(Long id) {
+  public ProviderResponse getById(Long id) {
     Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if (proveedorEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el proveedor");
     }
 
-    return modelMapper.map(proveedorEntityOptional.get(), ProveedorResponse.class);
+    return modelMapper.map(proveedorEntityOptional.get(), ProviderResponse.class);
   }
 
-  public ProveedorResponse post(ProviderRequest proveedor) {
+  public ProviderResponse post(ProviderRequest proveedor) {
     ProveedorEntity proveedorEntity = new ProveedorEntity();
     proveedorEntity.setCuit(proveedor.getCuit());
     proveedorEntity.setEmail(proveedor.getEmail());
@@ -75,10 +75,10 @@ public class ProveedorService {
     proveedorEntity.setTipoCuenta(proveedor.getTipoCuenta().equals(TipoCuenta.Corriente.name()) ? "Cuenta Corriente" : "Caja de Ahorro");
     proveedorEntity.setMostrar(true);
 
-    return modelMapper.map(repository.save(proveedorEntity), ProveedorResponse.class);
+    return modelMapper.map(repository.save(proveedorEntity), ProviderResponse.class);
   }
 
-  public ProveedorResponse put(ProviderRequest proveedor, Long id) {
+  public ProviderResponse put(ProviderRequest proveedor, Long id) {
     Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if(proveedorEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el proveedor");
@@ -103,10 +103,10 @@ public class ProveedorService {
     proveedorEntity.setTelefono(proveedor.getTelefono());
     proveedorEntity.setTipoCuenta(proveedor.getTipoCuenta());
 
-    return modelMapper.map(repository.save(proveedorEntity), ProveedorResponse.class);
+    return modelMapper.map(repository.save(proveedorEntity), ProviderResponse.class);
   }
 
-  public ProveedorResponse delete(Long id) {
+  public ProviderResponse delete(Long id) {
     Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if (proveedorEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el proveedor");
@@ -115,6 +115,6 @@ public class ProveedorService {
     ProveedorEntity proveedorEntity = proveedorEntityOptional.get();
     proveedorEntity.setMostrar(false);
 
-    return modelMapper.map(repository.save(proveedorEntity), ProveedorResponse.class);
+    return modelMapper.map(repository.save(proveedorEntity), ProviderResponse.class);
   }
 }

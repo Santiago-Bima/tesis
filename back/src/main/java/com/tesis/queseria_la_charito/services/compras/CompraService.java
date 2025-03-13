@@ -2,9 +2,9 @@ package com.tesis.queseria_la_charito.services.compras;
 
 import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipRequest;
 import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipDetailRequest;
-import com.tesis.queseria_la_charito.dtos.response.compra.ComprobanteCompraResponse;
-import com.tesis.queseria_la_charito.dtos.response.compra.DetalleComprobanteResponse;
-import com.tesis.queseria_la_charito.dtos.response.compra.InformeCompraResponse;
+import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipResponse;
+import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipDetailResponse;
+import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipReportResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.LoteEntity;
 import com.tesis.queseria_la_charito.entities.compra.ComprobanteCompraEntity;
@@ -48,21 +48,21 @@ public class CompraService {
 
 
 
-  public List<ComprobanteCompraResponse> getAll(LocalDate fecha) {
+  public List<ReceipResponse> getAll(LocalDate fecha) {
     List<ComprobanteCompraEntity> comprobanteCompraEntityList = compraRepository.findAllByFecha(fecha.plusDays(1));
     if (comprobanteCompraEntityList.isEmpty()) {
       return new ArrayList<>();
     }
-    List<ComprobanteCompraResponse> comprobanteCompraResponses = new ArrayList<>();
+    List<ReceipResponse> comprobanteCompraResponses = new ArrayList<>();
 
     for(ComprobanteCompraEntity comprobanteCompraEntity : comprobanteCompraEntityList) {
-      List<DetalleComprobanteEntity> detalleComprobanteEntities = detalleCompraRepository.findAllByComprobante(comprobanteCompraEntity);
-      List<DetalleComprobanteResponse> detalleComprobanteResponses = new ArrayList<>();
+      List<DetalleComprobanteEntity> detalleComprobanteEntities  = detalleCompraRepository.findAllByComprobante(comprobanteCompraEntity);
+      List<ReceipDetailResponse>     detalleComprobanteResponses = new ArrayList<>();
       for(DetalleComprobanteEntity detalle : detalleComprobanteEntities) {
-        detalleComprobanteResponses.add(modelMapper.map(detalle, DetalleComprobanteResponse.class));
+        detalleComprobanteResponses.add(modelMapper.map(detalle, ReceipDetailResponse.class));
       }
 
-      ComprobanteCompraResponse comprobanteCompraResponse = modelMapper.map(comprobanteCompraEntity, ComprobanteCompraResponse.class);
+      ReceipResponse comprobanteCompraResponse = modelMapper.map(comprobanteCompraEntity, ReceipResponse.class);
       comprobanteCompraResponse.setDetalles(detalleComprobanteResponses);
       comprobanteCompraResponses.add(comprobanteCompraResponse);
     }
@@ -70,7 +70,7 @@ public class CompraService {
     return comprobanteCompraResponses;
   }
 
-  public ComprobanteCompraResponse post(ReceipRequest comprobante) {
+  public ReceipResponse post(ReceipRequest comprobante) {
     ComprobanteCompraEntity comprobanteCompraEntity = new ComprobanteCompraEntity();
 
 
@@ -101,25 +101,25 @@ public class CompraService {
     comprobanteCompraEntity.setFecha(comprobante.getDate());
     comprobanteCompraEntity.setListaDetalles(detalleComprobanteEntities);
 
-    return modelMapper.map(compraRepository.save(comprobanteCompraEntity), ComprobanteCompraResponse.class);
+    return modelMapper.map(compraRepository.save(comprobanteCompraEntity), ReceipResponse.class);
   }
 
-  public List<InformeCompraResponse> generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
-    List<InformeCompraResponse> informes = new ArrayList<>();
+  public List<ReceipReportResponse> generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
+    List<ReceipReportResponse> informes = new ArrayList<>();
 
     List<ItemEntity> itemResponseList = itemRepository.findByTipo(TipoItem.Insumo.name());
 
     for (ItemEntity item : itemResponseList) {
-      InformeCompraResponse informe = new InformeCompraResponse();
+      ReceipReportResponse informe = new ReceipReportResponse();
 
-      List<DetalleComprobanteEntity> detalleComprobanteEntities = detalleCompraRepository.findAllByProveedorInsumoAndComprobanteFechaBetween(item, fechaInicio, fechaFin);
-      List<DetalleComprobanteResponse> detalleComprobanteResponses = new ArrayList<>();
+      List<DetalleComprobanteEntity> detalleComprobanteEntities  = detalleCompraRepository.findAllByProveedorInsumoAndComprobanteFechaBetween(item, fechaInicio, fechaFin);
+      List<ReceipDetailResponse>     detalleComprobanteResponses = new ArrayList<>();
 
       int total = 0;
 
       for (DetalleComprobanteEntity detalle : detalleComprobanteEntities) {
         total += detalle.getSubtotal();
-        detalleComprobanteResponses.add(modelMapper.map(detalle, DetalleComprobanteResponse.class));
+        detalleComprobanteResponses.add(modelMapper.map(detalle, ReceipDetailResponse.class));
       }
 
 

@@ -16,17 +16,17 @@ import java.util.List;
 public class FormulaResponse {
     @Description("codigo Formula")
     @JsonProperty("codigo")
-    private String codigo;
+    private String code;
 
     @Description("cantidad de leche")
     @JsonProperty("cantidad_leche")
-    private Integer cantidadLeche;
+    private Integer milkQuantity;
 
     @Description("Queso asociado")
     @JsonProperty("queso")
-    private TipoQuesoResponse tipoQueso;
+    private CheeseTypeResponse cheeseType;
 
     @Description("Detalles")
     @JsonProperty("detalles")
-    private List<DetalleFormulaResponse> detallesFormulas;
+    private List<FormulaDetailResponse> lstDetails;
 }

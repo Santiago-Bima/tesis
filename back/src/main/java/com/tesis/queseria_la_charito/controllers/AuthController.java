@@ -3,7 +3,7 @@ package com.tesis.queseria_la_charito.controllers;
 import com.tesis.queseria_la_charito.dtos.request.LoginRequest;
 import com.tesis.queseria_la_charito.dtos.request.RegisterRequest;
 import com.tesis.queseria_la_charito.dtos.response.AuthResponse;
-import com.tesis.queseria_la_charito.dtos.response.usuario.UsuarioResponse;
+import com.tesis.queseria_la_charito.dtos.response.user.UserResponse;
 import com.tesis.queseria_la_charito.services.Auth.AuthService;
 import com.tesis.queseria_la_charito.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -26,19 +26,19 @@ public class AuthController {
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @PutMapping("/usuarios/{username}")
-  public UsuarioResponse put(@PathVariable String username, @RequestParam String nombre) { return userService.update(nombre, username); }
+  public UserResponse put(@PathVariable String username, @RequestParam String nombre) { return userService.update(nombre, username); }
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @DeleteMapping("/usuarios/{username}")
-  public UsuarioResponse delete(@PathVariable String username) { return userService.delete(username); }
+  public UserResponse delete(@PathVariable String username) { return userService.delete(username); }
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @GetMapping("/usuarios")
-  public List<UsuarioResponse> getAll() { return userService.getAll(); }
+  public List<UserResponse> getAll() { return userService.getAll(); }
 
 //  TODO: Confirmar roles requeridos
   @GetMapping("/usuarios/{id}")
-  public UsuarioResponse getById(@PathVariable Long id) { return userService.getById(id); }
+  public UserResponse getById(@PathVariable Long id) { return userService.getById(id); }
 
 
 //  Rutas de jwt

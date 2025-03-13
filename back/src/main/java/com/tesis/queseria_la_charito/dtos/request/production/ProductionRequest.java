@@ -23,7 +23,7 @@ public class ProductionRequest {
   private String idFormula;
 
   @JsonProperty("tiempoSalado")
-  private Integer suteedTime;
+  private Integer sauteedTime;
 
   @JsonProperty("usuario")
   private String responsible;

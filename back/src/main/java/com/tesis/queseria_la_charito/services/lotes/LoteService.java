@@ -1,9 +1,9 @@
 package com.tesis.queseria_la_charito.services.lotes;
 
 import com.tesis.queseria_la_charito.dtos.request.BatchRequest;
-import com.tesis.queseria_la_charito.dtos.response.lote.ModificacionLoteResponse;
-import com.tesis.queseria_la_charito.dtos.response.controlStock.LoteControlResponse;
-import com.tesis.queseria_la_charito.dtos.response.lote.LoteResponse;
+import com.tesis.queseria_la_charito.dtos.response.batch.BatchModificationResponse;
+import com.tesis.queseria_la_charito.dtos.response.stockControl.BatchControlResponse;
+import com.tesis.queseria_la_charito.dtos.response.batch.BatchResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.LoteEntity;
 import com.tesis.queseria_la_charito.entities.ModificacionLoteEntity;
@@ -43,35 +43,35 @@ public class LoteService {
     private UsuarioRepository usuarioRepository;
 
 
-    public List<LoteResponse> getAll(Long idItem, String estado) {
+    public List<BatchResponse> getAll(Long idItem, String estado) {
         Optional<ItemEntity> itemEntityOptional = itemRepository.findById(idItem);
         if(itemEntityOptional.isEmpty()){
             throw new EntityNotFoundException("No se encontró el item");
         }
 
-        List<LoteResponse> listaLotesResponse = new ArrayList<>();
-        List<LoteEntity> listaLotesEntity = loteRepository.findByItemAndEstadoAndMostrar(itemEntityOptional.get(), estado, true);
+        List<BatchResponse> listaLotesResponse = new ArrayList<>();
+        List<LoteEntity>    listaLotesEntity   = loteRepository.findByItemAndEstadoAndMostrar(itemEntityOptional.get(), estado, true);
         if (listaLotesEntity.isEmpty()) {
             return new ArrayList<>();
         }
 
         for (LoteEntity loteEntity : listaLotesEntity) {
-            listaLotesResponse.add(modelMapper.map(loteEntity, LoteResponse.class));
+            listaLotesResponse.add(modelMapper.map(loteEntity, BatchResponse.class));
         }
 
         return listaLotesResponse;
     }
 
-    public LoteResponse getLoteById(String id) {
+    public BatchResponse getLoteById(String id) {
         Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró un lote con ese código");
         }
 
-        return modelMapper.map(loteEntityOptional.get(), LoteResponse.class);
+        return modelMapper.map(loteEntityOptional.get(), BatchResponse.class);
     }
 
-    public LoteResponse postLote(Long id_item, Integer unidades) {
+    public BatchResponse postLote(Long id_item, Integer unidades) {
         LoteEntity loteEntity = new LoteEntity();
 
         Optional<ItemEntity> itemEntityOptional = itemRepository.findById(id_item);
@@ -97,10 +97,10 @@ public class LoteService {
 
         loteEntity.setId(inicial + inicialItem + cantidadLotes);
 
-        return modelMapper.map(loteRepository.save(loteEntity), LoteResponse.class);
+        return modelMapper.map(loteRepository.save(loteEntity), BatchResponse.class);
     }
 
-    public LoteResponse putLote(BatchRequest lote, String id) {
+    public BatchResponse putLote(BatchRequest lote, String id) {
         ModificacionLoteEntity modificacionesLotesEntity = new ModificacionLoteEntity();
 
         Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
@@ -133,10 +133,10 @@ public class LoteService {
         modificacionesLotesEntity.setLote(loteEntity);
 
         modificacionesLotesRepository.save(modificacionesLotesEntity);
-        return modelMapper.map(loteRepository.save(loteEntity), LoteResponse.class);
+        return modelMapper.map(loteRepository.save(loteEntity), BatchResponse.class);
     }
 
-    public LoteResponse deleteLote(String id) {
+    public BatchResponse deleteLote(String id) {
         Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró el lote");
@@ -150,14 +150,14 @@ public class LoteService {
 
         try{
             loteEntity.setMostrar(false);
-            return modelMapper.map(loteRepository.save(loteEntity), LoteResponse.class);
+            return modelMapper.map(loteRepository.save(loteEntity), BatchResponse.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<LoteControlResponse> getUnidades(String item) {
-        List<LoteControlResponse> lotes = new ArrayList<>();
+    public List<BatchControlResponse> getUnidades(String item) {
+        List<BatchControlResponse> lotes = new ArrayList<>();
 
         List<LoteEntity> lotesEntities = new ArrayList<>();
 
@@ -180,7 +180,7 @@ public class LoteService {
 
 
         for (LoteEntity loteEntity: lotesEntities) {
-            LoteControlResponse lote = new LoteControlResponse();
+            BatchControlResponse lote = new BatchControlResponse();
             lote.setUnidades(loteEntity.getUnidades());
             lote.setItem(loteEntity.getItem().getNombre());
             lote.setId(loteEntity.getId());
@@ -199,16 +199,16 @@ public class LoteService {
         return lotes;
     }
 
-    public List<ModificacionLoteResponse> getModificaciones(boolean validate) {
+    public List<BatchModificationResponse> getModificaciones(boolean validate) {
         List<ModificacionLoteEntity> modificacionesLotesEntityList = modificacionLotesRepository.findAllByOrderByFechaDescIdDesc();
         if (modificacionesLotesEntityList.isEmpty()) {
             return new ArrayList<>();
         }
 
-        List<ModificacionLoteResponse> modificacionesLotesResponses = new ArrayList<>();
+        List<BatchModificationResponse> modificacionesLotesResponses = new ArrayList<>();
 
         for (ModificacionLoteEntity modificacionesLotesEntity : modificacionesLotesEntityList) {
-            modificacionesLotesResponses.add(modelMapper.map(modificacionesLotesEntity, ModificacionLoteResponse.class));
+            modificacionesLotesResponses.add(modelMapper.map(modificacionesLotesEntity, BatchModificationResponse.class));
 
             if (!validate) {
                 modificacionesLotesEntity.setNuevo(false);

@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 public class ItemResponse {
     @Description("Item id")
     @JsonProperty("id")
-    private Long idItem;
+    private Long id;
 
     @Description("Item nombre")
     @JsonProperty("nombre")
-    private String nombreItem;
+    private String name;
 
     @Description("Item unidad medida")
     @JsonProperty("unidad_medida")
-    private String unidadMedidaItem;
+    private String measurementUnit;
 }

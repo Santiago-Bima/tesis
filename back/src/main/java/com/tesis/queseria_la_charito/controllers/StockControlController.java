@@ -1,8 +1,8 @@
 package com.tesis.queseria_la_charito.controllers;
 
 import com.tesis.queseria_la_charito.dtos.request.stockControl.StockControlRequest;
-import com.tesis.queseria_la_charito.dtos.response.controlStock.CantidadesEsperadasResponse;
-import com.tesis.queseria_la_charito.dtos.response.controlStock.ControlStockResponse;
+import com.tesis.queseria_la_charito.dtos.response.stockControl.ExpectedQuantityResponse;
+import com.tesis.queseria_la_charito.dtos.response.stockControl.StockControlResponse;
 import com.tesis.queseria_la_charito.services.ControlStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,17 +19,17 @@ public class StockControlController {
 
 //  TODO: Configrmar roles requeridos
   @GetMapping("/validate")
-  List<ControlStockResponse> getAllValidate() { return service.getAll(true); }
+  List<StockControlResponse> getAllValidate() { return service.getAll(true); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @GetMapping("")
-  List<ControlStockResponse> getAll() { return service.getAll(false); }
+  List<StockControlResponse> getAll() { return service.getAll(false); }
 
   @PreAuthorize("hasRole('ROLE_Operario')")
   @PostMapping()
-  ControlStockResponse post(@RequestBody StockControlRequest data) { return service.post(data); }
+  StockControlResponse post(@RequestBody StockControlRequest data) { return service.post(data); }
 
   @PreAuthorize("hasRole('ROLE_Operario')")
   @GetMapping("/valoresEsperados")
-  CantidadesEsperadasResponse getExpected() { return service.getEsperado(); }
+  ExpectedQuantityResponse getExpected() { return service.getEsperado(); }
 }

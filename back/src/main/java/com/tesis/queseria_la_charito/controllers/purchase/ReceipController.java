@@ -1,8 +1,8 @@
 package com.tesis.queseria_la_charito.controllers.purchase;
 
 import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipRequest;
-import com.tesis.queseria_la_charito.dtos.response.compra.ComprobanteCompraResponse;
-import com.tesis.queseria_la_charito.dtos.response.compra.InformeCompraResponse;
+import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipResponse;
+import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipReportResponse;
 import com.tesis.queseria_la_charito.services.compras.CompraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,13 +20,13 @@ public class ReceipController {
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @GetMapping("")
-  List<ComprobanteCompraResponse> getAll(@RequestParam(required = false) LocalDate fecha) { return service.getAll(fecha.plusDays(1)); }
+  List<ReceipResponse> getAll(@RequestParam(required = false) LocalDate fecha) { return service.getAll(fecha.plusDays(1)); }
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")
   @PostMapping("")
-  ComprobanteCompraResponse post(@RequestBody ReceipRequest request) { return service.post(request); }
+  ReceipResponse post(@RequestBody ReceipRequest request) { return service.post(request); }
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @GetMapping("/informes")
-  List<InformeCompraResponse> generateReport(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return service.generateInforme(fechaInicio, fechaFin); }
+  List<ReceipReportResponse> generateReport(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return service.generateInforme(fechaInicio, fechaFin); }
 }

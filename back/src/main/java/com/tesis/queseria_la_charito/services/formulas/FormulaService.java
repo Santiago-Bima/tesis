@@ -2,7 +2,7 @@ package com.tesis.queseria_la_charito.services.formulas;
 
 import com.tesis.queseria_la_charito.dtos.request.formula.FormulaDetailRequest;
 import com.tesis.queseria_la_charito.dtos.request.formula.FormulaRequest;
-import com.tesis.queseria_la_charito.dtos.response.formula.DetalleFormulaResponse;
+import com.tesis.queseria_la_charito.dtos.response.formula.FormulaDetailResponse;
 import com.tesis.queseria_la_charito.dtos.response.formula.FormulaResponse;
 import com.tesis.queseria_la_charito.entities.formula.DetalleFormulaEntity;
 import com.tesis.queseria_la_charito.entities.formula.FormulaEntity;
@@ -51,11 +51,11 @@ public class FormulaService {
         List<FormulaEntity> listaFormulasEntity = formulaRepository.findAllByTipoQueso(tipoQuesoEntity);
 
         for (FormulaEntity formulaEntity : listaFormulasEntity){
-            List<DetalleFormulaEntity> listaDetallesEntity = detalleFormulaRepository.findAllByFormula(formulaEntity);
-            List<DetalleFormulaResponse> listaDetallesResponse = new ArrayList<>();
-            FormulaResponse formulaResponse = modelMapper.map(formulaEntity, FormulaResponse.class);
+            List<DetalleFormulaEntity>  listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity);
+            List<FormulaDetailResponse> listaDetallesResponse = new ArrayList<>();
+            FormulaResponse             formulaResponse       = modelMapper.map(formulaEntity, FormulaResponse.class);
             for (DetalleFormulaEntity detalleEntity : listaDetallesEntity){
-                listaDetallesResponse.add(modelMapper.map(detalleEntity, DetalleFormulaResponse.class));
+                listaDetallesResponse.add(modelMapper.map(detalleEntity, FormulaDetailResponse.class));
             }
             formulaResponse.setDetallesFormulas(listaDetallesResponse);
             listaFormulasResponse.add(formulaResponse);
@@ -70,11 +70,11 @@ public class FormulaService {
         }
         FormulaResponse formulaResponse = modelMapper.map(formulaEntity.get(), FormulaResponse.class);
 
-        List<DetalleFormulaEntity> listaDetallesEntity = detalleFormulaRepository.findAllByFormula(formulaEntity.get());
-        List<DetalleFormulaResponse> listaDetallesResponse = new ArrayList<>();
+        List<DetalleFormulaEntity>  listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity.get());
+        List<FormulaDetailResponse> listaDetallesResponse = new ArrayList<>();
 
         for (DetalleFormulaEntity detalleEntity : listaDetallesEntity){
-            listaDetallesResponse.add(modelMapper.map(detalleEntity, DetalleFormulaResponse.class));
+            listaDetallesResponse.add(modelMapper.map(detalleEntity, FormulaDetailResponse.class));
         }
 
         formulaResponse.setDetallesFormulas(listaDetallesResponse);

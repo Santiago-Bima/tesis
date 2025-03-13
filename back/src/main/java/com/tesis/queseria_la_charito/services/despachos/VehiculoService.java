@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.services.despachos;
 
-import com.tesis.queseria_la_charito.dtos.response.despacho.VehiculoResponse;
+import com.tesis.queseria_la_charito.dtos.response.dispatch.VehicleResponse;
 import com.tesis.queseria_la_charito.entities.despacho.VehiculoEntity;
 import com.tesis.queseria_la_charito.repositories.despacho.VehiculoRepository;
 import jakarta.persistence.EntityExistsException;
@@ -23,31 +23,31 @@ public class VehiculoService {
 
 
 
-  public List<VehiculoResponse> getAll() {
-    List<VehiculoResponse> lstVehiculosResponse = new ArrayList<>();
-    List<VehiculoEntity> lstVehiculosEntities = vehiculoRepository.findAll();
+  public List<VehicleResponse> getAll() {
+    List<VehicleResponse> lstVehiculosResponse = new ArrayList<>();
+    List<VehiculoEntity>  lstVehiculosEntities = vehiculoRepository.findAll();
 
     if (lstVehiculosEntities.isEmpty()) {
       return new ArrayList<>();
     }
 
     lstVehiculosEntities.forEach(entity -> {
-      lstVehiculosResponse.add(modelMapper.map(entity, VehiculoResponse.class));
+      lstVehiculosResponse.add(modelMapper.map(entity, VehicleResponse.class));
     });
 
     return lstVehiculosResponse;
   }
 
-  public VehiculoResponse getById(Long id) {
+  public VehicleResponse getById(Long id) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityExistsException("No se ha encontrado el vehículo");
     }
 
-    return modelMapper.map(vehiculoEntityOptional.get(), VehiculoResponse.class);
+    return modelMapper.map(vehiculoEntityOptional.get(), VehicleResponse.class);
   }
 
-  public VehiculoResponse post(String matricula) {
+  public VehicleResponse post(String matricula) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findByMatricula(matricula);
     if (vehiculoEntityOptional.isPresent()) {
       throw new EntityExistsException("Ya existe un vehículo con la misma matrícula");
@@ -57,10 +57,10 @@ public class VehiculoService {
     vehiculoEntity.setDisponible(true);
     vehiculoEntity.setMatricula(matricula);
 
-    return modelMapper.map(vehiculoRepository.save(vehiculoEntity), VehiculoResponse.class);
+    return modelMapper.map(vehiculoRepository.save(vehiculoEntity), VehicleResponse.class);
   }
 
-  public VehiculoResponse delete(Long id) {
+  public VehicleResponse delete(Long id) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if(vehiculoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el vehículo");
@@ -74,13 +74,13 @@ public class VehiculoService {
 
     try {
       vehiculoRepository.delete(vehiculoEntity);
-      return modelMapper.map(vehiculoEntity, VehiculoResponse.class);
+      return modelMapper.map(vehiculoEntity, VehicleResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  public VehiculoResponse put(Long id) {
+  public VehicleResponse put(Long id) {
     Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityExistsException("No se ha encontrado el vehículo");
@@ -89,6 +89,6 @@ public class VehiculoService {
     VehiculoEntity vehiculoEntity = vehiculoEntityOptional.get();
     vehiculoEntity.setDisponible(!vehiculoEntity.getDisponible());
 
-    return modelMapper.map(vehiculoRepository.save(vehiculoEntity), VehiculoResponse.class);
+    return modelMapper.map(vehiculoRepository.save(vehiculoEntity), VehicleResponse.class);
   }
 }
