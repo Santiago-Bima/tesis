@@ -1,5 +1,5 @@
 package com.tesis.queseria_la_charito.models;
 
-public enum Roles {
+public enum Role {
   Gerente, Subgerente, Operario
 }

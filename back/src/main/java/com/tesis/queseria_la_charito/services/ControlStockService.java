@@ -11,8 +11,8 @@ import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.controlStock.ControlStockEntity;
 import com.tesis.queseria_la_charito.entities.controlStock.InsumoControlEntity;
 import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
-import com.tesis.queseria_la_charito.models.TipoControlItem;
-import com.tesis.queseria_la_charito.models.TipoCorte;
+import com.tesis.queseria_la_charito.models.ItemControlType;
+import com.tesis.queseria_la_charito.models.CutType;
 import com.tesis.queseria_la_charito.repositories.controlStock.ControlStockRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.controlStock.InsumoControlRepository;
@@ -65,7 +65,7 @@ public class ControlStockService {
       StockControlResponse response = modelMapper.map(controlEntity, StockControlResponse.class);
 
       List<SupplyControlResponse> insumoControlResponsesEsperado  = new ArrayList<>();
-      List<InsumoControlEntity>   insumoControlEsperadoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, TipoControlItem.Esperado.name());
+      List<InsumoControlEntity>   insumoControlEsperadoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, ItemControlType.Esperado.name());
       if (insumoControlEsperadoEntityList.isEmpty()) {
         insumoControlEsperadoEntityList = new ArrayList<>();
       }
@@ -75,7 +75,7 @@ public class ControlStockService {
       }
 
       List<SupplyControlResponse> insumoControlResponsesObtenido  = new ArrayList<>();
-      List<InsumoControlEntity>   insumoControlObtenidoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, TipoControlItem.Obtenido.name());
+      List<InsumoControlEntity>   insumoControlObtenidoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, ItemControlType.Obtenido.name());
       if (insumoControlObtenidoEntityList.isEmpty()) {
         insumoControlObtenidoEntityList = new ArrayList<>();
       }
@@ -122,7 +122,7 @@ public class ControlStockService {
       insumoControlEntity.setInsumo(itemEntityOptional.get());
       insumoControlEntity.setCantidad(insumoControlRequest.getCantidad());
       insumoControlEntity.setControlStock(controlStockEntity);
-      insumoControlEntity.setTipo(TipoControlItem.Obtenido.name());
+      insumoControlEntity.setTipo(ItemControlType.Obtenido.name());
 
       insumoControlEntityListObtenidos.add(insumoControlEntity);
     }
@@ -141,7 +141,7 @@ public class ControlStockService {
 
       insumoControlEntity.setInsumo(itemEntityOptional.get());
       insumoControlEntity.setControlStock(controlStockEntity);
-      insumoControlEntity.setTipo(TipoControlItem.Esperado.name());
+      insumoControlEntity.setTipo(ItemControlType.Esperado.name());
       insumoControlEntityListEsperados.add(insumoControlEntity);
     }
 
@@ -198,9 +198,9 @@ public class ControlStockService {
         }
       } else {
 
-        if (loteControl.getCorte().equals(TipoCorte.Entero.name())) {
+        if (loteControl.getCorte().equals(CutType.Whole.name())) {
           cantidadesEsperadasResponse.setCantidadEnterosEsperada(cantidadesEsperadasResponse.getCantidadEnterosEsperada() + loteControl.getUnidades());
-        } else if (loteControl.getCorte().equals(TipoCorte.Medio.name())) {
+        } else if (loteControl.getCorte().equals(CutType.Medio.name())) {
           cantidadesEsperadasResponse.setCantidadMediosEsperada(cantidadesEsperadasResponse.getCantidadMediosEsperada() + loteControl.getUnidades());
         } else {
           cantidadesEsperadasResponse.setCantidadCuartosEsperada(cantidadesEsperadasResponse.getCantidadCuartosEsperada() + loteControl.getUnidades());

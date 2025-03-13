@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers.batch;
 
-import com.tesis.queseria_la_charito.models.Estado;
+import com.tesis.queseria_la_charito.models.Status;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,5 +14,5 @@ import java.util.List;
 public class StatusController {
     @PreAuthorize("hasRole('ROLE_Operario'")
     @GetMapping()
-    List<Estado> get() { return Arrays.asList(Estado.values()) ;}
+    List<Status> get() { return Arrays.asList(Status.values()) ;}
 }

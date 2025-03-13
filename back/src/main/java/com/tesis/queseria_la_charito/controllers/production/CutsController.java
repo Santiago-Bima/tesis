@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers.production;
 
-import com.tesis.queseria_la_charito.models.TipoCorte;
+import com.tesis.queseria_la_charito.models.CutType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,5 +14,5 @@ import java.util.List;
 public class CutsController {
     @PreAuthorize("hasRole('ROLE_Operario'")
     @GetMapping()
-    List<TipoCorte> getAll() { return Arrays.asList(TipoCorte.values()); }
+    List<CutType> getAll() { return Arrays.asList(CutType.values()); }
 }

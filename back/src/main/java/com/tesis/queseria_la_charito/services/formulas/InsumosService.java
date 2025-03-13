@@ -3,7 +3,7 @@ package com.tesis.queseria_la_charito.services.formulas;
 import com.tesis.queseria_la_charito.dtos.request.ItemRequest;
 import com.tesis.queseria_la_charito.dtos.response.ItemResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.models.TipoItem;
+import com.tesis.queseria_la_charito.models.ItemType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,7 +27,7 @@ public class InsumosService {
 
     public List<ItemResponse> getItems() {
         List<ItemResponse> listaInsumosResponse = new ArrayList<>();
-        List<ItemEntity> listaInsumosEntity = itemRepository.findByTipo(TipoItem.Insumo.name());
+        List<ItemEntity> listaInsumosEntity = itemRepository.findByTipo(ItemType.Insumo.name());
         if (listaInsumosEntity.isEmpty()) {
             return new ArrayList<>();
         }
@@ -50,7 +50,7 @@ public class InsumosService {
 
     public ItemResponse postItem(ItemRequest item) throws Exception {
         ItemEntity itemEntity = modelMapper.map(item, ItemEntity.class);
-        itemEntity.setTipo(TipoItem.Insumo.name());
+        itemEntity.setTipo(ItemType.Insumo.name());
 
         Optional<ItemEntity> itemEntityOptional = itemRepository.findByNombre(itemEntity.getNombre());
         if (itemEntityOptional.isPresent()) {
@@ -83,7 +83,7 @@ public class InsumosService {
     public ItemResponse putItem(ItemRequest item, Long id) {
         ItemEntity itemEntity = modelMapper.map(item, ItemEntity.class);
         itemEntity.setId(id);
-        itemEntity.setTipo(TipoItem.Insumo.name());
+        itemEntity.setTipo(ItemType.Insumo.name());
 
         Optional<ItemEntity> itemEntityOptional = itemRepository.findByNombre(itemEntity.getNombre());
         if (itemEntityOptional.isPresent() && !Objects.equals(itemEntityOptional.get().getId(), id)) {

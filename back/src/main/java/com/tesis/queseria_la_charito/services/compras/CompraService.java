@@ -10,7 +10,7 @@ import com.tesis.queseria_la_charito.entities.LoteEntity;
 import com.tesis.queseria_la_charito.entities.compra.ComprobanteCompraEntity;
 import com.tesis.queseria_la_charito.entities.compra.DetalleComprobanteEntity;
 import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
-import com.tesis.queseria_la_charito.models.TipoItem;
+import com.tesis.queseria_la_charito.models.ItemType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.compra.CompraRepository;
 import com.tesis.queseria_la_charito.repositories.compra.DetalleCompraRepository;
@@ -107,7 +107,7 @@ public class CompraService {
   public List<ReceipReportResponse> generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
     List<ReceipReportResponse> informes = new ArrayList<>();
 
-    List<ItemEntity> itemResponseList = itemRepository.findByTipo(TipoItem.Insumo.name());
+    List<ItemEntity> itemResponseList = itemRepository.findByTipo(ItemType.Insumo.name());
 
     for (ItemEntity item : itemResponseList) {
       ReceipReportResponse informe = new ReceipReportResponse();

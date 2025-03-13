@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.controllers;
 
-import com.tesis.queseria_la_charito.models.Roles;
+import com.tesis.queseria_la_charito.models.Role;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,5 +15,5 @@ public class RoleController {
 
   @PreAuthorize("hasRole('ROLE_Gerente')")
   @GetMapping()
-  List<Roles> get() { return Arrays.asList(Roles.values()) ;}
+  List<Role> get() { return Arrays.asList(Role.values()) ;}
 }

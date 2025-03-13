@@ -16,9 +16,9 @@ import com.tesis.queseria_la_charito.entities.LoteEntity;
 import com.tesis.queseria_la_charito.entities.procesosElaboracion.ControlCalidadEntity;
 import com.tesis.queseria_la_charito.entities.procesosElaboracion.DetalleCorteEntity;
 import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
-import com.tesis.queseria_la_charito.models.Estado;
-import com.tesis.queseria_la_charito.models.Quesos;
-import com.tesis.queseria_la_charito.models.TipoCorte;
+import com.tesis.queseria_la_charito.models.Status;
+import com.tesis.queseria_la_charito.models.Cheese;
+import com.tesis.queseria_la_charito.models.CutType;
 import com.tesis.queseria_la_charito.repositories.ElaboracionRepository;
 import com.tesis.queseria_la_charito.repositories.formula.FormulaRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
@@ -130,7 +130,7 @@ public class ElaboracionesService {
       ItemEntity insumo = detalle.getInsumo();
       int relacionLeche = elaboracionRequest.getCantidadLeche() / formulaEntity.getCantidadLeche();
       AtomicReference<Integer> cantidad     = new AtomicReference<>(detalle.getCantidad() * relacionLeche);
-      List<LoteEntity>         loteEntities = loteRepository.findByItemAndEstadoAndMostrar(insumo, Estado.Disponible.name(), true);
+      List<LoteEntity>         loteEntities = loteRepository.findByItemAndEstadoAndMostrar(insumo, Status.Disponible.name(), true);
       if (loteEntities.isEmpty()) {
         throw new RuntimeException("El insumo " + insumo.getNombre() + " no posee lotes");
       }
@@ -144,7 +144,7 @@ public class ElaboracionesService {
         cantidad.set(diferencia > 0 ? 0 : diferencia * -1);
 
         if (lote.getUnidades() == 0) {
-          lote.setEstado(Estado.SinStock.name());
+          lote.setEstado(Status.SinStock.name());
 
           try {
             loteRepository.save(lote);
@@ -180,13 +180,13 @@ public class ElaboracionesService {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
 
-    if (elaboracionEntityOptional.get().getLote().getUnidades() != 0 && elaboracionEntityOptional.get().getLote().getEstado().equals(Estado.Elaborando.name())) {
+    if (elaboracionEntityOptional.get().getLote().getUnidades() != 0 && elaboracionEntityOptional.get().getLote().getEstado().equals(Status.Elaborando.name())) {
       throw new RuntimeException("La elaboración ya fué creada con sus cortes, no se pueden editar los cortes");
     }
 
     ElaboracionEntity elaboracionEntity = elaboracionEntityOptional.get();
 
-    if(!elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Quesos.Cremoso.name()) && !detalleCorteRequest.getCorte().equals(TipoCorte.Entero.name())) {
+    if(!elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Cremoso.name()) && !detalleCorteRequest.getCorte().equals(CutType.Whole.name())) {
       throw new Exception("El queso para el que está pensada la elaboración no permite más de 1 corte y el mismo debe ser de tipo Entero");
     }
 
@@ -212,7 +212,7 @@ public class ElaboracionesService {
       throw new Exception("La fecha de embolsado debe ser posterior a la maduración");
     }
 
-    if(elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Quesos.Pategras.name())) {
+    if(elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Pategras.name())) {
       throw new Exception("El queso para el que está pensada la elaboración no permite tipos de cortes");
     }
 
@@ -259,7 +259,7 @@ public class ElaboracionesService {
       throw new Exception("La fecha de pintado debe ser posterior a la maduración");
     }
 
-    if(!elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Quesos.Pategras.name())) {
+    if(!elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Pategras.name())) {
       throw new Exception("El queso para el que está pensada la elaboración no permite tipos de cortes");
     }
 
@@ -295,7 +295,7 @@ public class ElaboracionesService {
     ControlCalidadEntity controlCalidadEntity = modelMapper.map(controlCalidadRequest ,ControlCalidadEntity.class);
     controlCalidadEntity.setElaboracion(elaboracionEntity);
     elaboracionEntity.setControlCalidad(controlCalidadEntity);
-    elaboracionEntity.getLote().setEstado(Estado.Terminado.name());
+    elaboracionEntity.getLote().setEstado(Status.Terminado.name());
     return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ProductionResponse.class);
   }
 
@@ -360,15 +360,15 @@ public class ElaboracionesService {
       if (elaboracion.getDetalleCorte() == null) {
         informe.setCantidadIncompletas(informe.getCantidadIncompletas() + 1);
       } else {
-        if (elaboracion.getDetalleCorte().getCorte().equals(TipoCorte.Entero.name())) {
-          if (elaboracion.getFormula().getTipoQueso().getItem().getNombre().equals(Quesos.Pategras.name())) {
+        if (elaboracion.getDetalleCorte().getCorte().equals(CutType.Whole.name())) {
+          if (elaboracion.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Pategras.name())) {
             informe.setCantidadPategras(informe.getCantidadPategras() + elaboracion.getDetalleCorte().getCantidad());
-          } else if (elaboracion.getFormula().getTipoQueso().getItem().getNombre().equals(Quesos.Barra.name())) {
+          } else if (elaboracion.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Barra.name())) {
             informe.setCantidadBarra(informe.getCantidadBarra() + elaboracion.getDetalleCorte().getCantidad());
           } else {
             informe.setCantidadEnterosCremoso(informe.getCantidadEnterosCremoso() + elaboracion.getDetalleCorte().getCantidad());
           }
-        } else if (elaboracion.getDetalleCorte().getCorte().equals(TipoCorte.Medio.name())) {
+        } else if (elaboracion.getDetalleCorte().getCorte().equals(CutType.Medio.name())) {
           informe.setCantidadMediosCremoso(informe.getCantidadMediosCremoso() + elaboracion.getDetalleCorte().getCantidad());
         } else {
           informe.setCantidadCuartosCremoso(informe.getCantidadCuartosCremoso() + elaboracion.getDetalleCorte().getCantidad());

@@ -4,7 +4,7 @@ import com.tesis.queseria_la_charito.dtos.request.purchase.ProviderRequest;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ProviderResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
-import com.tesis.queseria_la_charito.models.TipoCuenta;
+import com.tesis.queseria_la_charito.models.AccountType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.compra.ProveedorRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -72,7 +72,7 @@ public class ProveedorService {
 
     proveedorEntity.setNombre(proveedor.getNombre());
     proveedorEntity.setTelefono(proveedor.getTelefono());
-    proveedorEntity.setTipoCuenta(proveedor.getTipoCuenta().equals(TipoCuenta.Corriente.name()) ? "Cuenta Corriente" : "Caja de Ahorro");
+    proveedorEntity.setTipoCuenta(proveedor.getTipoCuenta().equals(AccountType.Corriente.name()) ? "Cuenta Corriente" : "Caja de Ahorro");
     proveedorEntity.setMostrar(true);
 
     return modelMapper.map(repository.save(proveedorEntity), ProviderResponse.class);

@@ -14,10 +14,10 @@ import com.tesis.queseria_la_charito.entities.despacho.VehiculoEntity;
 import com.tesis.queseria_la_charito.entities.LoteEntity;
 import com.tesis.queseria_la_charito.entities.procesosElaboracion.DetalleCorteEntity;
 import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
-import com.tesis.queseria_la_charito.models.DespachoEstado;
-import com.tesis.queseria_la_charito.models.Estado;
-import com.tesis.queseria_la_charito.models.Quesos;
-import com.tesis.queseria_la_charito.models.TipoCorte;
+import com.tesis.queseria_la_charito.models.DispatchStatus;
+import com.tesis.queseria_la_charito.models.Status;
+import com.tesis.queseria_la_charito.models.Cheese;
+import com.tesis.queseria_la_charito.models.CutType;
 import com.tesis.queseria_la_charito.repositories.*;
 import com.tesis.queseria_la_charito.repositories.despacho.DespachoRepository;
 import com.tesis.queseria_la_charito.repositories.despacho.DestinoRepository;
@@ -74,7 +74,7 @@ public class DespachoService {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findByUsuarioAndEstadoNot(usuarioEntityOptional.get(), DespachoEstado.Despachado.name());
+    Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findByUsuarioAndEstadoNot(usuarioEntityOptional.get(), DispatchStatus.Despachado.name());
     if (despachoEntityOptional.isEmpty()) {
       return new ArrayList<>();
     }
@@ -121,7 +121,7 @@ public class DespachoService {
     despachoEntity.setLstDetallesDespacho(new ArrayList<>());
     despachoEntity.setFecha(despachoRequest.getFecha());
     despachoEntity.setQueso(despachoRequest.getQueso());
-    despachoEntity.setEstado(DespachoEstado.PorEntregar.name());
+    despachoEntity.setEstado(DispatchStatus.PorEntregar.name());
 
     Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(despachoRequest.getUsuario(), true);
     if (usuarioEntityOptional.isEmpty()) {
@@ -156,7 +156,7 @@ public class DespachoService {
     }
 
     ItemEntity       tipoQueso = tipoQuesoOptional.get();
-    List<LoteEntity> lotes     = loteRepository.findByItemAndEstadoAndMostrar(tipoQueso, Estado.Terminado.name(), true);
+    List<LoteEntity> lotes     = loteRepository.findByItemAndEstadoAndMostrar(tipoQueso, Status.Terminado.name(), true);
     if (lotes.isEmpty()) {
       throw new RuntimeException("No hay ningún lote para despachar");
     }
@@ -186,11 +186,11 @@ public class DespachoService {
       AtomicInteger cuartosLote = new AtomicInteger(0);
 
       DetalleCorteEntity corte = elaboracion.getDetalleCorte();
-      if (corte.getCorte().equals(TipoCorte.Entero.name())) {
+      if (corte.getCorte().equals(CutType.Whole.name())) {
         enterosLote.addAndGet(lote.getUnidades());
-      } else if (corte.getCorte().equals(TipoCorte.Medio.name())) {
+      } else if (corte.getCorte().equals(CutType.Medio.name())) {
         mediosLote.addAndGet(lote.getUnidades());
-      } else if (corte.getCorte().equals(TipoCorte.Cuarto.name())) {
+      } else if (corte.getCorte().equals(CutType.Cuarto.name())) {
         cuartosLote.addAndGet(lote.getUnidades());
       }
 
@@ -223,7 +223,7 @@ public class DespachoService {
 
       if (modificado) {
         if (enterosLote.get() == 0 && mediosLote.get() == 0 && cuartosLote.get() == 0) {
-          lote.setEstado(Estado.Despachado.name());
+          lote.setEstado(Status.Despachado.name());
         }
 
         detalleDespachoEntity.setLote(lote);
@@ -245,7 +245,7 @@ public class DespachoService {
     }
     DespachoEntity despachoEntity = despachoEntityOptional.get();
 
-    if (!despachoEntity.getEstado().equals(DespachoEstado.PorEntregar.name())) {
+    if (!despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
       throw new RuntimeException("No se puede modificar un despacho que está entregado o en proceso");
     }
 
@@ -276,10 +276,10 @@ public class DespachoService {
 
     DespachoEntity despachoEntity = despachoEntityOptional.get();
 
-    if (despachoEntity.getEstado().equals(DespachoEstado.Entregando.name())) {
+    if (despachoEntity.getEstado().equals(DispatchStatus.Entregando.name())) {
       throw new RuntimeException("No se puede eliminar un despacho que está siendo entregado");
     }
-    if (despachoEntity.getEstado().equals(DespachoEstado.PorEntregar.name())) {
+    if (despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
       despachoEntity.getUsuario().setIsDispatching(false);
       usuarioRepository.save(despachoEntity.getUsuario());
       despachoEntity.getVehiculo().setDisponible(true);
@@ -293,10 +293,10 @@ public class DespachoService {
           throw new EntityNotFoundException("No se ha encontrado el lote del detalle");
         }
 
-        if (despachoEntity.getEstado().equals(DespachoEstado.PorEntregar.name())) {
-          if (loteEntityOptional.get().getElaboracion().getDetalleCorte().getCorte().equals(TipoCorte.Entero.name())) {
+        if (despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
+          if (loteEntityOptional.get().getElaboracion().getDetalleCorte().getCorte().equals(CutType.Whole.name())) {
             loteEntityOptional.get().setUnidades(loteEntityOptional.get().getUnidades() + detalle.getCantidadEnteros());
-          } else  if (loteEntityOptional.get().getElaboracion().getDetalleCorte().getCorte().equals(TipoCorte.Medio.name())) {
+          } else  if (loteEntityOptional.get().getElaboracion().getDetalleCorte().getCorte().equals(CutType.Medio.name())) {
             loteEntityOptional.get().setUnidades(loteEntityOptional.get().getUnidades() + detalle.getCantidadMedios());
           } else {
             loteEntityOptional.get().setUnidades(loteEntityOptional.get().getUnidades() + detalle.getCantidadCuartos());
@@ -353,12 +353,12 @@ public class DespachoService {
         informeDespachoResponse.setTotalUnidadesDespachadas(informeDespachoResponse.getTotalUnidadesDespachadas() + despachoEntity.getCantidadTotal());
 
 
-        if (despachoEntity.getQueso().equals(Quesos.Pategras.name())) {
+        if (despachoEntity.getQueso().equals(Cheese.Pategras.name())) {
           for (DetalleDespachoEntity detalleDespachoEntity : despachoEntity.getLstDetallesDespacho()) {
             informeDespachoResponse.setCantidadTotalPategras(informeDespachoResponse.getCantidadTotalPategras() + detalleDespachoEntity.getCantidadEnteros());
             detalleInformeDespacho.setCantidadPategras(detalleInformeDespacho.getCantidadPategras() + detalleDespachoEntity.getCantidadEnteros());
           }
-        } else if (despachoEntity.getQueso().equals(Quesos.Barra.name())) {
+        } else if (despachoEntity.getQueso().equals(Cheese.Barra.name())) {
           for (DetalleDespachoEntity detalleDespachoEntity : despachoEntity.getLstDetallesDespacho()) {
             informeDespachoResponse.setCantidadTotalBarra(informeDespachoResponse.getCantidadTotalBarra() + detalleDespachoEntity.getCantidadEnteros());
             detalleInformeDespacho.setCantidadBarra(detalleInformeDespacho.getCantidadBarra() + detalleDespachoEntity.getCantidadEnteros());
@@ -401,10 +401,10 @@ public class DespachoService {
     VehiculoEntity vehiculoEntity = despachoEntity.getVehiculo();
     UsuarioEntity usuarioEntity = despachoEntity.getUsuario();
 
-    if (despachoEntity.getEstado().equals(DespachoEstado.PorEntregar.name())) {
-      despachoEntity.setEstado(DespachoEstado.Entregando.name());
-    } else if (despachoEntity.getEstado().equals(DespachoEstado.Entregando.name())) {
-      despachoEntity.setEstado(DespachoEstado.Despachado.name());
+    if (despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
+      despachoEntity.setEstado(DispatchStatus.Entregando.name());
+    } else if (despachoEntity.getEstado().equals(DispatchStatus.Entregando.name())) {
+      despachoEntity.setEstado(DispatchStatus.Despachado.name());
       vehiculoEntity.setDisponible(true);
       usuarioEntity.setIsDispatching(false);
 

@@ -8,9 +8,9 @@ import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.LoteEntity;
 import com.tesis.queseria_la_charito.entities.ModificacionLoteEntity;
 import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
-import com.tesis.queseria_la_charito.models.Estado;
-import com.tesis.queseria_la_charito.models.Quesos;
-import com.tesis.queseria_la_charito.models.TipoItem;
+import com.tesis.queseria_la_charito.models.Status;
+import com.tesis.queseria_la_charito.models.Cheese;
+import com.tesis.queseria_la_charito.models.ItemType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.LoteRepository;
 import com.tesis.queseria_la_charito.repositories.ModificacionLoteRepository;
@@ -84,11 +84,11 @@ public class LoteService {
         loteEntity.setUnidades(unidades);
         loteEntity.setMostrar(true);
         String inicial;
-        if(Objects.equals(itemEntity.getTipo(), TipoItem.Insumo.name())){
-            loteEntity.setEstado(Estado.Disponible.name());
+        if(Objects.equals(itemEntity.getTipo(), ItemType.Insumo.name())){
+            loteEntity.setEstado(Status.Disponible.name());
             inicial = "I";
         } else {
-            loteEntity.setEstado(Estado.Elaborando.name());
+            loteEntity.setEstado(Status.Elaborando.name());
             inicial = "Q";
         }
 
@@ -124,9 +124,9 @@ public class LoteService {
 
         loteEntity.setUnidades(lote.getUnidades());
         if (loteEntity.getUnidades() == 0) {
-            loteEntity.setEstado(Estado.Despachado.name());
-        } else if (loteEntity.getEstado().equals(Estado.Despachado.name())){
-            loteEntity.setEstado(Estado.Terminado.name());
+            loteEntity.setEstado(Status.Despachado.name());
+        } else if (loteEntity.getEstado().equals(Status.Despachado.name())){
+            loteEntity.setEstado(Status.Terminado.name());
         }
 
         modificacionesLotesEntity.setCantidadPosterior(loteEntity.getUnidades());
@@ -185,7 +185,7 @@ public class LoteService {
             lote.setItem(loteEntity.getItem().getNombre());
             lote.setId(loteEntity.getId());
 
-            if (lote.getItem().equals(Quesos.Pategras.name()) || lote.getItem().equals(Quesos.Cremoso.name()) ||lote.getItem().equals(Quesos.Barra.name())) {
+            if (lote.getItem().equals(Cheese.Pategras.name()) || lote.getItem().equals(Cheese.Cremoso.name()) || lote.getItem().equals(Cheese.Barra.name())) {
                 if (loteEntity.getElaboracion() != null) {
                     if (loteEntity.getElaboracion().getDetalleCorte() != null) {
                         lote.setCorte(loteEntity.getElaboracion().getDetalleCorte().getCorte());
