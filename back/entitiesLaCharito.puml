@@ -1,5 +1,5 @@
 @startuml
-class com.tesis.queseria_la_charito.entities.controlStock.ControlStockEntity {
+class com.tesis.queseria_la_charito.entities.stockControl.StockControlEntity {
   - Long id
   - LocalDate fecha
   - Integer cantidadEnterosEsperada
@@ -15,7 +15,7 @@ class com.tesis.queseria_la_charito.entities.controlStock.ControlStockEntity {
   - UsuarioEntity usuario
 }
 
-class com.tesis.queseria_la_charito.entities.LoteEntity {
+class com.tesis.queseria_la_charito.entities.batch.BatchEntity {
   - String id
   - ItemEntity item
   - String estado
@@ -27,7 +27,7 @@ class com.tesis.queseria_la_charito.entities.LoteEntity {
   - DetalleComprobanteEntity detalleComprobante
 }
 
-class com.tesis.queseria_la_charito.entities.compra.ComprobanteCompraEntity {
+class com.tesis.queseria_la_charito.entities.purchase.ReceiptEntity {
   - Long id
   - LocalDate fecha
   - Integer total
@@ -44,7 +44,7 @@ class com.tesis.queseria_la_charito.entities.procesosElaboracion.ControlCalidadE
   - ElaboracionEntity elaboracion
 }
 
-class com.tesis.queseria_la_charito.entities.despacho.DespachoEntity {
+class com.tesis.queseria_la_charito.entities.dispatch.DispatchEntity {
   - Long id
   - LocalDate fecha
   - String queso
@@ -56,7 +56,7 @@ class com.tesis.queseria_la_charito.entities.despacho.DespachoEntity {
   - UsuarioEntity usuario
 }
 
-class com.tesis.queseria_la_charito.entities.despacho.DetalleDespachoEntity {
+class com.tesis.queseria_la_charito.entities.dispatch.DispatchDetailEntity {
   - Long id
   - LoteEntity lote
   - Integer cantidadEnteros
@@ -65,7 +65,7 @@ class com.tesis.queseria_la_charito.entities.despacho.DetalleDespachoEntity {
   - DespachoEntity despacho
 }
 
-class com.tesis.queseria_la_charito.entities.formula.TipoQuesoEntity {
+class com.tesis.queseria_la_charito.entities.formula.CheeseTypeEntity {
   - Long id
   - ItemEntity item
   - Integer diasMaduracion
@@ -84,14 +84,14 @@ class com.tesis.queseria_la_charito.entities.ItemEntity {
   - List<InsumoControlEntity> listaControlesInsumo
 }
 
-class com.tesis.queseria_la_charito.entities.despacho.VehiculoEntity {
+class com.tesis.queseria_la_charito.entities.dispatch.VehicleEntity {
   - Long id
   - String matricula
   - Boolean disponible
   - List<DespachoEntity> lstDespachos
 }
 
-class com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity {
+class com.tesis.queseria_la_charito.entities.user.UserEntity {
   - Long id
   - String username
   - String password
@@ -104,7 +104,7 @@ class com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity {
   - List<DespachoEntity> lstDespachos
 }
 
-class com.tesis.queseria_la_charito.entities.formula.DetalleFormulaEntity {
+class com.tesis.queseria_la_charito.entities.formula.FormulaDetailEntity {
   - Long id
   - FormulaEntity formula
   - ItemEntity insumo
@@ -119,7 +119,7 @@ class com.tesis.queseria_la_charito.entities.formula.FormulaEntity {
   - List<ElaboracionEntity> listaElaboraciones
 }
 
-class com.tesis.queseria_la_charito.entities.compra.ProveedorEntity {
+class com.tesis.queseria_la_charito.entities.purchase.ProviderEntity {
   - Long id
   - String nombre
   - String email
@@ -136,7 +136,7 @@ class com.tesis.queseria_la_charito.entities.compra.ProveedorEntity {
   - List<DetalleComprobanteEntity> listaDetallesComprobante
 }
 
-class com.tesis.queseria_la_charito.entities.compra.DetalleComprobanteEntity {
+class com.tesis.queseria_la_charito.entities.purchase.ReceiptDetailEntity {
   - Long id
   - ComprobanteCompraEntity comprobante
   - LoteEntity lote
@@ -145,12 +145,12 @@ class com.tesis.queseria_la_charito.entities.compra.DetalleComprobanteEntity {
   - ProveedorEntity proveedor
 }
 
-class com.tesis.queseria_la_charito.entities.usuario.RolEntity {
+class com.tesis.queseria_la_charito.entities.user.RoleEntity {
   - Long id
   - String rol
 }
 
-class com.tesis.queseria_la_charito.entities.controlStock.InsumoControlEntity {
+class com.tesis.queseria_la_charito.entities.stockControl.InsumoControlEntity {
   - Long id
   - ControlStockEntity controlStock
   - ItemEntity insumo
@@ -158,7 +158,7 @@ class com.tesis.queseria_la_charito.entities.controlStock.InsumoControlEntity {
   - String tipo
 }
 
-class com.tesis.queseria_la_charito.entities.ElaboracionEntity {
+class com.tesis.queseria_la_charito.entities.production.ProductionEntity {
   - String id
   - LocalDate fecha
   - Integer cantidadLeche
@@ -174,7 +174,7 @@ class com.tesis.queseria_la_charito.entities.ElaboracionEntity {
   - ControlCalidadEntity controlCalidad
 }
 
-class com.tesis.queseria_la_charito.entities.ModificacionLoteEntity {
+class com.tesis.queseria_la_charito.entities.batch.BatchModificationEntity {
   - Long id
   - String motivo
   - LocalDate fecha
@@ -193,7 +193,7 @@ class com.tesis.queseria_la_charito.entities.procesosElaboracion.DetalleCorteEnt
   - String corte
 }
 
-class com.tesis.queseria_la_charito.entities.despacho.DestinoEntity {
+class com.tesis.queseria_la_charito.entities.dispatch.DestinationEntity {
   - Long id
   - String calle
   - Integer numero

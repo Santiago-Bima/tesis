@@ -1,9 +1,9 @@
 package com.tesis.queseria_la_charito.repositories;
 
-import com.tesis.queseria_la_charito.entities.ElaboracionEntity;
+import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
+import com.tesis.queseria_la_charito.entities.production.ProductionEntity;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.entities.LoteEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,11 +13,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
-public interface ElaboracionRepository extends JpaRepository<ElaboracionEntity, String> {
+public interface ElaboracionRepository extends JpaRepository<ProductionEntity, String> {
 
-  List<ElaboracionEntity> findByUsuarioAndFormulaTipoQuesoItemAndFechaBetween(UsuarioEntity usuario,ItemEntity Item, LocalDate fechaInicio, LocalDate fechaFin);
-  List<ElaboracionEntity> findByUsuarioAndFormulaTipoQuesoItem(UsuarioEntity usuario, ItemEntity item);
-  Optional<ElaboracionEntity> findByLote(LoteEntity lote);
-  List<ElaboracionEntity> findByFechaBetween(LocalDate fechaInicio, LocalDate fechaFin);
-  Optional<ElaboracionEntity> findByUsuarioAndId(UsuarioEntity usuario, String id);
+  List<ProductionEntity> findByUsuarioAndFormulaTipoQuesoItemAndFechaBetween(UserEntity usuario, ItemEntity Item, LocalDate fechaInicio, LocalDate fechaFin);
+  List<ProductionEntity> findByUsuarioAndFormulaTipoQuesoItem(UserEntity usuario, ItemEntity item);
+  Optional<ProductionEntity> findByLote(BatchEntity lote);
+  List<ProductionEntity> findByFechaBetween(LocalDate fechaInicio, LocalDate fechaFin);
+  Optional<ProductionEntity> findByUsuarioAndId(UserEntity usuario, String id);
 }

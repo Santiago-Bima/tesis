@@ -7,13 +7,14 @@ import com.tesis.queseria_la_charito.dtos.response.dispatch.DestinationResponse;
 import com.tesis.queseria_la_charito.dtos.response.dispatch.ReportDetailDespacho;
 import com.tesis.queseria_la_charito.dtos.response.dispatch.DispatchReportResponse;
 import com.tesis.queseria_la_charito.entities.*;
-import com.tesis.queseria_la_charito.entities.despacho.DespachoEntity;
-import com.tesis.queseria_la_charito.entities.despacho.DestinoEntity;
-import com.tesis.queseria_la_charito.entities.despacho.DetalleDespachoEntity;
-import com.tesis.queseria_la_charito.entities.despacho.VehiculoEntity;
-import com.tesis.queseria_la_charito.entities.LoteEntity;
-import com.tesis.queseria_la_charito.entities.procesosElaboracion.DetalleCorteEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DestinationEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DispatchDetailEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DispatchEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.VehicleEntity;
+import com.tesis.queseria_la_charito.entities.production.ProductionEntity;
+import com.tesis.queseria_la_charito.entities.production.processes.CutDetailEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.models.DispatchStatus;
 import com.tesis.queseria_la_charito.models.Status;
 import com.tesis.queseria_la_charito.models.Cheese;
@@ -69,12 +70,12 @@ public class DespachoService {
   public List<DispatchResponse> getByUser(String username) {
     List<DispatchResponse> despachoResponses = new ArrayList<>();
 
-    Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
+    Optional<UserEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
     if (usuarioEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findByUsuarioAndEstadoNot(usuarioEntityOptional.get(), DispatchStatus.Despachado.name());
+    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findByUsuarioAndEstadoNot(usuarioEntityOptional.get(), DispatchStatus.Despachado.name());
     if (despachoEntityOptional.isEmpty()) {
       return new ArrayList<>();
     }
@@ -86,12 +87,12 @@ public class DespachoService {
   }
 
   public List<DispatchResponse> getAll(LocalDate fecha, Long destinoId) {
-    Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(destinoId);
+    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(destinoId);
     if (destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el destino");
     }
 
-    List<DespachoEntity>   lstDespachosEntities;
+    List<DispatchEntity>   lstDespachosEntities;
     List<DispatchResponse> lstDespachoResponse = new ArrayList<>();
     if(fecha != null) {
       lstDespachosEntities = despachoRepository.findByDestinoAndFecha(destinoEntityOptional.get(), fecha);
@@ -108,7 +109,7 @@ public class DespachoService {
   }
 
   public DispatchResponse getById(Long id) {
-    Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el despacho");
     }
@@ -117,46 +118,46 @@ public class DespachoService {
   }
 
   public DispatchResponse post(DispatchRequest despachoRequest) {
-    DespachoEntity despachoEntity = new DespachoEntity();
-    despachoEntity.setLstDetallesDespacho(new ArrayList<>());
-    despachoEntity.setFecha(despachoRequest.getFecha());
-    despachoEntity.setQueso(despachoRequest.getQueso());
-    despachoEntity.setEstado(DispatchStatus.PorEntregar.name());
+    DispatchEntity dispatchEntity = new DispatchEntity();
+    dispatchEntity.setLstDetallesDespacho(new ArrayList<>());
+    dispatchEntity.setFecha(despachoRequest.getFecha());
+    dispatchEntity.setQueso(despachoRequest.getQueso());
+    dispatchEntity.setEstado(DispatchStatus.PorEntregar.name());
 
-    Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(despachoRequest.getUsuario(), true);
+    Optional<UserEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(despachoRequest.getUsuario(), true);
     if (usuarioEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    UsuarioEntity usuarioEntity = usuarioEntityOptional.get();
+    UserEntity userEntity = usuarioEntityOptional.get();
 
-    usuarioEntity.setIsDispatching(true);
-    despachoEntity.setUsuario(usuarioEntity);
+    userEntity.setIsDispatching(true);
+    dispatchEntity.setUsuario(userEntity);
 
-    Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(despachoRequest.getDestino());
+    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(despachoRequest.getDestino());
     if (destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el destino");
     }
-    despachoEntity.setDestino(destinoEntityOptional.get());
+    dispatchEntity.setDestino(destinoEntityOptional.get());
 
-    Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(despachoRequest.getVehiculo());
+    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findById(despachoRequest.getVehiculo());
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el vehículo");
     }
-    VehiculoEntity vehiculoEntity = vehiculoEntityOptional.get();
-    if (!vehiculoEntity.getDisponible()) {
+    VehicleEntity vehicleEntity = vehiculoEntityOptional.get();
+    if (!vehicleEntity.getDisponible()) {
       throw new RuntimeException("El vehículo ya se encuentra en uso");
     }
-    vehiculoEntity.setDisponible(false);
-    despachoEntity.setVehiculo(vehiculoEntity);
+    vehicleEntity.setDisponible(false);
+    dispatchEntity.setVehiculo(vehicleEntity);
 
     Optional<ItemEntity> tipoQuesoOptional = itemRepository.findByNombre(despachoRequest.getQueso());
     if (tipoQuesoOptional.isEmpty()) {
       throw new EntityNotFoundException("No existe ese tipo de queso");
     }
 
-    ItemEntity       tipoQueso = tipoQuesoOptional.get();
-    List<LoteEntity> lotes     = loteRepository.findByItemAndEstadoAndMostrar(tipoQueso, Status.Terminado.name(), true);
+    ItemEntity        tipoQueso = tipoQuesoOptional.get();
+    List<BatchEntity> lotes     = loteRepository.findByItemAndEstadoAndMostrar(tipoQueso, Status.Terminado.name(), true);
     if (lotes.isEmpty()) {
       throw new RuntimeException("No hay ningún lote para despachar");
     }
@@ -165,27 +166,27 @@ public class DespachoService {
     Integer totalCuartos = despachoRequest.getTotalCuartos();
     int contador = 0;
 
-    despachoEntity.setCantidadTotal(totalEntero + totalMedio + totalCuartos);
+    dispatchEntity.setCantidadTotal(totalEntero + totalMedio + totalCuartos);
 
     while (totalEntero > 0 || totalMedio > 0 || totalCuartos > 0) {
       if (lotes.size() - 1 < contador) {
         throw new RuntimeException("No hay suficientes lotes para despachar la cantidad de quesos requeridos");
       }
-      DetalleDespachoEntity detalleDespachoEntity = new DetalleDespachoEntity();
-      LoteEntity lote = lotes.get(contador);
-      boolean modificado = false;
+      DispatchDetailEntity dispatchDetailEntity = new DispatchDetailEntity();
+      BatchEntity          lote                 = lotes.get(contador);
+      boolean               modificado            = false;
 
-      Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findByLote(lote);
+      Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findByLote(lote);
       if (elaboracionEntityOptional.isEmpty()) {
         throw new EntityNotFoundException("No se encontró la elaboración del lote");
       }
-      ElaboracionEntity elaboracion = elaboracionEntityOptional.get();
+      ProductionEntity elaboracion = elaboracionEntityOptional.get();
 
       AtomicInteger enterosLote = new AtomicInteger(0);
       AtomicInteger mediosLote = new AtomicInteger(0);
       AtomicInteger cuartosLote = new AtomicInteger(0);
 
-      DetalleCorteEntity corte = elaboracion.getDetalleCorte();
+      CutDetailEntity corte = elaboracion.getDetalleCorte();
       if (corte.getCorte().equals(CutType.Whole.name())) {
         enterosLote.addAndGet(lote.getUnidades());
       } else if (corte.getCorte().equals(CutType.Medio.name())) {
@@ -196,7 +197,7 @@ public class DespachoService {
 
       if (enterosLote.get() > 0) {
         int diferencia = totalEntero - enterosLote.get();
-        detalleDespachoEntity.setCantidadEnteros(diferencia > 0 ? enterosLote.get() : totalEntero);
+        dispatchDetailEntity.setCantidadEnteros(diferencia > 0 ? enterosLote.get() : totalEntero);
         lote.setUnidades(lote.getUnidades() - (diferencia > 0 ? enterosLote.get() : totalEntero));
         enterosLote.set(diferencia >= 0 ? 0 : enterosLote.get() - diferencia);
         totalEntero = Math.max(diferencia, 0);
@@ -205,7 +206,7 @@ public class DespachoService {
 
       if (mediosLote.get() > 0) {
         int diferencia = totalMedio - mediosLote.get();
-        detalleDespachoEntity.setCantidadMedios(diferencia > 0 ? mediosLote.get() : totalMedio);
+        dispatchDetailEntity.setCantidadMedios(diferencia > 0 ? mediosLote.get() : totalMedio);
         lote.setUnidades(lote.getUnidades() - (diferencia > 0 ? mediosLote.get() : totalMedio));
         totalMedio = Math.max(diferencia, 0);
         mediosLote.set(diferencia >= 0 ? 0 : mediosLote.get() - diferencia);
@@ -214,7 +215,7 @@ public class DespachoService {
 
       if (cuartosLote.get() > 0) {
         int diferencia = totalCuartos - cuartosLote.get();
-        detalleDespachoEntity.setCantidadCuartos(diferencia > 0 ? cuartosLote.get() : totalCuartos);
+        dispatchDetailEntity.setCantidadCuartos(diferencia > 0 ? cuartosLote.get() : totalCuartos);
         lote.setUnidades(lote.getUnidades() - (diferencia > 0 ? cuartosLote.get() : totalCuartos));
         totalCuartos = Math.max(diferencia, 0);
         cuartosLote.set(diferencia >= 0 ? 0 : cuartosLote.get() - diferencia);
@@ -226,74 +227,74 @@ public class DespachoService {
           lote.setEstado(Status.Despachado.name());
         }
 
-        detalleDespachoEntity.setLote(lote);
-        detalleDespachoEntity.setDespacho(despachoEntity);
-        despachoEntity.getLstDetallesDespacho().add(detalleDespachoEntity);
+        dispatchDetailEntity.setLote(lote);
+        dispatchDetailEntity.setDespacho(dispatchEntity);
+        dispatchEntity.getLstDetallesDespacho().add(dispatchDetailEntity);
       }
       contador ++;
     }
 
-    vehiculoRepository.save(vehiculoEntity);
-    usuarioRepository.save(usuarioEntity);
-    return modelMapper.map(despachoRepository.save(despachoEntity), DispatchResponse.class);
+    vehiculoRepository.save(vehicleEntity);
+    usuarioRepository.save(userEntity);
+    return modelMapper.map(despachoRepository.save(dispatchEntity), DispatchResponse.class);
   }
 
   public DispatchResponse put(DispatchUpdateRequest despachoRequest, Long id) {
-    Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
     }
-    DespachoEntity despachoEntity = despachoEntityOptional.get();
+    DispatchEntity dispatchEntity = despachoEntityOptional.get();
 
-    if (!despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
+    if (!dispatchEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
       throw new RuntimeException("No se puede modificar un despacho que está entregado o en proceso");
     }
 
-    Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(despachoRequest.getIdVehiculo());
+    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findById(despachoRequest.getIdVehiculo());
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el vehículo");
     }
-    VehiculoEntity vehiculoEntity = vehiculoEntityOptional.get();
-    if (!vehiculoEntity.getDisponible()) {
+    VehicleEntity vehicleEntity = vehiculoEntityOptional.get();
+    if (!vehicleEntity.getDisponible()) {
       throw new RuntimeException("El vehículo ya se encuentra en uso");
     }
-    despachoEntity.setVehiculo(vehiculoEntityOptional.get());
+    dispatchEntity.setVehiculo(vehiculoEntityOptional.get());
 
-    Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(despachoRequest.getIdDestino());
+    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(despachoRequest.getIdDestino());
     if (destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el destino");
     }
-    despachoEntity.setDestino(destinoEntityOptional.get());
+    dispatchEntity.setDestino(destinoEntityOptional.get());
 
-    return modelMapper.map(despachoRepository.save(despachoEntity), DispatchResponse.class);
+    return modelMapper.map(despachoRepository.save(dispatchEntity), DispatchResponse.class);
   }
 
   public DispatchResponse delete(Long id) {
-    Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
     }
 
-    DespachoEntity despachoEntity = despachoEntityOptional.get();
+    DispatchEntity dispatchEntity = despachoEntityOptional.get();
 
-    if (despachoEntity.getEstado().equals(DispatchStatus.Entregando.name())) {
+    if (dispatchEntity.getEstado().equals(DispatchStatus.Entregando.name())) {
       throw new RuntimeException("No se puede eliminar un despacho que está siendo entregado");
     }
-    if (despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
-      despachoEntity.getUsuario().setIsDispatching(false);
-      usuarioRepository.save(despachoEntity.getUsuario());
-      despachoEntity.getVehiculo().setDisponible(true);
-      vehiculoRepository.save(despachoEntity.getVehiculo());
+    if (dispatchEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
+      dispatchEntity.getUsuario().setIsDispatching(false);
+      usuarioRepository.save(dispatchEntity.getUsuario());
+      dispatchEntity.getVehiculo().setDisponible(true);
+      vehiculoRepository.save(dispatchEntity.getVehiculo());
     }
 
-    if (!despachoEntity.getLstDetallesDespacho().isEmpty()) {
-      despachoEntity.getLstDetallesDespacho().forEach(detalle -> {
-        Optional<LoteEntity> loteEntityOptional = loteRepository.findById(detalle.getLote().getId());
+    if (!dispatchEntity.getLstDetallesDespacho().isEmpty()) {
+      dispatchEntity.getLstDetallesDespacho().forEach(detalle -> {
+        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(detalle.getLote().getId());
         if (loteEntityOptional.isEmpty()) {
           throw new EntityNotFoundException("No se ha encontrado el lote del detalle");
         }
 
-        if (despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
+        if (dispatchEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
           if (loteEntityOptional.get().getElaboracion().getDetalleCorte().getCorte().equals(CutType.Whole.name())) {
             loteEntityOptional.get().setUnidades(loteEntityOptional.get().getUnidades() + detalle.getCantidadEnteros());
           } else  if (loteEntityOptional.get().getElaboracion().getDetalleCorte().getCorte().equals(CutType.Medio.name())) {
@@ -313,8 +314,8 @@ public class DespachoService {
     }
 
     try{
-      despachoRepository.delete(despachoEntity);
-      return modelMapper.map(despachoEntity, DispatchResponse.class);
+      despachoRepository.delete(dispatchEntity);
+      return modelMapper.map(dispatchEntity, DispatchResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -330,7 +331,7 @@ public class DespachoService {
     informeDespachoResponse.setCantidadTotalEnterosCremoso(0);
     informeDespachoResponse.setTotalUnidadesDespachadas(0);
 
-    List<DestinoEntity> destinoEntities = destinoRepository.findAll();
+    List<DestinationEntity> destinoEntities = destinoRepository.findAll();
     if (destinoEntities.isEmpty()) {
       destinoEntities = new ArrayList<>();
     }
@@ -338,44 +339,44 @@ public class DespachoService {
 
     List<ReportDetailDespacho> detalleInformeDespachos = new ArrayList<>();
     informeDespachoResponse.setDetallesDespacho(detalleInformeDespachos);
-    for (DestinoEntity destinoEntity : destinoEntities) {
+    for (DestinationEntity destinationEntity : destinoEntities) {
       ReportDetailDespacho detalleInformeDespacho = new ReportDetailDespacho();
-      detalleInformeDespacho.setDestino(modelMapper.map(destinoEntity, DestinationResponse.class));
+      detalleInformeDespacho.setDestino(modelMapper.map(destinationEntity, DestinationResponse.class));
       detalleInformeDespacho.setCantidadPategras(0);
       detalleInformeDespacho.setCantidadBarra(0);
       detalleInformeDespacho.setCantidadMediosCremoso(0);
       detalleInformeDespacho.setCantidadCuartosCremoso(0);
       detalleInformeDespacho.setCantidadEnterosCremoso(0);
 
-      List<DespachoEntity> despachoEntities = despachoRepository.findByDestinoAndFechaBetween(destinoEntity, fechaInicio, fechaFin);
-      for (DespachoEntity despachoEntity : despachoEntities) {
+      List<DispatchEntity> despachoEntities = despachoRepository.findByDestinoAndFechaBetween(destinationEntity, fechaInicio, fechaFin);
+      for (DispatchEntity dispatchEntity : despachoEntities) {
         informeDespachoResponse.setCantidadDespachos(informeDespachoResponse.getCantidadDespachos() + 1);
-        informeDespachoResponse.setTotalUnidadesDespachadas(informeDespachoResponse.getTotalUnidadesDespachadas() + despachoEntity.getCantidadTotal());
+        informeDespachoResponse.setTotalUnidadesDespachadas(informeDespachoResponse.getTotalUnidadesDespachadas() + dispatchEntity.getCantidadTotal());
 
 
-        if (despachoEntity.getQueso().equals(Cheese.Pategras.name())) {
-          for (DetalleDespachoEntity detalleDespachoEntity : despachoEntity.getLstDetallesDespacho()) {
-            informeDespachoResponse.setCantidadTotalPategras(informeDespachoResponse.getCantidadTotalPategras() + detalleDespachoEntity.getCantidadEnteros());
-            detalleInformeDespacho.setCantidadPategras(detalleInformeDespacho.getCantidadPategras() + detalleDespachoEntity.getCantidadEnteros());
+        if (dispatchEntity.getQueso().equals(Cheese.Pategras.name())) {
+          for (DispatchDetailEntity dispatchDetailEntity : dispatchEntity.getLstDetallesDespacho()) {
+            informeDespachoResponse.setCantidadTotalPategras(informeDespachoResponse.getCantidadTotalPategras() + dispatchDetailEntity.getCantidadEnteros());
+            detalleInformeDespacho.setCantidadPategras(detalleInformeDespacho.getCantidadPategras() + dispatchDetailEntity.getCantidadEnteros());
           }
-        } else if (despachoEntity.getQueso().equals(Cheese.Barra.name())) {
-          for (DetalleDespachoEntity detalleDespachoEntity : despachoEntity.getLstDetallesDespacho()) {
-            informeDespachoResponse.setCantidadTotalBarra(informeDespachoResponse.getCantidadTotalBarra() + detalleDespachoEntity.getCantidadEnteros());
-            detalleInformeDespacho.setCantidadBarra(detalleInformeDespacho.getCantidadBarra() + detalleDespachoEntity.getCantidadEnteros());
+        } else if (dispatchEntity.getQueso().equals(Cheese.Barra.name())) {
+          for (DispatchDetailEntity dispatchDetailEntity : dispatchEntity.getLstDetallesDespacho()) {
+            informeDespachoResponse.setCantidadTotalBarra(informeDespachoResponse.getCantidadTotalBarra() + dispatchDetailEntity.getCantidadEnteros());
+            detalleInformeDespacho.setCantidadBarra(detalleInformeDespacho.getCantidadBarra() + dispatchDetailEntity.getCantidadEnteros());
           }
         } else {
-          for (DetalleDespachoEntity detalleDespachoEntity : despachoEntity.getLstDetallesDespacho()) {
-            if (detalleDespachoEntity.getCantidadEnteros() != null) {
-              informeDespachoResponse.setCantidadTotalEnterosCremoso(informeDespachoResponse.getCantidadTotalEnterosCremoso() + detalleDespachoEntity.getCantidadEnteros());
-              detalleInformeDespacho.setCantidadEnterosCremoso(detalleInformeDespacho.getCantidadEnterosCremoso() + detalleDespachoEntity.getCantidadEnteros());
+          for (DispatchDetailEntity dispatchDetailEntity : dispatchEntity.getLstDetallesDespacho()) {
+            if (dispatchDetailEntity.getCantidadEnteros() != null) {
+              informeDespachoResponse.setCantidadTotalEnterosCremoso(informeDespachoResponse.getCantidadTotalEnterosCremoso() + dispatchDetailEntity.getCantidadEnteros());
+              detalleInformeDespacho.setCantidadEnterosCremoso(detalleInformeDespacho.getCantidadEnterosCremoso() + dispatchDetailEntity.getCantidadEnteros());
             }
-            if (detalleDespachoEntity.getCantidadMedios() != null) {
-              informeDespachoResponse.setCantidadTotalMediosCremoso(informeDespachoResponse.getCantidadTotalMediosCremoso() + detalleDespachoEntity.getCantidadMedios());
-              detalleInformeDespacho.setCantidadMediosCremoso(detalleInformeDespacho.getCantidadMediosCremoso() + detalleDespachoEntity.getCantidadMedios());
+            if (dispatchDetailEntity.getCantidadMedios() != null) {
+              informeDespachoResponse.setCantidadTotalMediosCremoso(informeDespachoResponse.getCantidadTotalMediosCremoso() + dispatchDetailEntity.getCantidadMedios());
+              detalleInformeDespacho.setCantidadMediosCremoso(detalleInformeDespacho.getCantidadMediosCremoso() + dispatchDetailEntity.getCantidadMedios());
             }
-            if (detalleDespachoEntity.getCantidadCuartos() != null) {
-              informeDespachoResponse.setCantidadTotalCuartosCremoso(informeDespachoResponse.getCantidadTotalCuartosCremoso() + detalleDespachoEntity.getCantidadCuartos());
-              detalleInformeDespacho.setCantidadCuartosCremoso(detalleInformeDespacho.getCantidadCuartosCremoso() + detalleDespachoEntity.getCantidadCuartos());
+            if (dispatchDetailEntity.getCantidadCuartos() != null) {
+              informeDespachoResponse.setCantidadTotalCuartosCremoso(informeDespachoResponse.getCantidadTotalCuartosCremoso() + dispatchDetailEntity.getCantidadCuartos());
+              detalleInformeDespacho.setCantidadCuartosCremoso(detalleInformeDespacho.getCantidadCuartosCremoso() + dispatchDetailEntity.getCantidadCuartos());
             }
           }
         }
@@ -391,28 +392,28 @@ public class DespachoService {
   }
 
   public DispatchResponse changeEstado(Long id) {
-    Optional<DespachoEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
     }
-    DespachoEntity despachoEntity = despachoEntityOptional.get();
+    DispatchEntity dispatchEntity = despachoEntityOptional.get();
 
 
-    VehiculoEntity vehiculoEntity = despachoEntity.getVehiculo();
-    UsuarioEntity usuarioEntity = despachoEntity.getUsuario();
+    VehicleEntity vehicleEntity = dispatchEntity.getVehiculo();
+    UserEntity    userEntity    = dispatchEntity.getUsuario();
 
-    if (despachoEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
-      despachoEntity.setEstado(DispatchStatus.Entregando.name());
-    } else if (despachoEntity.getEstado().equals(DispatchStatus.Entregando.name())) {
-      despachoEntity.setEstado(DispatchStatus.Despachado.name());
-      vehiculoEntity.setDisponible(true);
-      usuarioEntity.setIsDispatching(false);
+    if (dispatchEntity.getEstado().equals(DispatchStatus.PorEntregar.name())) {
+      dispatchEntity.setEstado(DispatchStatus.Entregando.name());
+    } else if (dispatchEntity.getEstado().equals(DispatchStatus.Entregando.name())) {
+      dispatchEntity.setEstado(DispatchStatus.Despachado.name());
+      vehicleEntity.setDisponible(true);
+      userEntity.setIsDispatching(false);
 
-      usuarioRepository.save(usuarioEntity);
-      vehiculoRepository.save(vehiculoEntity);
+      usuarioRepository.save(userEntity);
+      vehiculoRepository.save(vehicleEntity);
     }
 
 
-    return modelMapper.map(despachoRepository.save(despachoEntity), DispatchResponse.class);
+    return modelMapper.map(despachoRepository.save(dispatchEntity), DispatchResponse.class);
   }
 }

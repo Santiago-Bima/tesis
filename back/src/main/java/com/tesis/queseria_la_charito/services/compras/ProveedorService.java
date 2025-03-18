@@ -3,7 +3,7 @@ package com.tesis.queseria_la_charito.services.compras;
 import com.tesis.queseria_la_charito.dtos.request.purchase.ProviderRequest;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ProviderResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
+import com.tesis.queseria_la_charito.entities.purchase.ProviderEntity;
 import com.tesis.queseria_la_charito.models.AccountType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.compra.ProveedorRepository;
@@ -35,7 +35,7 @@ public class ProveedorService {
       throw new EntityNotFoundException("No se ha encontrado el insumo");
     }
 
-    List<ProveedorEntity>  lstProveedores         = repository.findByInsumoAndMostrar(itemEntityOptional.get(), true);
+    List<ProviderEntity>   lstProveedores         = repository.findByInsumoAndMostrar(itemEntityOptional.get(), true);
     List<ProviderResponse> lstProveedoresResponse = new ArrayList<>();
     lstProveedores.forEach(proveedor -> {
       ProviderResponse proveedorResponse = modelMapper.map(proveedor, ProviderResponse.class);
@@ -46,7 +46,7 @@ public class ProveedorService {
   }
 
   public ProviderResponse getById(Long id) {
-    Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
+    Optional<ProviderEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if (proveedorEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el proveedor");
     }
@@ -55,66 +55,66 @@ public class ProveedorService {
   }
 
   public ProviderResponse post(ProviderRequest proveedor) {
-    ProveedorEntity proveedorEntity = new ProveedorEntity();
-    proveedorEntity.setCuit(proveedor.getCuit());
-    proveedorEntity.setEmail(proveedor.getEmail());
-    proveedorEntity.setUnidadMedida(proveedor.getUnidadMedida());
-    proveedorEntity.setCantidadMedida(proveedor.getCantidadMedida());
-    proveedorEntity.setCosto(proveedor.getCosto());
-    proveedorEntity.setBanco(proveedor.getBanco());
-    proveedorEntity.setAlias(proveedor.getAlias());
+    ProviderEntity providerEntity = new ProviderEntity();
+    providerEntity.setCuit(proveedor.getCuit());
+    providerEntity.setEmail(proveedor.getEmail());
+    providerEntity.setUnidadMedida(proveedor.getUnidadMedida());
+    providerEntity.setCantidadMedida(proveedor.getCantidadMedida());
+    providerEntity.setCosto(proveedor.getCosto());
+    providerEntity.setBanco(proveedor.getBanco());
+    providerEntity.setAlias(proveedor.getAlias());
 
     Optional<ItemEntity> itemEntityOptional = itemRepository.findById(proveedor.getIdInsumo());
     if (itemEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el insumo");
     }
-    proveedorEntity.setInsumo(itemEntityOptional.get());
+    providerEntity.setInsumo(itemEntityOptional.get());
 
-    proveedorEntity.setNombre(proveedor.getNombre());
-    proveedorEntity.setTelefono(proveedor.getTelefono());
-    proveedorEntity.setTipoCuenta(proveedor.getTipoCuenta().equals(AccountType.Corriente.name()) ? "Cuenta Corriente" : "Caja de Ahorro");
-    proveedorEntity.setMostrar(true);
+    providerEntity.setNombre(proveedor.getNombre());
+    providerEntity.setTelefono(proveedor.getTelefono());
+    providerEntity.setTipoCuenta(proveedor.getTipoCuenta().equals(AccountType.Corriente.name()) ? "Cuenta Corriente" : "Caja de Ahorro");
+    providerEntity.setMostrar(true);
 
-    return modelMapper.map(repository.save(proveedorEntity), ProviderResponse.class);
+    return modelMapper.map(repository.save(providerEntity), ProviderResponse.class);
   }
 
   public ProviderResponse put(ProviderRequest proveedor, Long id) {
-    Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
+    Optional<ProviderEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if(proveedorEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el proveedor");
     }
 
-    ProveedorEntity proveedorEntity = proveedorEntityOptional.get();
-    proveedorEntity.setCuit(proveedor.getCuit());
-    proveedorEntity.setEmail(proveedor.getEmail());
-    proveedorEntity.setCosto(proveedor.getCosto());
-    proveedorEntity.setBanco(proveedor.getBanco());
-    proveedorEntity.setAlias(proveedor.getAlias());
-    proveedorEntity.setUnidadMedida(proveedor.getUnidadMedida());
-    proveedorEntity.setCantidadMedida(proveedor.getCantidadMedida());
+    ProviderEntity providerEntity = proveedorEntityOptional.get();
+    providerEntity.setCuit(proveedor.getCuit());
+    providerEntity.setEmail(proveedor.getEmail());
+    providerEntity.setCosto(proveedor.getCosto());
+    providerEntity.setBanco(proveedor.getBanco());
+    providerEntity.setAlias(proveedor.getAlias());
+    providerEntity.setUnidadMedida(proveedor.getUnidadMedida());
+    providerEntity.setCantidadMedida(proveedor.getCantidadMedida());
 
     Optional<ItemEntity> itemEntityOptional = itemRepository.findById(proveedor.getIdInsumo());
     if (itemEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el insumo");
     }
-    proveedorEntity.setInsumo(itemEntityOptional.get());
+    providerEntity.setInsumo(itemEntityOptional.get());
 
-    proveedorEntity.setNombre(proveedor.getNombre());
-    proveedorEntity.setTelefono(proveedor.getTelefono());
-    proveedorEntity.setTipoCuenta(proveedor.getTipoCuenta());
+    providerEntity.setNombre(proveedor.getNombre());
+    providerEntity.setTelefono(proveedor.getTelefono());
+    providerEntity.setTipoCuenta(proveedor.getTipoCuenta());
 
-    return modelMapper.map(repository.save(proveedorEntity), ProviderResponse.class);
+    return modelMapper.map(repository.save(providerEntity), ProviderResponse.class);
   }
 
   public ProviderResponse delete(Long id) {
-    Optional<ProveedorEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
+    Optional<ProviderEntity> proveedorEntityOptional = repository.findByIdAndMostrar(id, true);
     if (proveedorEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el proveedor");
     }
 
-    ProveedorEntity proveedorEntity = proveedorEntityOptional.get();
-    proveedorEntity.setMostrar(false);
+    ProviderEntity providerEntity = proveedorEntityOptional.get();
+    providerEntity.setMostrar(false);
 
-    return modelMapper.map(repository.save(proveedorEntity), ProviderResponse.class);
+    return modelMapper.map(repository.save(providerEntity), ProviderResponse.class);
   }
 }

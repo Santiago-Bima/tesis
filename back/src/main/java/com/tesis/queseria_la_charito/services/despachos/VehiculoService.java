@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.services.despachos;
 
 import com.tesis.queseria_la_charito.dtos.response.dispatch.VehicleResponse;
-import com.tesis.queseria_la_charito.entities.despacho.VehiculoEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.VehicleEntity;
 import com.tesis.queseria_la_charito.repositories.despacho.VehiculoRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,7 +25,7 @@ public class VehiculoService {
 
   public List<VehicleResponse> getAll() {
     List<VehicleResponse> lstVehiculosResponse = new ArrayList<>();
-    List<VehiculoEntity>  lstVehiculosEntities = vehiculoRepository.findAll();
+    List<VehicleEntity>   lstVehiculosEntities = vehiculoRepository.findAll();
 
     if (lstVehiculosEntities.isEmpty()) {
       return new ArrayList<>();
@@ -39,7 +39,7 @@ public class VehiculoService {
   }
 
   public VehicleResponse getById(Long id) {
-    Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
+    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityExistsException("No se ha encontrado el vehículo");
     }
@@ -48,47 +48,47 @@ public class VehiculoService {
   }
 
   public VehicleResponse post(String matricula) {
-    Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findByMatricula(matricula);
+    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findByMatricula(matricula);
     if (vehiculoEntityOptional.isPresent()) {
       throw new EntityExistsException("Ya existe un vehículo con la misma matrícula");
     }
 
-    VehiculoEntity vehiculoEntity = new VehiculoEntity();
-    vehiculoEntity.setDisponible(true);
-    vehiculoEntity.setMatricula(matricula);
+    VehicleEntity vehicleEntity = new VehicleEntity();
+    vehicleEntity.setDisponible(true);
+    vehicleEntity.setMatricula(matricula);
 
-    return modelMapper.map(vehiculoRepository.save(vehiculoEntity), VehicleResponse.class);
+    return modelMapper.map(vehiculoRepository.save(vehicleEntity), VehicleResponse.class);
   }
 
   public VehicleResponse delete(Long id) {
-    Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
+    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if(vehiculoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el vehículo");
     }
 
-    VehiculoEntity vehiculoEntity = vehiculoEntityOptional.get();
+    VehicleEntity vehicleEntity = vehiculoEntityOptional.get();
 
-    if(!vehiculoEntity.getLstDespachos().isEmpty()){
+    if(!vehicleEntity.getLstDespachos().isEmpty()){
       throw new IllegalStateException("No se puede eliminar el item porque tiene registros de despachos existentes");
     }
 
     try {
-      vehiculoRepository.delete(vehiculoEntity);
-      return modelMapper.map(vehiculoEntity, VehicleResponse.class);
+      vehiculoRepository.delete(vehicleEntity);
+      return modelMapper.map(vehicleEntity, VehicleResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
   public VehicleResponse put(Long id) {
-    Optional<VehiculoEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
+    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findById(id);
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityExistsException("No se ha encontrado el vehículo");
     }
 
-    VehiculoEntity vehiculoEntity = vehiculoEntityOptional.get();
-    vehiculoEntity.setDisponible(!vehiculoEntity.getDisponible());
+    VehicleEntity vehicleEntity = vehiculoEntityOptional.get();
+    vehicleEntity.setDisponible(!vehicleEntity.getDisponible());
 
-    return modelMapper.map(vehiculoRepository.save(vehiculoEntity), VehicleResponse.class);
+    return modelMapper.map(vehiculoRepository.save(vehicleEntity), VehicleResponse.class);
   }
 }

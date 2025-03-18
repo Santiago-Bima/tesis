@@ -3,8 +3,8 @@ package com.tesis.queseria_la_charito.services.Auth;
 import com.tesis.queseria_la_charito.dtos.request.LoginRequest;
 import com.tesis.queseria_la_charito.dtos.request.RegisterRequest;
 import com.tesis.queseria_la_charito.dtos.response.AuthResponse;
-import com.tesis.queseria_la_charito.entities.usuario.RolEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.user.RoleEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.repositories.usuario.RolRepository;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,11 +46,11 @@ public class AuthService {
   }
 
   public AuthResponse register(RegisterRequest request) {
-    RolEntity rol = rolRepository.findByRol(request.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+    RoleEntity rol = rolRepository.findByRol(request.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
     String hashedPassword = passwordEncoder.encode(request.getPassword());
 
-    UsuarioEntity user = UsuarioEntity.builder()
+    UserEntity user = UserEntity.builder()
         .username(request.getUsername())
         .password(hashedPassword)
         .isDispatching(false)

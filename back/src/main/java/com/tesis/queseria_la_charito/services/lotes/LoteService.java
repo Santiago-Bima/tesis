@@ -4,10 +4,10 @@ import com.tesis.queseria_la_charito.dtos.request.BatchRequest;
 import com.tesis.queseria_la_charito.dtos.response.batch.BatchModificationResponse;
 import com.tesis.queseria_la_charito.dtos.response.stockControl.BatchControlResponse;
 import com.tesis.queseria_la_charito.dtos.response.batch.BatchResponse;
+import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.entities.LoteEntity;
-import com.tesis.queseria_la_charito.entities.ModificacionLoteEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.batch.BatchModificationEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.models.Status;
 import com.tesis.queseria_la_charito.models.Cheese;
 import com.tesis.queseria_la_charito.models.ItemType;
@@ -50,20 +50,20 @@ public class LoteService {
         }
 
         List<BatchResponse> listaLotesResponse = new ArrayList<>();
-        List<LoteEntity>    listaLotesEntity   = loteRepository.findByItemAndEstadoAndMostrar(itemEntityOptional.get(), estado, true);
+        List<BatchEntity>   listaLotesEntity   = loteRepository.findByItemAndEstadoAndMostrar(itemEntityOptional.get(), estado, true);
         if (listaLotesEntity.isEmpty()) {
             return new ArrayList<>();
         }
 
-        for (LoteEntity loteEntity : listaLotesEntity) {
-            listaLotesResponse.add(modelMapper.map(loteEntity, BatchResponse.class));
+        for (BatchEntity batchEntity : listaLotesEntity) {
+            listaLotesResponse.add(modelMapper.map(batchEntity, BatchResponse.class));
         }
 
         return listaLotesResponse;
     }
 
     public BatchResponse getLoteById(String id) {
-        Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
+        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró un lote con ese código");
         }
@@ -72,7 +72,7 @@ public class LoteService {
     }
 
     public BatchResponse postLote(Long id_item, Integer unidades) {
-        LoteEntity loteEntity = new LoteEntity();
+        BatchEntity batchEntity = new BatchEntity();
 
         Optional<ItemEntity> itemEntityOptional = itemRepository.findById(id_item);
         if (itemEntityOptional.isEmpty()){
@@ -80,77 +80,77 @@ public class LoteService {
         }
         ItemEntity itemEntity = itemEntityOptional.get();
 
-        loteEntity.setItem(itemEntity);
-        loteEntity.setUnidades(unidades);
-        loteEntity.setMostrar(true);
+        batchEntity.setItem(itemEntity);
+        batchEntity.setUnidades(unidades);
+        batchEntity.setMostrar(true);
         String inicial;
         if(Objects.equals(itemEntity.getTipo(), ItemType.Insumo.name())){
-            loteEntity.setEstado(Status.Disponible.name());
+            batchEntity.setEstado(Status.Disponible.name());
             inicial = "I";
         } else {
-            loteEntity.setEstado(Status.Elaborando.name());
+            batchEntity.setEstado(Status.Elaborando.name());
             inicial = "Q";
         }
 
-        String inicialItem = loteEntity.getItem().getNombre().substring(0, 1).toUpperCase();
+        String inicialItem = batchEntity.getItem().getNombre().substring(0, 1).toUpperCase();
         String cantidadLotes = String.valueOf(loteRepository.findAll().size());
 
-        loteEntity.setId(inicial + inicialItem + cantidadLotes);
+        batchEntity.setId(inicial + inicialItem + cantidadLotes);
 
-        return modelMapper.map(loteRepository.save(loteEntity), BatchResponse.class);
+        return modelMapper.map(loteRepository.save(batchEntity), BatchResponse.class);
     }
 
     public BatchResponse putLote(BatchRequest lote, String id) {
-        ModificacionLoteEntity modificacionesLotesEntity = new ModificacionLoteEntity();
+        BatchModificationEntity modificacionesLotesEntity = new BatchModificationEntity();
 
-        Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
+        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(id);
         if(loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró ningún lote");
         }
 
         
-        LoteEntity loteEntity = loteEntityOptional.get();
+        BatchEntity batchEntity = loteEntityOptional.get();
 
         modificacionesLotesEntity.setMotivo(lote.getMotivos());
-        modificacionesLotesEntity.setCantidadPrevia(loteEntity.getUnidades());
+        modificacionesLotesEntity.setCantidadPrevia(batchEntity.getUnidades());
         modificacionesLotesEntity.setFecha(lote.getFecha());
         modificacionesLotesEntity.setNuevo(true);
 
-        Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findByUsername(lote.getUsuario());
+        Optional<UserEntity> usuarioEntity = usuarioRepository.findByUsername(lote.getUsuario());
         if (usuarioEntity.isEmpty()) {
             throw new EntityNotFoundException("No se ha encontrado el usuario");
         }
         modificacionesLotesEntity.setUsuario(usuarioEntity.get());
 
-        loteEntity.setUnidades(lote.getUnidades());
-        if (loteEntity.getUnidades() == 0) {
-            loteEntity.setEstado(Status.Despachado.name());
-        } else if (loteEntity.getEstado().equals(Status.Despachado.name())){
-            loteEntity.setEstado(Status.Terminado.name());
+        batchEntity.setUnidades(lote.getUnidades());
+        if (batchEntity.getUnidades() == 0) {
+            batchEntity.setEstado(Status.Despachado.name());
+        } else if (batchEntity.getEstado().equals(Status.Despachado.name())){
+            batchEntity.setEstado(Status.Terminado.name());
         }
 
-        modificacionesLotesEntity.setCantidadPosterior(loteEntity.getUnidades());
-        modificacionesLotesEntity.setLote(loteEntity);
+        modificacionesLotesEntity.setCantidadPosterior(batchEntity.getUnidades());
+        modificacionesLotesEntity.setLote(batchEntity);
 
         modificacionesLotesRepository.save(modificacionesLotesEntity);
-        return modelMapper.map(loteRepository.save(loteEntity), BatchResponse.class);
+        return modelMapper.map(loteRepository.save(batchEntity), BatchResponse.class);
     }
 
     public BatchResponse deleteLote(String id) {
-        Optional<LoteEntity> loteEntityOptional = loteRepository.findById(id);
+        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró el lote");
         }
 
-        LoteEntity loteEntity = loteEntityOptional.get();
+        BatchEntity batchEntity = loteEntityOptional.get();
 
-        if (loteEntity.getUnidades() > 0 && loteEntity.getElaboracion() != null) {
+        if (batchEntity.getUnidades() > 0 && batchEntity.getElaboracion() != null) {
             throw new IllegalStateException("No se puede eliminar el lote porque aún contiene unidades.");
         }
 
         try{
-            loteEntity.setMostrar(false);
-            return modelMapper.map(loteRepository.save(loteEntity), BatchResponse.class);
+            batchEntity.setMostrar(false);
+            return modelMapper.map(loteRepository.save(batchEntity), BatchResponse.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -159,7 +159,7 @@ public class LoteService {
     public List<BatchControlResponse> getUnidades(String item) {
         List<BatchControlResponse> lotes = new ArrayList<>();
 
-        List<LoteEntity> lotesEntities = new ArrayList<>();
+        List<BatchEntity> lotesEntities = new ArrayList<>();
 
         if(item == null) {
             lotesEntities = loteRepository.findAll();
@@ -179,16 +179,16 @@ public class LoteService {
         }
 
 
-        for (LoteEntity loteEntity: lotesEntities) {
+        for (BatchEntity batchEntity : lotesEntities) {
             BatchControlResponse lote = new BatchControlResponse();
-            lote.setUnidades(loteEntity.getUnidades());
-            lote.setItem(loteEntity.getItem().getNombre());
-            lote.setId(loteEntity.getId());
+            lote.setUnidades(batchEntity.getUnidades());
+            lote.setItem(batchEntity.getItem().getNombre());
+            lote.setId(batchEntity.getId());
 
             if (lote.getItem().equals(Cheese.Pategras.name()) || lote.getItem().equals(Cheese.Cremoso.name()) || lote.getItem().equals(Cheese.Barra.name())) {
-                if (loteEntity.getElaboracion() != null) {
-                    if (loteEntity.getElaboracion().getDetalleCorte() != null) {
-                        lote.setCorte(loteEntity.getElaboracion().getDetalleCorte().getCorte());
+                if (batchEntity.getElaboracion() != null) {
+                    if (batchEntity.getElaboracion().getDetalleCorte() != null) {
+                        lote.setCorte(batchEntity.getElaboracion().getDetalleCorte().getCorte());
                     }
                 }
             }
@@ -200,14 +200,14 @@ public class LoteService {
     }
 
     public List<BatchModificationResponse> getModificaciones(boolean validate) {
-        List<ModificacionLoteEntity> modificacionesLotesEntityList = modificacionLotesRepository.findAllByOrderByFechaDescIdDesc();
+        List<BatchModificationEntity> modificacionesLotesEntityList = modificacionLotesRepository.findAllByOrderByFechaDescIdDesc();
         if (modificacionesLotesEntityList.isEmpty()) {
             return new ArrayList<>();
         }
 
         List<BatchModificationResponse> modificacionesLotesResponses = new ArrayList<>();
 
-        for (ModificacionLoteEntity modificacionesLotesEntity : modificacionesLotesEntityList) {
+        for (BatchModificationEntity modificacionesLotesEntity : modificacionesLotesEntityList) {
             modificacionesLotesResponses.add(modelMapper.map(modificacionesLotesEntity, BatchModificationResponse.class));
 
             if (!validate) {

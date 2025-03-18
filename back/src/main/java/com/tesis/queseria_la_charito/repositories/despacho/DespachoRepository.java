@@ -1,8 +1,8 @@
 package com.tesis.queseria_la_charito.repositories.despacho;
 
-import com.tesis.queseria_la_charito.entities.despacho.DespachoEntity;
-import com.tesis.queseria_la_charito.entities.despacho.DestinoEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DestinationEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DispatchEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DespachoRepository extends JpaRepository<DespachoEntity, Long> {
-  List<DespachoEntity> findByDestino(DestinoEntity destino);
-  List<DespachoEntity> findByDestinoAndFecha(DestinoEntity destino, LocalDate fecha);
-  List<DespachoEntity> findByDestinoAndFechaBetween(DestinoEntity destino, LocalDate fechaInicio, LocalDate fechaFin);
-  Optional<DespachoEntity> findByUsuarioAndEstadoNot(UsuarioEntity usuario, String estado);
+public interface DespachoRepository extends JpaRepository<DispatchEntity, Long> {
+  List<DispatchEntity> findByDestino(DestinationEntity destino);
+  List<DispatchEntity> findByDestinoAndFecha(DestinationEntity destino, LocalDate fecha);
+  List<DispatchEntity> findByDestinoAndFechaBetween(DestinationEntity destino, LocalDate fechaInicio, LocalDate fechaFin);
+  Optional<DispatchEntity> findByUsuarioAndEstadoNot(UserEntity usuario, String estado);
 }

@@ -1,7 +1,7 @@
 package com.tesis.queseria_la_charito.services.formulas;
 
 import com.tesis.queseria_la_charito.dtos.response.formula.CheeseTypeResponse;
-import com.tesis.queseria_la_charito.entities.formula.TipoQuesoEntity;
+import com.tesis.queseria_la_charito.entities.formula.CheeseTypeEntity;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.formula.TipoQuesoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,20 +28,20 @@ public class ProductosService {
     public List<CheeseTypeResponse> getAll() {
         List<CheeseTypeResponse> listaTiposQuesosResponse = new ArrayList<>();
 
-        List<TipoQuesoEntity> tipoQuesoEntities = tipoQuesoRepository.findAll();
+        List<CheeseTypeEntity> tipoQuesoEntities = tipoQuesoRepository.findAll();
         if (tipoQuesoEntities.isEmpty()) {
             throw new EntityNotFoundException("No existen productos registrados");
         }
 
-        for (TipoQuesoEntity tipoQuesoEntity : tipoQuesoEntities) {
-            listaTiposQuesosResponse.add(modelMapper.map(tipoQuesoEntity, CheeseTypeResponse.class));
+        for (CheeseTypeEntity cheeseTypeEntity : tipoQuesoEntities) {
+            listaTiposQuesosResponse.add(modelMapper.map(cheeseTypeEntity, CheeseTypeResponse.class));
         }
 
         return listaTiposQuesosResponse;
     }
 
     public CheeseTypeResponse getById(Long id) {
-        Optional<TipoQuesoEntity> tipoQuesoResponseOptional = tipoQuesoRepository.findById(id);
+        Optional<CheeseTypeEntity> tipoQuesoResponseOptional = tipoQuesoRepository.findById(id);
         if (tipoQuesoResponseOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró el tipo de producto");
         }

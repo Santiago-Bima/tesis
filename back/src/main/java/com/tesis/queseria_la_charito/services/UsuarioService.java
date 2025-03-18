@@ -2,8 +2,8 @@ package com.tesis.queseria_la_charito.services;
 
 import com.tesis.queseria_la_charito.dtos.request.user.UserRequest;
 import com.tesis.queseria_la_charito.dtos.response.user.UserResponse;
-import com.tesis.queseria_la_charito.entities.usuario.RolEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.user.RoleEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.repositories.usuario.RolRepository;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
 import jakarta.persistence.EntityExistsException;
@@ -34,16 +34,16 @@ public class UsuarioService {
       throw new EntityExistsException("ya existe un usuario con el mismo nombre");
     }
 
-    UsuarioEntity usuarioEntity = modelMapper.map(usuario, UsuarioEntity.class);
+    UserEntity userEntity = modelMapper.map(usuario, UserEntity.class);
 
-    usuarioEntity.setMostrar(true);
-    usuarioEntity.setPassword(usuario.getPassword());
-    usuarioEntity.setIsDispatching(false);
+    userEntity.setMostrar(true);
+    userEntity.setPassword(usuario.getPassword());
+    userEntity.setIsDispatching(false);
 
-    RolEntity rol = rolRepository.findByRol(usuario.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-    usuarioEntity.setRol(rol);
+    RoleEntity rol = rolRepository.findByRol(usuario.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+    userEntity.setRol(rol);
 
-    return modelMapper.map(usuarioRepository.save(usuarioEntity), UserResponse.class);
+    return modelMapper.map(usuarioRepository.save(userEntity), UserResponse.class);
   }
 
   public UserResponse update(String nombre, String oldUsername) {
@@ -51,19 +51,19 @@ public class UsuarioService {
       throw new EntityExistsException("ya existe un usuario con el mismo nombre");
     }
 
-    Optional<UsuarioEntity> optionalUsuarioEntity = usuarioRepository.findByUsernameAndMostrar(oldUsername, true);
+    Optional<UserEntity> optionalUsuarioEntity = usuarioRepository.findByUsernameAndMostrar(oldUsername, true);
     if (optionalUsuarioEntity.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    UsuarioEntity usuarioEntity = optionalUsuarioEntity.get();
-    usuarioEntity.setUsername(nombre);
+    UserEntity userEntity = optionalUsuarioEntity.get();
+    userEntity.setUsername(nombre);
 
-    return modelMapper.map(usuarioRepository.save(usuarioEntity), UserResponse.class);
+    return modelMapper.map(usuarioRepository.save(userEntity), UserResponse.class);
   }
 
   public UserResponse getById(Long id) {
-    Optional<UsuarioEntity> optionalUsuarioEntity = usuarioRepository.findById(id);
+    Optional<UserEntity> optionalUsuarioEntity = usuarioRepository.findById(id);
     if (optionalUsuarioEntity.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
@@ -72,21 +72,21 @@ public class UsuarioService {
   }
 
   public List<UserResponse> getAll() {
-    List<UsuarioEntity> usuarioEntities = usuarioRepository.findByMostrarOrderByRolAsc(true);
+    List<UserEntity> usuarioEntities = usuarioRepository.findByMostrarOrderByRolAsc(true);
     if (usuarioEntities.isEmpty()) {
       return new ArrayList<>();
     }
 
     List<UserResponse> usuarioResponses = new ArrayList<>();
-    for (UsuarioEntity usuarioEntity : usuarioEntities) {
-      usuarioResponses.add(modelMapper.map(usuarioEntity, UserResponse.class));
+    for (UserEntity userEntity : usuarioEntities) {
+      usuarioResponses.add(modelMapper.map(userEntity, UserResponse.class));
     }
 
     return usuarioResponses;
   }
 
   public UserResponse obtenerUsuarioPorNombreYContrasena(String username, String password) {
-    Optional<UsuarioEntity> usuarioResponseOptional = usuarioRepository.findByUsernameAndPasswordAndMostrar(username, password, true);
+    Optional<UserEntity> usuarioResponseOptional = usuarioRepository.findByUsernameAndPasswordAndMostrar(username, password, true);
     if (usuarioResponseOptional.isEmpty()) {
       throw new EntityNotFoundException("Los datos son incorrectos");
     }
@@ -95,14 +95,14 @@ public class UsuarioService {
 
 
   public UserResponse delete(String username) {
-    Optional<UsuarioEntity> optionalUsuarioEntity = usuarioRepository.findByUsernameAndMostrar(username, true);
+    Optional<UserEntity> optionalUsuarioEntity = usuarioRepository.findByUsernameAndMostrar(username, true);
     if (optionalUsuarioEntity.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    UsuarioEntity usuarioEntity = optionalUsuarioEntity.get();
-    usuarioEntity.setMostrar(false);
+    UserEntity userEntity = optionalUsuarioEntity.get();
+    userEntity.setMostrar(false);
 
-    return modelMapper.map(usuarioRepository.save(usuarioEntity), UserResponse.class);
+    return modelMapper.map(usuarioRepository.save(userEntity), UserResponse.class);
   }
 }

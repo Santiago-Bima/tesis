@@ -1,9 +1,9 @@
-package com.tesis.queseria_la_charito.entities.usuario;
+package com.tesis.queseria_la_charito.entities.user;
 
-import com.tesis.queseria_la_charito.entities.ElaboracionEntity;
-import com.tesis.queseria_la_charito.entities.ModificacionLoteEntity;
-import com.tesis.queseria_la_charito.entities.controlStock.ControlStockEntity;
-import com.tesis.queseria_la_charito.entities.despacho.DespachoEntity;
+import com.tesis.queseria_la_charito.entities.batch.BatchModificationEntity;
+import com.tesis.queseria_la_charito.entities.production.ProductionEntity;
+import com.tesis.queseria_la_charito.entities.stockControl.StockControlEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DispatchEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "usuarios")
-public class UsuarioEntity implements UserDetails {
+@Table(name = "users")
+public class UserEntity implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,31 +38,31 @@ public class UsuarioEntity implements UserDetails {
   private String password;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "rol_id")
-  private RolEntity rol;
+  @JoinColumn(name = "role_id")
+  private RoleEntity role;
 
-  @Column(name = "mostrar")
-  private Boolean mostrar;
+  @Column(name = "show")
+  private Boolean show;
 
   @Column(name = "isDispatching")
   private Boolean isDispatching;
 
-  @OneToMany(mappedBy = "usuario", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-  private List<ElaboracionEntity> lstElaboraciones;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  private List<ProductionEntity> lstProductions;
 
-  @OneToMany(mappedBy = "usuario", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-  private List<ModificacionLoteEntity> lstModificacionesLotes;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  private List<BatchModificationEntity> lstBatchModifications;
 
-  @OneToMany(mappedBy = "usuario", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-  private List<ControlStockEntity> lstControlesStock;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  private List<StockControlEntity> lstStockControls;
 
-  @OneToMany(mappedBy = "usuario", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-  private List<DespachoEntity> lstDespachos;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+  private List<DispatchEntity> lstDispatches;
 
 
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Arrays.stream(rol.getRol().split(","))
-        .map(role -> new SimpleGrantedAuthority("ROLE_" + rol.getRol()))
+    return Arrays.stream(role.getRole().split(","))
+        .map(role -> new SimpleGrantedAuthority("ROLE_" + getRole()))
         .collect(Collectors.toList());
   }
 

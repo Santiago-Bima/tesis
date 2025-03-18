@@ -1,9 +1,10 @@
 package com.tesis.queseria_la_charito.entities;
 
-import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
-import com.tesis.queseria_la_charito.entities.controlStock.InsumoControlEntity;
-import com.tesis.queseria_la_charito.entities.formula.DetalleFormulaEntity;
-import com.tesis.queseria_la_charito.entities.formula.TipoQuesoEntity;
+import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
+import com.tesis.queseria_la_charito.entities.purchase.ProviderEntity;
+import com.tesis.queseria_la_charito.entities.stockControl.InsumoControlEntity;
+import com.tesis.queseria_la_charito.entities.formula.CheeseTypeEntity;
+import com.tesis.queseria_la_charito.entities.formula.FormulaDetailEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,27 +19,27 @@ public class ItemEntity {
     @Column(name = "id_item", unique = true)
     private Long id;
 
-    @Column(name = "nombre", unique = true)
-    private String nombre;
+    @Column(name = "name", unique = true)
+    private String name;
 
-    @Column(name = "tipo")
-    private String tipo;
+    @Column(name = "type")
+    private String type;
 
-    @Column(name = "unidad_medida")
-    private String unidadMedida;
+    @Column(name = "measurement_unit")
+    private String measurementUnit;
 
     @OneToOne(mappedBy = "item")
-    private TipoQuesoEntity tipoQueso;
+    private CheeseTypeEntity cheeseType;
 
-    @OneToMany(mappedBy = "insumo", cascade = CascadeType.REFRESH)
-    private List<DetalleFormulaEntity> listaDetalles;
+    @OneToMany(mappedBy = "supply", cascade = CascadeType.REFRESH)
+    private List<FormulaDetailEntity> lstDetails;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REFRESH)
-    private List<LoteEntity> listaLotes;
+    private List<BatchEntity> lstBatches;
 
-    @OneToMany(mappedBy = "insumo", cascade = CascadeType.REFRESH)
-    private List<ProveedorEntity> listaProveedores;
+    @OneToMany(mappedBy = "supply", cascade = CascadeType.REFRESH)
+    private List<ProviderEntity> lstProviders;
 
-    @OneToMany(mappedBy = "insumo", cascade = CascadeType.REFRESH)
-    private List<InsumoControlEntity> listaControlesInsumo;
+    @OneToMany(mappedBy = "supply", cascade = CascadeType.REFRESH)
+    private List<InsumoControlEntity> lstControls;
 }

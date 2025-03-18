@@ -1,15 +1,15 @@
 package com.tesis.queseria_la_charito.repositories.despacho;
 
-import com.tesis.queseria_la_charito.entities.despacho.DespachoEntity;
-import com.tesis.queseria_la_charito.entities.despacho.DetalleDespachoEntity;
-import com.tesis.queseria_la_charito.entities.LoteEntity;
+import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DispatchDetailEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DispatchEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface DetalleDespachoRepository extends JpaRepository<DetalleDespachoEntity, Long> {
-  List<DetalleDespachoEntity> findByLote(LoteEntity lote);
-  List<DetalleDespachoEntity> findAllByDespacho(DespachoEntity despacho);
+public interface DetalleDespachoRepository extends JpaRepository<DispatchDetailEntity, Long> {
+  List<DispatchDetailEntity> findByLote(BatchEntity lote);
+  List<DispatchDetailEntity> findAllByDespacho(DispatchEntity despacho);
 }

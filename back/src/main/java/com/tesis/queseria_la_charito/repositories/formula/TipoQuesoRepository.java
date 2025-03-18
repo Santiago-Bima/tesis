@@ -1,9 +1,9 @@
 package com.tesis.queseria_la_charito.repositories.formula;
 
-import com.tesis.queseria_la_charito.entities.formula.TipoQuesoEntity;
+import com.tesis.queseria_la_charito.entities.formula.CheeseTypeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TipoQuesoRepository extends JpaRepository<TipoQuesoEntity, Long> {
+public interface TipoQuesoRepository extends JpaRepository<CheeseTypeEntity, Long> {
 }

@@ -5,11 +5,11 @@ import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipDetailRequest;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipResponse;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipDetailResponse;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipReportResponse;
+import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.entities.LoteEntity;
-import com.tesis.queseria_la_charito.entities.compra.ComprobanteCompraEntity;
-import com.tesis.queseria_la_charito.entities.compra.DetalleComprobanteEntity;
-import com.tesis.queseria_la_charito.entities.compra.ProveedorEntity;
+import com.tesis.queseria_la_charito.entities.purchase.ReceiptEntity;
+import com.tesis.queseria_la_charito.entities.purchase.ReceiptDetailEntity;
+import com.tesis.queseria_la_charito.entities.purchase.ProviderEntity;
 import com.tesis.queseria_la_charito.models.ItemType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
 import com.tesis.queseria_la_charito.repositories.compra.CompraRepository;
@@ -49,20 +49,20 @@ public class CompraService {
 
 
   public List<ReceipResponse> getAll(LocalDate fecha) {
-    List<ComprobanteCompraEntity> comprobanteCompraEntityList = compraRepository.findAllByFecha(fecha.plusDays(1));
-    if (comprobanteCompraEntityList.isEmpty()) {
+    List<ReceiptEntity> receiptEntityList = compraRepository.findAllByFecha(fecha.plusDays(1));
+    if (receiptEntityList.isEmpty()) {
       return new ArrayList<>();
     }
     List<ReceipResponse> comprobanteCompraResponses = new ArrayList<>();
 
-    for(ComprobanteCompraEntity comprobanteCompraEntity : comprobanteCompraEntityList) {
-      List<DetalleComprobanteEntity> detalleComprobanteEntities  = detalleCompraRepository.findAllByComprobante(comprobanteCompraEntity);
-      List<ReceipDetailResponse>     detalleComprobanteResponses = new ArrayList<>();
-      for(DetalleComprobanteEntity detalle : detalleComprobanteEntities) {
+    for(ReceiptEntity receiptEntity : receiptEntityList) {
+      List<ReceiptDetailEntity>  detalleComprobanteEntities  = detalleCompraRepository.findAllByComprobante(receiptEntity);
+      List<ReceipDetailResponse> detalleComprobanteResponses = new ArrayList<>();
+      for(ReceiptDetailEntity detalle : detalleComprobanteEntities) {
         detalleComprobanteResponses.add(modelMapper.map(detalle, ReceipDetailResponse.class));
       }
 
-      ReceipResponse comprobanteCompraResponse = modelMapper.map(comprobanteCompraEntity, ReceipResponse.class);
+      ReceipResponse comprobanteCompraResponse = modelMapper.map(receiptEntity, ReceipResponse.class);
       comprobanteCompraResponse.setDetalles(detalleComprobanteResponses);
       comprobanteCompraResponses.add(comprobanteCompraResponse);
     }
@@ -71,37 +71,37 @@ public class CompraService {
   }
 
   public ReceipResponse post(ReceipRequest comprobante) {
-    ComprobanteCompraEntity comprobanteCompraEntity = new ComprobanteCompraEntity();
+    ReceiptEntity receiptEntity = new ReceiptEntity();
 
 
-    List<DetalleComprobanteEntity> detalleComprobanteEntities = new ArrayList<>();
+    List<ReceiptDetailEntity> detalleComprobanteEntities = new ArrayList<>();
     for(ReceipDetailRequest detalle : comprobante.getLstDetails()) {
-      DetalleComprobanteEntity detalleComprobante = new DetalleComprobanteEntity();
+      ReceiptDetailEntity detalleComprobante = new ReceiptDetailEntity();
       detalleComprobante.setCantidad(detalle.getCantidad());
       detalleComprobante.setSubtotal(detalle.getSubtotal());
 
-      Optional<ProveedorEntity> proveedorEntityOptional = proveedorRepository.findByIdAndMostrar(detalle.getIdProveedor(), true);
+      Optional<ProviderEntity> proveedorEntityOptional = proveedorRepository.findByIdAndMostrar(detalle.getIdProveedor(), true);
       if (proveedorEntityOptional.isEmpty()) {
         throw new EntityNotFoundException("No se ha encontrado el proveedor");
       }
-      ProveedorEntity proveedor = proveedorEntityOptional.get();
+      ProviderEntity proveedor = proveedorEntityOptional.get();
       detalleComprobante.setProveedor(proveedor);
 
       ItemEntity itemEntity = proveedor.getInsumo();
       Integer    cantidad   = getCantidad(detalle, itemEntity, proveedor);
 
-      LoteEntity loteEntity = modelMapper.map(loteService.postLote(itemEntity.getId(), cantidad), LoteEntity.class);
-      detalleComprobante.setLote(loteEntity);
-      detalleComprobante.setComprobante(comprobanteCompraEntity);
+      BatchEntity batchEntity = modelMapper.map(loteService.postLote(itemEntity.getId(), cantidad), BatchEntity.class);
+      detalleComprobante.setLote(batchEntity);
+      detalleComprobante.setComprobante(receiptEntity);
 
       detalleComprobanteEntities.add(detalleComprobante);
     }
 
-    comprobanteCompraEntity.setTotal(comprobante.getTotal());
-    comprobanteCompraEntity.setFecha(comprobante.getDate());
-    comprobanteCompraEntity.setListaDetalles(detalleComprobanteEntities);
+    receiptEntity.setTotal(comprobante.getTotal());
+    receiptEntity.setFecha(comprobante.getDate());
+    receiptEntity.setListaDetalles(detalleComprobanteEntities);
 
-    return modelMapper.map(compraRepository.save(comprobanteCompraEntity), ReceipResponse.class);
+    return modelMapper.map(compraRepository.save(receiptEntity), ReceipResponse.class);
   }
 
   public List<ReceipReportResponse> generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
@@ -112,12 +112,12 @@ public class CompraService {
     for (ItemEntity item : itemResponseList) {
       ReceipReportResponse informe = new ReceipReportResponse();
 
-      List<DetalleComprobanteEntity> detalleComprobanteEntities  = detalleCompraRepository.findAllByProveedorInsumoAndComprobanteFechaBetween(item, fechaInicio, fechaFin);
-      List<ReceipDetailResponse>     detalleComprobanteResponses = new ArrayList<>();
+      List<ReceiptDetailEntity>  detalleComprobanteEntities  = detalleCompraRepository.findAllByProveedorInsumoAndComprobanteFechaBetween(item, fechaInicio, fechaFin);
+      List<ReceipDetailResponse> detalleComprobanteResponses = new ArrayList<>();
 
       int total = 0;
 
-      for (DetalleComprobanteEntity detalle : detalleComprobanteEntities) {
+      for (ReceiptDetailEntity detalle : detalleComprobanteEntities) {
         total += detalle.getSubtotal();
         detalleComprobanteResponses.add(modelMapper.map(detalle, ReceipDetailResponse.class));
       }
@@ -132,7 +132,7 @@ public class CompraService {
     return informes;
   }
 
-  private static Integer getCantidad(ReceipDetailRequest detalle, ItemEntity itemEntity, ProveedorEntity proveedor) {
+  private static Integer getCantidad(ReceipDetailRequest detalle, ItemEntity itemEntity, ProviderEntity proveedor) {
     String unidadMedida = itemEntity.getUnidadMedida();
     String unidadMedidaCompra = proveedor.getUnidadMedida();
     int    cantidad           = 0;

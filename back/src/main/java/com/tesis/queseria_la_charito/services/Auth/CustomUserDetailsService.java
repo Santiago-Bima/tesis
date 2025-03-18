@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
 
 
@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    UsuarioEntity user = usuarioRepository.findByUsername(username)
+    UserEntity user = usuarioRepository.findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
     // Retornar un User con roles desde la base de datos

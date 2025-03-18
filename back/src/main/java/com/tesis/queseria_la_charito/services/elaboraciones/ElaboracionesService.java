@@ -10,12 +10,13 @@ import com.tesis.queseria_la_charito.dtos.response.production.ProductionResponse
 import com.tesis.queseria_la_charito.dtos.response.batch.BatchResponse;
 import com.tesis.queseria_la_charito.dtos.response.production.ProductionReportResponse;
 import com.tesis.queseria_la_charito.entities.*;
-import com.tesis.queseria_la_charito.entities.formula.DetalleFormulaEntity;
+import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
+import com.tesis.queseria_la_charito.entities.formula.FormulaDetailEntity;
 import com.tesis.queseria_la_charito.entities.formula.FormulaEntity;
-import com.tesis.queseria_la_charito.entities.LoteEntity;
-import com.tesis.queseria_la_charito.entities.procesosElaboracion.ControlCalidadEntity;
-import com.tesis.queseria_la_charito.entities.procesosElaboracion.DetalleCorteEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.production.ProductionEntity;
+import com.tesis.queseria_la_charito.entities.production.processes.QualityControlEntity;
+import com.tesis.queseria_la_charito.entities.production.processes.CutDetailEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.models.Status;
 import com.tesis.queseria_la_charito.models.Cheese;
 import com.tesis.queseria_la_charito.models.CutType;
@@ -71,12 +72,12 @@ public class ElaboracionesService {
       throw new EntityNotFoundException("No se ha encontrado el producto");
     }
 
-    Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
+    Optional<UserEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
     if (usuarioEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    List<ElaboracionEntity> listaElaboraciones;
+    List<ProductionEntity> listaElaboraciones;
     if(fechaInicio == null || fechaFin == null){
       listaElaboraciones = elaboracionRepository.findByUsuarioAndFormulaTipoQuesoItem(usuarioEntityOptional.get(),
           itemEntityOptional.get());
@@ -97,12 +98,12 @@ public class ElaboracionesService {
   }
 
   public ProductionResponse getById(String username, String id) {
-    Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
+    Optional<UserEntity> usuarioEntityOptional = usuarioRepository.findByUsernameAndMostrar(username, true);
     if (usuarioEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findByUsuarioAndId(usuarioEntityOptional.get(), id);
+    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findByUsuarioAndId(usuarioEntityOptional.get(), id);
     if(elaboracionEntityOptional.isEmpty()){
       throw new EntityNotFoundException("No se encontró una elaboración con ese id");
     }
@@ -111,13 +112,13 @@ public class ElaboracionesService {
   }
 
   public ProductionResponse post(ProductionRequest elaboracionRequest) {
-    ElaboracionEntity elaboracionEntity = new ElaboracionEntity();
-    Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsername(elaboracionRequest.getUsuario());
+    ProductionEntity     productionEntity      = new ProductionEntity();
+    Optional<UserEntity> usuarioEntityOptional = usuarioRepository.findByUsername(elaboracionRequest.getUsuario());
     if (usuarioEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    elaboracionEntity.setUsuario(usuarioEntityOptional.get());
+    productionEntity.setUsuario(usuarioEntityOptional.get());
 
     Optional<FormulaEntity> formulaEntityOptional = formulaRepository.findById(elaboracionRequest.getIdFormula());
     if(formulaEntityOptional.isEmpty()) {
@@ -130,14 +131,14 @@ public class ElaboracionesService {
       ItemEntity insumo = detalle.getInsumo();
       int relacionLeche = elaboracionRequest.getCantidadLeche() / formulaEntity.getCantidadLeche();
       AtomicReference<Integer> cantidad     = new AtomicReference<>(detalle.getCantidad() * relacionLeche);
-      List<LoteEntity>         loteEntities = loteRepository.findByItemAndEstadoAndMostrar(insumo, Status.Disponible.name(), true);
+      List<BatchEntity>        loteEntities = loteRepository.findByItemAndEstadoAndMostrar(insumo, Status.Disponible.name(), true);
       if (loteEntities.isEmpty()) {
         throw new RuntimeException("El insumo " + insumo.getNombre() + " no posee lotes");
       }
       int contador = 0;
 
       while (cantidad.get() != 0) {
-        LoteEntity lote = loteEntities.get(contador);
+        BatchEntity lote = loteEntities.get(contador);
 
         int diferencia = lote.getUnidades() - cantidad.get();
         lote.setUnidades(Math.max(diferencia, 0));
@@ -157,25 +158,25 @@ public class ElaboracionesService {
       }
     });
 
-    elaboracionEntity.setFormula(formulaEntity);
+    productionEntity.setFormula(formulaEntity);
 
     String inicialItem = formulaEntity.getTipoQueso().getItem().getNombre().substring(0, 1).toUpperCase();
     String cantidadElaboraciones = String.valueOf(elaboracionRepository.findAll().size());
-    elaboracionEntity.setId("Q" + inicialItem + elaboracionRequest.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + cantidadElaboraciones);
+    productionEntity.setId("Q" + inicialItem + elaboracionRequest.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + cantidadElaboraciones);
 
-    elaboracionEntity.setFecha(elaboracionRequest.getFecha());
-    elaboracionEntity.setCantidadLeche(elaboracionRequest.getCantidadLeche());
-    elaboracionEntity.setTiempoSalado(elaboracionRequest.getTiempoSalado());
+    productionEntity.setFecha(elaboracionRequest.getFecha());
+    productionEntity.setCantidadLeche(elaboracionRequest.getCantidadLeche());
+    productionEntity.setTiempoSalado(elaboracionRequest.getTiempoSalado());
 
     BatchResponse loteResponse = loteService.postLote(formulaEntity.getTipoQueso().getItem().getId(), 0);
 
-    elaboracionEntity.setLote(modelMapper.map(loteResponse, LoteEntity.class));
+    productionEntity.setLote(modelMapper.map(loteResponse, BatchEntity.class));
 
-    return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ProductionResponse.class);
+    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateCortes(CutDetailRequest detalleCorteRequest, String idElaboracion) throws Exception{
-    Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
@@ -184,55 +185,55 @@ public class ElaboracionesService {
       throw new RuntimeException("La elaboración ya fué creada con sus cortes, no se pueden editar los cortes");
     }
 
-    ElaboracionEntity elaboracionEntity = elaboracionEntityOptional.get();
+    ProductionEntity productionEntity = elaboracionEntityOptional.get();
 
-    if(!elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Cremoso.name()) && !detalleCorteRequest.getCorte().equals(CutType.Whole.name())) {
+    if(!productionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Cremoso.name()) && !detalleCorteRequest.getCorte().equals(CutType.Whole.name())) {
       throw new Exception("El queso para el que está pensada la elaboración no permite más de 1 corte y el mismo debe ser de tipo Entero");
     }
 
-    DetalleCorteEntity detalleCorteEntity = modelMapper.map(detalleCorteRequest, DetalleCorteEntity.class);
-    detalleCorteEntity.setElaboracion(elaboracionEntity);
-    elaboracionEntity.getLote().setUnidades(elaboracionEntity.getLote().getUnidades() + detalleCorteEntity.getCantidad());
+    CutDetailEntity cutDetailEntity = modelMapper.map(detalleCorteRequest, CutDetailEntity.class);
+    cutDetailEntity.setElaboracion(productionEntity);
+    productionEntity.getLote().setUnidades(productionEntity.getLote().getUnidades() + cutDetailEntity.getCantidad());
 
-    elaboracionEntity.setDetalleCorte(detalleCorteEntity);
-    return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ProductionResponse.class);
+    productionEntity.setDetalleCorte(cutDetailEntity);
+    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateEmbolsado(LocalDate fechaEmbolsado, String idElaboracion) throws Exception {
-    Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
 
-    ElaboracionEntity elaboracionEntity = elaboracionEntityOptional.get();
+    ProductionEntity productionEntity = elaboracionEntityOptional.get();
 
-    if (fechaEmbolsado.isBefore(elaboracionEntity.getFecha())) {
+    if (fechaEmbolsado.isBefore(productionEntity.getFecha())) {
       throw new Exception("La fecha de embolsado debe ser posterior al inicio de la elaboración");
-    } else if (elaboracionEntity.getFechaSalidaMaduracion() == null || fechaEmbolsado.isBefore(elaboracionEntity.getFechaSalidaMaduracion())) {
+    } else if (productionEntity.getFechaSalidaMaduracion() == null || fechaEmbolsado.isBefore(productionEntity.getFechaSalidaMaduracion())) {
       throw new Exception("La fecha de embolsado debe ser posterior a la maduración");
     }
 
-    if(elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Pategras.name())) {
+    if(productionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Pategras.name())) {
       throw new Exception("El queso para el que está pensada la elaboración no permite tipos de cortes");
     }
 
-    elaboracionEntity.setFechaEmbolsado(fechaEmbolsado);
+    productionEntity.setFechaEmbolsado(fechaEmbolsado);
 
-    return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ProductionResponse.class);
+    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateMaduracion(MadurationRequest maduracionRequest, String idElaboracion) throws Exception {
-    Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
 
-    ElaboracionEntity elaboracionEntity = elaboracionEntityOptional.get();
-    LocalDate fechaEntrada = maduracionRequest.getFechaEntrada();
-    LocalDate fechaSalida = maduracionRequest.getFechaSalida();
-    Integer diasMaduracion = elaboracionEntity.getFormula().getTipoQueso().getDiasMaduracion();
+    ProductionEntity productionEntity = elaboracionEntityOptional.get();
+    LocalDate        fechaEntrada     = maduracionRequest.getFechaEntrada();
+    LocalDate        fechaSalida      = maduracionRequest.getFechaSalida();
+    Integer          diasMaduracion   = productionEntity.getFormula().getTipoQueso().getDiasMaduracion();
 
-    if (fechaEntrada.isBefore(elaboracionEntity.getFecha())) {
+    if (fechaEntrada.isBefore(productionEntity.getFecha())) {
       throw new Exception("La fecha de entrada debe ser posterior al inicio de la elaboración");
     }
 
@@ -240,49 +241,49 @@ public class ElaboracionesService {
       throw new Exception("La fecha de salida debe ser al menos " + diasMaduracion.toString() + " días después de la fecha de entrada.");
     }
 
-    elaboracionEntity.setFechaEntradaMaduracion(fechaEntrada);
-    elaboracionEntity.setFechaSalidaMaduracion(fechaSalida);
-    return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ProductionResponse.class);
+    productionEntity.setFechaEntradaMaduracion(fechaEntrada);
+    productionEntity.setFechaSalidaMaduracion(fechaSalida);
+    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updatePintado(LocalDate fechaPintado, String idElaboracion) throws Exception {
-    Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
 
-    ElaboracionEntity elaboracionEntity = elaboracionEntityOptional.get();
+    ProductionEntity productionEntity = elaboracionEntityOptional.get();
 
-    if (fechaPintado.isBefore(elaboracionEntity.getFecha())) {
+    if (fechaPintado.isBefore(productionEntity.getFecha())) {
       throw new Exception("La fecha de pintado debe ser posterior al inicio de la elaboración");
-    } else if (elaboracionEntity.getFechaSalidaMaduracion() == null || fechaPintado.isBefore(elaboracionEntity.getFechaSalidaMaduracion())) {
+    } else if (productionEntity.getFechaSalidaMaduracion() == null || fechaPintado.isBefore(productionEntity.getFechaSalidaMaduracion())) {
       throw new Exception("La fecha de pintado debe ser posterior a la maduración");
     }
 
-    if(!elaboracionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Pategras.name())) {
+    if(!productionEntity.getFormula().getTipoQueso().getItem().getNombre().equals(Cheese.Pategras.name())) {
       throw new Exception("El queso para el que está pensada la elaboración no permite tipos de cortes");
     }
 
-    elaboracionEntity.setFechaPintado(fechaPintado);
+    productionEntity.setFechaPintado(fechaPintado);
 
-    return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ProductionResponse.class);
+    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateControl(QualityControlRequest controlCalidadRequest, String idElaboracion) throws Exception {
-    Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
 
-    ElaboracionEntity elaboracionEntity = elaboracionEntityOptional.get();
-    LocalDate fechaControl = controlCalidadRequest.getFecha();
+    ProductionEntity productionEntity = elaboracionEntityOptional.get();
+    LocalDate        fechaControl     = controlCalidadRequest.getFecha();
 
-    if (fechaControl.isBefore(elaboracionEntity.getFecha())) {
+    if (fechaControl.isBefore(productionEntity.getFecha())) {
       throw new Exception("La fecha de control de calidad debe ser posterior al inicio de la elaboración.");
     }
 
-    LocalDate fechaEmbolsado = elaboracionEntity.getFechaEmbolsado();
-    LocalDate fechaPintado = elaboracionEntity.getFechaPintado();
+    LocalDate fechaEmbolsado = productionEntity.getFechaEmbolsado();
+    LocalDate fechaPintado = productionEntity.getFechaPintado();
 
     if (fechaEmbolsado != null && fechaControl.isBefore(fechaEmbolsado)) {
       throw new Exception("La fecha de control de calidad debe ser posterior al embolsado.");
@@ -292,35 +293,35 @@ public class ElaboracionesService {
       throw new Exception("La fecha de control de calidad debe ser posterior al pintado.");
     }
 
-    ControlCalidadEntity controlCalidadEntity = modelMapper.map(controlCalidadRequest ,ControlCalidadEntity.class);
-    controlCalidadEntity.setElaboracion(elaboracionEntity);
-    elaboracionEntity.setControlCalidad(controlCalidadEntity);
-    elaboracionEntity.getLote().setEstado(Status.Terminado.name());
-    return modelMapper.map(elaboracionRepository.save(elaboracionEntity), ProductionResponse.class);
+    QualityControlEntity qualityControlEntity = modelMapper.map(controlCalidadRequest , QualityControlEntity.class);
+    qualityControlEntity.setElaboracion(productionEntity);
+    productionEntity.setControlCalidad(qualityControlEntity);
+    productionEntity.getLote().setEstado(Status.Terminado.name());
+    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse deleteElaboracion(String id) {
-    Optional<ElaboracionEntity> elaboracionEntityOptional = elaboracionRepository.findById(id);
+    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(id);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración para eliminar");
     }
 
-    ElaboracionEntity elaboracionEntity = elaboracionEntityOptional.get();
+    ProductionEntity productionEntity = elaboracionEntityOptional.get();
 
-    if (elaboracionEntity.getLote().getUnidades() > 0) {
+    if (productionEntity.getLote().getUnidades() > 0) {
       throw new IllegalStateException("No se puede eliminar el item porque tiene lotes existentes.");
     }
 
     try{
-      elaboracionRepository.delete(elaboracionEntity);
-      return modelMapper.map(elaboracionEntity, ProductionResponse.class);
+      elaboracionRepository.delete(productionEntity);
+      return modelMapper.map(productionEntity, ProductionResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
   public ProductionReportResponse generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
-    List<ElaboracionEntity> elaboracionEntities = elaboracionRepository.findByFechaBetween(fechaInicio, fechaFin);
+    List<ProductionEntity> elaboracionEntities = elaboracionRepository.findByFechaBetween(fechaInicio, fechaFin);
     if (elaboracionEntities.isEmpty()) {
       elaboracionEntities = new ArrayList<>();
     }
@@ -346,8 +347,8 @@ public class ElaboracionesService {
       detallesInsumos.add(detalleInsumo);
     }
 
-    for(ElaboracionEntity elaboracion : elaboracionEntities) {
-      for (DetalleFormulaEntity detalleFormula : elaboracion.getFormula().getDetallesFormulas()) {
+    for(ProductionEntity elaboracion : elaboracionEntities) {
+      for (FormulaDetailEntity detalleFormula : elaboracion.getFormula().getDetallesFormulas()) {
         for (SuppliesReportDetailElaboracion detalleInsumo : detallesInsumos) {
           if (detalleFormula.getInsumo().getNombre().equals(detalleInsumo.getInsumo().getNombreItem())) {
             detalleInsumo.setTotal(detalleInsumo.getTotal() + ((elaboracion.getCantidadLeche() / elaboracion.getFormula().getCantidadLeche()) * detalleFormula.getCantidad()));

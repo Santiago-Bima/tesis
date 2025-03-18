@@ -1,6 +1,6 @@
 package com.tesis.queseria_la_charito.entities.formula;
 
-import com.tesis.queseria_la_charito.entities.ElaboracionEntity;
+import com.tesis.queseria_la_charito.entities.production.ProductionEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,18 +12,18 @@ import java.util.List;
 public class FormulaEntity {
     @Id
     @Column(name = "id_formula", unique = true)
-    private String codigo;
+    private String code;
 
-    @Column(name = "cantidad_leche")
-    private Integer cantidadLeche;
+    @Column(name = "milk_quantity")
+    private Integer milkQuantity;
 
     @ManyToOne
-    @JoinColumn(name = "id_tipo_queso")
-    private TipoQuesoEntity tipoQueso;
+    @JoinColumn(name = "id_cheese_type")
+    private CheeseTypeEntity cheeseType;
 
     @OneToMany(mappedBy = "formula", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleFormulaEntity> detallesFormulas;
+    private List<FormulaDetailEntity> lstDetails;
 
     @OneToMany(mappedBy = "formula", cascade = CascadeType.REFRESH)
-    private List<ElaboracionEntity> listaElaboraciones;
+    private List<ProductionEntity> lstProductions;
 }

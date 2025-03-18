@@ -8,9 +8,9 @@ import com.tesis.queseria_la_charito.dtos.response.stockControl.StockControlResp
 import com.tesis.queseria_la_charito.dtos.response.stockControl.SupplyControlResponse;
 import com.tesis.queseria_la_charito.dtos.response.stockControl.BatchControlResponse;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.entities.controlStock.ControlStockEntity;
-import com.tesis.queseria_la_charito.entities.controlStock.InsumoControlEntity;
-import com.tesis.queseria_la_charito.entities.usuario.UsuarioEntity;
+import com.tesis.queseria_la_charito.entities.stockControl.StockControlEntity;
+import com.tesis.queseria_la_charito.entities.stockControl.InsumoControlEntity;
+import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.models.ItemControlType;
 import com.tesis.queseria_la_charito.models.CutType;
 import com.tesis.queseria_la_charito.repositories.controlStock.ControlStockRepository;
@@ -56,12 +56,12 @@ public class ControlStockService {
   public List<StockControlResponse> getAll(boolean validate) {
     List<StockControlResponse> responses = new ArrayList<>();
 
-    List<ControlStockEntity> controlStockEntities = repository.findAllByOrderByFechaDescIdDesc();
+    List<StockControlEntity> controlStockEntities = repository.findAllByOrderByFechaDescIdDesc();
     if (controlStockEntities.isEmpty()) {
       return new ArrayList<>();
     }
 
-    for (ControlStockEntity controlEntity : controlStockEntities) {
+    for (StockControlEntity controlEntity : controlStockEntities) {
       StockControlResponse response = modelMapper.map(controlEntity, StockControlResponse.class);
 
       List<SupplyControlResponse> insumoControlResponsesEsperado  = new ArrayList<>();
@@ -99,15 +99,15 @@ public class ControlStockService {
   }
 
   public StockControlResponse post(StockControlRequest data) {
-    ControlStockEntity controlStockEntity = modelMapper.map(data, ControlStockEntity.class);
+    StockControlEntity stockControlEntity = modelMapper.map(data, StockControlEntity.class);
 
-    Optional<UsuarioEntity> usuarioEntityOptional = usuarioRepository.findByUsername(data.getUsuario());
+    Optional<UserEntity> usuarioEntityOptional = usuarioRepository.findByUsername(data.getUsuario());
     if (usuarioEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    controlStockEntity.setUsuario(usuarioEntityOptional.get());
-    controlStockEntity.setNuevo(true);
+    stockControlEntity.setUsuario(usuarioEntityOptional.get());
+    stockControlEntity.setNuevo(true);
 
     List<InsumoControlEntity> insumoControlEntityListObtenidos = new ArrayList<>();
 
@@ -121,7 +121,7 @@ public class ControlStockService {
 
       insumoControlEntity.setInsumo(itemEntityOptional.get());
       insumoControlEntity.setCantidad(insumoControlRequest.getCantidad());
-      insumoControlEntity.setControlStock(controlStockEntity);
+      insumoControlEntity.setControlStock(stockControlEntity);
       insumoControlEntity.setTipo(ItemControlType.Obtenido.name());
 
       insumoControlEntityListObtenidos.add(insumoControlEntity);
@@ -140,19 +140,19 @@ public class ControlStockService {
       }
 
       insumoControlEntity.setInsumo(itemEntityOptional.get());
-      insumoControlEntity.setControlStock(controlStockEntity);
+      insumoControlEntity.setControlStock(stockControlEntity);
       insumoControlEntity.setTipo(ItemControlType.Esperado.name());
       insumoControlEntityListEsperados.add(insumoControlEntity);
     }
 
-    controlStockEntity.setCantidadCuartosEsperada(cantidadesEsperadasResponse.getCantidadCuartosEsperada());
-    controlStockEntity.setCantidadEnterosEsperada(cantidadesEsperadasResponse.getCantidadEnterosEsperada());
-    controlStockEntity.setCantidadMediosEsperada(cantidadesEsperadasResponse.getCantidadMediosEsperada());
-    controlStockEntity.setControlesInsumosEsperados(insumoControlEntityListEsperados);
+    stockControlEntity.setCantidadCuartosEsperada(cantidadesEsperadasResponse.getCantidadCuartosEsperada());
+    stockControlEntity.setCantidadEnterosEsperada(cantidadesEsperadasResponse.getCantidadEnterosEsperada());
+    stockControlEntity.setCantidadMediosEsperada(cantidadesEsperadasResponse.getCantidadMediosEsperada());
+    stockControlEntity.setControlesInsumosEsperados(insumoControlEntityListEsperados);
 
-    controlStockEntity.setControlesInsumosObtenidos(insumoControlEntityListObtenidos);
+    stockControlEntity.setControlesInsumosObtenidos(insumoControlEntityListObtenidos);
 
-    ControlStockEntity   controlEntitySaved = repository.save(controlStockEntity);
+    StockControlEntity   controlEntitySaved = repository.save(stockControlEntity);
     StockControlResponse response           = modelMapper.map(controlEntitySaved, StockControlResponse.class);
 
     List<SupplyControlResponse> insumoControlResponsesEsperado  = new ArrayList<>();

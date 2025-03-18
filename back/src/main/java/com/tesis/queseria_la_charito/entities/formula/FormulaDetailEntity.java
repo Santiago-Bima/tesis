@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "detalles_formulas")
-public class DetalleFormulaEntity {
+@Table(name = "formulas_details")
+public class FormulaDetailEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,8 +18,8 @@ public class DetalleFormulaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_item")
-    private ItemEntity insumo;
+    private ItemEntity supply;
 
-    @Column(name = "cantidad")
-    private Integer cantidad;
+    @Column(name = "quantity")
+    private Integer quantity;
 }

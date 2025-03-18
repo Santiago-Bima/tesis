@@ -4,10 +4,10 @@ import com.tesis.queseria_la_charito.dtos.request.formula.FormulaDetailRequest;
 import com.tesis.queseria_la_charito.dtos.request.formula.FormulaRequest;
 import com.tesis.queseria_la_charito.dtos.response.formula.FormulaDetailResponse;
 import com.tesis.queseria_la_charito.dtos.response.formula.FormulaResponse;
-import com.tesis.queseria_la_charito.entities.formula.DetalleFormulaEntity;
+import com.tesis.queseria_la_charito.entities.formula.CheeseTypeEntity;
+import com.tesis.queseria_la_charito.entities.formula.FormulaDetailEntity;
 import com.tesis.queseria_la_charito.entities.formula.FormulaEntity;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.entities.formula.TipoQuesoEntity;
 import com.tesis.queseria_la_charito.repositories.formula.DetalleFormulaRepository;
 import com.tesis.queseria_la_charito.repositories.formula.FormulaRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
@@ -41,20 +41,20 @@ public class FormulaService {
 
 
     public List<FormulaResponse> getFormulasByProducto(Long tipoProductoId) {
-        Optional<TipoQuesoEntity> productoEntityOptional = tipoQuesoRepository.findById(tipoProductoId);
+        Optional<CheeseTypeEntity> productoEntityOptional = tipoQuesoRepository.findById(tipoProductoId);
         if (productoEntityOptional.isEmpty()){
             throw new EntityNotFoundException();
         }
         
-        TipoQuesoEntity tipoQuesoEntity = productoEntityOptional.get();
+        CheeseTypeEntity      cheeseTypeEntity      = productoEntityOptional.get();
         List<FormulaResponse> listaFormulasResponse = new ArrayList<>();
-        List<FormulaEntity> listaFormulasEntity = formulaRepository.findAllByTipoQueso(tipoQuesoEntity);
+        List<FormulaEntity>   listaFormulasEntity   = formulaRepository.findAllByTipoQueso(cheeseTypeEntity);
 
         for (FormulaEntity formulaEntity : listaFormulasEntity){
-            List<DetalleFormulaEntity>  listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity);
+            List<FormulaDetailEntity>   listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity);
             List<FormulaDetailResponse> listaDetallesResponse = new ArrayList<>();
             FormulaResponse             formulaResponse       = modelMapper.map(formulaEntity, FormulaResponse.class);
-            for (DetalleFormulaEntity detalleEntity : listaDetallesEntity){
+            for (FormulaDetailEntity detalleEntity : listaDetallesEntity){
                 listaDetallesResponse.add(modelMapper.map(detalleEntity, FormulaDetailResponse.class));
             }
             formulaResponse.setDetallesFormulas(listaDetallesResponse);
@@ -70,10 +70,10 @@ public class FormulaService {
         }
         FormulaResponse formulaResponse = modelMapper.map(formulaEntity.get(), FormulaResponse.class);
 
-        List<DetalleFormulaEntity>  listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity.get());
+        List<FormulaDetailEntity>   listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity.get());
         List<FormulaDetailResponse> listaDetallesResponse = new ArrayList<>();
 
-        for (DetalleFormulaEntity detalleEntity : listaDetallesEntity){
+        for (FormulaDetailEntity detalleEntity : listaDetallesEntity){
             listaDetallesResponse.add(modelMapper.map(detalleEntity, FormulaDetailResponse.class));
         }
 
@@ -87,7 +87,7 @@ public class FormulaService {
             throw new EntityExistsException("Ya existe una fórmula con el mismo código");
         }
 
-        Optional<TipoQuesoEntity> tipoQuesoEntityOptional = tipoQuesoRepository.findById(formulaRequest.getTipoQueso());
+        Optional<CheeseTypeEntity> tipoQuesoEntityOptional = tipoQuesoRepository.findById(formulaRequest.getTipoQueso());
         if (tipoQuesoEntityOptional.isEmpty()){
             throw new EntityNotFoundException("No se encontró el tipo de producto");
         }
@@ -120,7 +120,7 @@ public class FormulaService {
         FormulaEntity formulaEntity = formulaEntityAntigua.get();
         formulaEntity.setCantidadLeche(formulaRequest.getCantidadLeche());
 
-        Optional<TipoQuesoEntity> tipoQuesoEntityOptional = tipoQuesoRepository.findById(formulaRequest.getTipoQueso());
+        Optional<CheeseTypeEntity> tipoQuesoEntityOptional = tipoQuesoRepository.findById(formulaRequest.getTipoQueso());
         if (tipoQuesoEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró el tipo de producto");
         }
@@ -134,10 +134,10 @@ public class FormulaService {
                 throw new EntityNotFoundException("No se encontró el insumo");
             }
 
-            DetalleFormulaEntity detalleFormulaEntity = modelMapper.map(detalleFormulaRequest, DetalleFormulaEntity.class);
-            detalleFormulaEntity.setInsumo(insumoEntity.get());
-            detalleFormulaEntity.setFormula(formulaEntity);
-            formulaEntity.getDetallesFormulas().add(detalleFormulaEntity);
+            FormulaDetailEntity formulaDetailEntity = modelMapper.map(detalleFormulaRequest, FormulaDetailEntity.class);
+            formulaDetailEntity.setInsumo(insumoEntity.get());
+            formulaDetailEntity.setFormula(formulaEntity);
+            formulaEntity.getDetallesFormulas().add(formulaDetailEntity);
         }
 
         FormulaEntity formulaEntityFinal = formulaRepository.save(formulaEntity);

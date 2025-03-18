@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.entities.controlStock;
+package com.tesis.queseria_la_charito.entities.stockControl;
 
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ public class InsumoControlEntity {
 
   @ManyToOne
   @JoinColumn(name = "id_control")
-  private ControlStockEntity controlStock;
+  private StockControlEntity controlStock;
 
   @ManyToOne
   @JoinColumn(name = "id_item")

@@ -2,7 +2,7 @@ package com.tesis.queseria_la_charito.services.despachos;
 
 import com.tesis.queseria_la_charito.dtos.request.dispatch.DestinationRequest;
 import com.tesis.queseria_la_charito.dtos.response.dispatch.DestinationResponse;
-import com.tesis.queseria_la_charito.entities.despacho.DestinoEntity;
+import com.tesis.queseria_la_charito.entities.dispatch.DestinationEntity;
 import com.tesis.queseria_la_charito.repositories.despacho.DestinoRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,7 +25,7 @@ public class DestinoService {
 
 
   public DestinationResponse getById(Long id) {
-    Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(id);
+    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(id);
     if(destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el destino");
     }
@@ -35,7 +35,7 @@ public class DestinoService {
 
   public List<DestinationResponse> getAll() {
     List<DestinationResponse> lstDestinosResponse = new ArrayList<>();
-    List<DestinoEntity>       lstDestinosEntity   = destinoRepository.findAll();
+    List<DestinationEntity>   lstDestinosEntity   = destinoRepository.findAll();
 
     if(lstDestinosEntity.isEmpty()) {
       return new ArrayList<>();
@@ -49,50 +49,50 @@ public class DestinoService {
   }
 
   public DestinationResponse put(Long id, DestinationRequest destinoRequest) {
-    Optional<DestinoEntity> existenteDestinoEntity = destinoRepository.findByCalleAndNumeroAndBarrio(destinoRequest.getCalle(), destinoRequest.getNumero(), destinoRequest.getBarrio());
+    Optional<DestinationEntity> existenteDestinoEntity = destinoRepository.findByCalleAndNumeroAndBarrio(destinoRequest.getCalle(), destinoRequest.getNumero(), destinoRequest.getBarrio());
     if(existenteDestinoEntity.isPresent()) {
       throw new EntityExistsException("Ya existe un destino con dichos datos");
     }
 
-    Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(id);
+    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(id);
     if(destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el destino");
     }
 
-    DestinoEntity destinoEntity = destinoEntityOptional.get();
-    destinoEntity.setBarrio(destinoRequest.getBarrio());
-    destinoEntity.setCalle(destinoRequest.getCalle());
-    destinoEntity.setNumero(destinoRequest.getNumero());
+    DestinationEntity destinationEntity = destinoEntityOptional.get();
+    destinationEntity.setBarrio(destinoRequest.getBarrio());
+    destinationEntity.setCalle(destinoRequest.getCalle());
+    destinationEntity.setNumero(destinoRequest.getNumero());
 
-    return modelMapper.map(destinoRepository.save(destinoEntity), DestinationResponse.class);
+    return modelMapper.map(destinoRepository.save(destinationEntity), DestinationResponse.class);
   }
 
   public DestinationResponse post(DestinationRequest destinoRequest) {
-    DestinoEntity destinoEntity = modelMapper.map(destinoRequest, DestinoEntity.class);
+    DestinationEntity destinationEntity = modelMapper.map(destinoRequest, DestinationEntity.class);
 
-    Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findByCalleAndNumeroAndBarrio(destinoEntity.getCalle(), destinoEntity.getNumero(), destinoEntity.getBarrio());
+    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findByCalleAndNumeroAndBarrio(destinationEntity.getCalle(), destinationEntity.getNumero(), destinationEntity.getBarrio());
     if(destinoEntityOptional.isPresent()) {
       throw new EntityExistsException("Ya existe el mismo destino");
     }
 
-    return modelMapper.map(destinoRepository.save(destinoEntity), DestinationResponse.class);
+    return modelMapper.map(destinoRepository.save(destinationEntity), DestinationResponse.class);
   }
 
   public DestinationResponse delete(Long id) {
-    Optional<DestinoEntity> destinoEntityOptional = destinoRepository.findById(id);
+    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(id);
     if(destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el destino");
     }
 
-    DestinoEntity destinoEntity = destinoEntityOptional.get();
+    DestinationEntity destinationEntity = destinoEntityOptional.get();
 
-    if(!destinoEntity.getLstDespachos().isEmpty()){
+    if(!destinationEntity.getLstDespachos().isEmpty()){
       throw new IllegalStateException("No se puede eliminar el item porque tiene registros de despachos existentes");
     }
 
     try {
-      destinoRepository.delete(destinoEntity);
-      return modelMapper.map(destinoEntity, DestinationResponse.class);
+      destinoRepository.delete(destinationEntity);
+      return modelMapper.map(destinationEntity, DestinationResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
