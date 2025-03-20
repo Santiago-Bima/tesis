@@ -13,10 +13,10 @@ import com.tesis.queseria_la_charito.entities.stockControl.InsumoControlEntity;
 import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.models.ItemControlType;
 import com.tesis.queseria_la_charito.models.CutType;
-import com.tesis.queseria_la_charito.repositories.controlStock.ControlStockRepository;
+import com.tesis.queseria_la_charito.repositories.stockControl.StockControlRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.controlStock.InsumoControlRepository;
-import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
+import com.tesis.queseria_la_charito.repositories.stockControl.SupplyControlRepository;
+import com.tesis.queseria_la_charito.repositories.user.UserRepository;
 import com.tesis.queseria_la_charito.services.formulas.InsumosService;
 import com.tesis.queseria_la_charito.services.lotes.LoteService;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,7 +31,7 @@ import java.util.Optional;
 @Service
 public class ControlStockService {
   @Autowired
-  private ControlStockRepository repository;
+  private StockControlRepository repository;
 
   @Autowired
   private LoteService loteService;
@@ -43,13 +43,13 @@ public class ControlStockService {
   private ItemRepository itemRepository;
 
   @Autowired
-  private InsumoControlRepository insumoControlRepository;
+  private SupplyControlRepository supplyControlRepository;
 
   @Autowired
   private ModelMapper modelMapper;
 
   @Autowired
-  private UsuarioRepository usuarioRepository;
+  private UserRepository usuarioRepository;
 
 
 
@@ -65,7 +65,7 @@ public class ControlStockService {
       StockControlResponse response = modelMapper.map(controlEntity, StockControlResponse.class);
 
       List<SupplyControlResponse> insumoControlResponsesEsperado  = new ArrayList<>();
-      List<InsumoControlEntity>   insumoControlEsperadoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, ItemControlType.Esperado.name());
+      List<InsumoControlEntity>   insumoControlEsperadoEntityList = supplyControlRepository.findByControlStockAndTipo(controlEntity, ItemControlType.Esperado.name());
       if (insumoControlEsperadoEntityList.isEmpty()) {
         insumoControlEsperadoEntityList = new ArrayList<>();
       }
@@ -75,7 +75,7 @@ public class ControlStockService {
       }
 
       List<SupplyControlResponse> insumoControlResponsesObtenido  = new ArrayList<>();
-      List<InsumoControlEntity>   insumoControlObtenidoEntityList = insumoControlRepository.findByControlStockAndTipo(controlEntity, ItemControlType.Obtenido.name());
+      List<InsumoControlEntity>   insumoControlObtenidoEntityList = supplyControlRepository.findByControlStockAndTipo(controlEntity, ItemControlType.Obtenido.name());
       if (insumoControlObtenidoEntityList.isEmpty()) {
         insumoControlObtenidoEntityList = new ArrayList<>();
       }

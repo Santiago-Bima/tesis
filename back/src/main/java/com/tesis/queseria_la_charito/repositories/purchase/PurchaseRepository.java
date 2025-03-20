@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.repositories.compra;
+package com.tesis.queseria_la_charito.repositories.purchase;
 
 import com.tesis.queseria_la_charito.entities.purchase.ReceiptEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface CompraRepository extends JpaRepository<ReceiptEntity, Long> {
-  List<ReceiptEntity> findAllByFecha(LocalDate fecha);
+public interface PurchaseRepository extends JpaRepository<ReceiptEntity, Long> {
+  List<ReceiptEntity> findAllByDate(LocalDate date);
 }

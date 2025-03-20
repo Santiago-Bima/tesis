@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.repositories.despacho;
+package com.tesis.queseria_la_charito.repositories.dispatch;
 
 import com.tesis.queseria_la_charito.entities.batch.BatchEntity;
 import com.tesis.queseria_la_charito.entities.dispatch.DispatchDetailEntity;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DetalleDespachoRepository extends JpaRepository<DispatchDetailEntity, Long> {
-  List<DispatchDetailEntity> findByLote(BatchEntity lote);
-  List<DispatchDetailEntity> findAllByDespacho(DispatchEntity despacho);
+public interface DispatchDetailRepository extends JpaRepository<DispatchDetailEntity, Long> {
+  List<DispatchDetailEntity> findByBatch(BatchEntity batch);
+  List<DispatchDetailEntity> findAllByDispatch(DispatchEntity dispatch);
 }

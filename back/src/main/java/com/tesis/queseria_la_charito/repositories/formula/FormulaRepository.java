@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface FormulaRepository extends JpaRepository<FormulaEntity, String> {
-    List<FormulaEntity> findAllByTipoQueso(CheeseTypeEntity producto);
+    List<FormulaEntity> findAllByCheeseType(CheeseTypeEntity product);
 }

@@ -3,7 +3,7 @@ package com.tesis.queseria_la_charito.services.formulas;
 import com.tesis.queseria_la_charito.dtos.response.formula.CheeseTypeResponse;
 import com.tesis.queseria_la_charito.entities.formula.CheeseTypeEntity;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.formula.TipoQuesoRepository;
+import com.tesis.queseria_la_charito.repositories.formula.CheeseTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ public class ProductosService {
     private ItemRepository itemRepository;
 
     @Autowired
-    private TipoQuesoRepository tipoQuesoRepository;
+    private CheeseTypeRepository cheeseTypeRepository;
 
 
     public List<CheeseTypeResponse> getAll() {
         List<CheeseTypeResponse> listaTiposQuesosResponse = new ArrayList<>();
 
-        List<CheeseTypeEntity> tipoQuesoEntities = tipoQuesoRepository.findAll();
+        List<CheeseTypeEntity> tipoQuesoEntities = cheeseTypeRepository.findAll();
         if (tipoQuesoEntities.isEmpty()) {
             throw new EntityNotFoundException("No existen productos registrados");
         }
@@ -41,7 +41,7 @@ public class ProductosService {
     }
 
     public CheeseTypeResponse getById(Long id) {
-        Optional<CheeseTypeEntity> tipoQuesoResponseOptional = tipoQuesoRepository.findById(id);
+        Optional<CheeseTypeEntity> tipoQuesoResponseOptional = cheeseTypeRepository.findById(id);
         if (tipoQuesoResponseOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró el tipo de producto");
         }

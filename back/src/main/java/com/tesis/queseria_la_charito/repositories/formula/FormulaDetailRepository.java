@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DetalleFormulaRepository extends JpaRepository<FormulaDetailEntity, Long> {
+public interface FormulaDetailRepository extends JpaRepository<FormulaDetailEntity, Long> {
     List<FormulaDetailEntity> findAllByFormula(FormulaEntity formula);
 }

@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.repositories.controlStock;
+package com.tesis.queseria_la_charito.repositories.stockControl;
 
 import com.tesis.queseria_la_charito.entities.stockControl.StockControlEntity;
 import com.tesis.queseria_la_charito.entities.stockControl.InsumoControlEntity;
@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface InsumoControlRepository extends JpaRepository<InsumoControlEntity, Long> {
-  List<InsumoControlEntity> findByControlStockAndTipo(StockControlEntity stockControlEntity, String tipo);
+public interface SupplyControlRepository extends JpaRepository<InsumoControlEntity, Long> {
+  List<InsumoControlEntity> findByStockControlAndType(StockControlEntity stockControlEntity, String type);
 }

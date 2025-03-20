@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.tesis.queseria_la_charito.entities.user.UserEntity;
-import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
+import com.tesis.queseria_la_charito.repositories.user.UserRepository;
 
 
 
@@ -15,7 +15,7 @@ import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
 public class CustomUserDetailsService implements UserDetailsService {
 
   @Autowired
-  private UsuarioRepository usuarioRepository;
+  private UserRepository usuarioRepository;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

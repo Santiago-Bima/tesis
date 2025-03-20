@@ -20,11 +20,11 @@ import com.tesis.queseria_la_charito.entities.user.UserEntity;
 import com.tesis.queseria_la_charito.models.Status;
 import com.tesis.queseria_la_charito.models.Cheese;
 import com.tesis.queseria_la_charito.models.CutType;
-import com.tesis.queseria_la_charito.repositories.ElaboracionRepository;
+import com.tesis.queseria_la_charito.repositories.production.ProductionRepository;
 import com.tesis.queseria_la_charito.repositories.formula.FormulaRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.LoteRepository;
-import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
+import com.tesis.queseria_la_charito.repositories.batch.BatchRepository;
+import com.tesis.queseria_la_charito.repositories.user.UserRepository;
 import com.tesis.queseria_la_charito.services.formulas.InsumosService;
 import com.tesis.queseria_la_charito.services.lotes.LoteService;
 import jakarta.persistence.EntityNotFoundException;
@@ -45,7 +45,7 @@ public class ElaboracionesService {
   private ModelMapper modelMapper;
 
   @Autowired
-  private ElaboracionRepository elaboracionRepository;
+  private ProductionRepository productionRepository;
 
   @Autowired
   private FormulaRepository formulaRepository;
@@ -57,10 +57,10 @@ public class ElaboracionesService {
   private LoteService loteService;
 
   @Autowired
-  private UsuarioRepository usuarioRepository;
+  private UserRepository usuarioRepository;
 
   @Autowired
-  private LoteRepository loteRepository;
+  private BatchRepository batchRepository;
 
   @Autowired
   private InsumosService insumoService;
@@ -79,10 +79,10 @@ public class ElaboracionesService {
 
     List<ProductionEntity> listaElaboraciones;
     if(fechaInicio == null || fechaFin == null){
-      listaElaboraciones = elaboracionRepository.findByUsuarioAndFormulaTipoQuesoItem(usuarioEntityOptional.get(),
-          itemEntityOptional.get());
+      listaElaboraciones = productionRepository.findByUsuarioAndFormulaTipoQuesoItem(usuarioEntityOptional.get(),
+                                                                                     itemEntityOptional.get());
     } else {
-      listaElaboraciones = elaboracionRepository.findByUsuarioAndFormulaTipoQuesoItemAndFechaBetween(usuarioEntityOptional.get(), itemEntityOptional.get(), fechaInicio, fechaFin);
+      listaElaboraciones = productionRepository.findByUsuarioAndFormulaTipoQuesoItemAndFechaBetween(usuarioEntityOptional.get(), itemEntityOptional.get(), fechaInicio, fechaFin);
     }
 
     if(listaElaboraciones.isEmpty()){
@@ -103,7 +103,7 @@ public class ElaboracionesService {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findByUsuarioAndId(usuarioEntityOptional.get(), id);
+    Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findByUsuarioAndId(usuarioEntityOptional.get(), id);
     if(elaboracionEntityOptional.isEmpty()){
       throw new EntityNotFoundException("No se encontró una elaboración con ese id");
     }
@@ -131,7 +131,7 @@ public class ElaboracionesService {
       ItemEntity insumo = detalle.getInsumo();
       int relacionLeche = elaboracionRequest.getCantidadLeche() / formulaEntity.getCantidadLeche();
       AtomicReference<Integer> cantidad     = new AtomicReference<>(detalle.getCantidad() * relacionLeche);
-      List<BatchEntity>        loteEntities = loteRepository.findByItemAndEstadoAndMostrar(insumo, Status.Disponible.name(), true);
+      List<BatchEntity>        loteEntities = batchRepository.findByItemAndEstadoAndMostrar(insumo, Status.Disponible.name(), true);
       if (loteEntities.isEmpty()) {
         throw new RuntimeException("El insumo " + insumo.getNombre() + " no posee lotes");
       }
@@ -148,7 +148,7 @@ public class ElaboracionesService {
           lote.setEstado(Status.SinStock.name());
 
           try {
-            loteRepository.save(lote);
+            batchRepository.save(lote);
           } catch (Exception e) {
             throw new RuntimeException("Hubo un error al eliminar el stock de insumos utilizados en la elaboración: " + e);
           }
@@ -161,7 +161,7 @@ public class ElaboracionesService {
     productionEntity.setFormula(formulaEntity);
 
     String inicialItem = formulaEntity.getTipoQueso().getItem().getNombre().substring(0, 1).toUpperCase();
-    String cantidadElaboraciones = String.valueOf(elaboracionRepository.findAll().size());
+    String cantidadElaboraciones = String.valueOf(productionRepository.findAll().size());
     productionEntity.setId("Q" + inicialItem + elaboracionRequest.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + cantidadElaboraciones);
 
     productionEntity.setFecha(elaboracionRequest.getFecha());
@@ -172,11 +172,11 @@ public class ElaboracionesService {
 
     productionEntity.setLote(modelMapper.map(loteResponse, BatchEntity.class));
 
-    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
+    return modelMapper.map(productionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateCortes(CutDetailRequest detalleCorteRequest, String idElaboracion) throws Exception{
-    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
@@ -196,11 +196,11 @@ public class ElaboracionesService {
     productionEntity.getLote().setUnidades(productionEntity.getLote().getUnidades() + cutDetailEntity.getCantidad());
 
     productionEntity.setDetalleCorte(cutDetailEntity);
-    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
+    return modelMapper.map(productionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateEmbolsado(LocalDate fechaEmbolsado, String idElaboracion) throws Exception {
-    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
@@ -219,11 +219,11 @@ public class ElaboracionesService {
 
     productionEntity.setFechaEmbolsado(fechaEmbolsado);
 
-    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
+    return modelMapper.map(productionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateMaduracion(MadurationRequest maduracionRequest, String idElaboracion) throws Exception {
-    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
@@ -243,11 +243,11 @@ public class ElaboracionesService {
 
     productionEntity.setFechaEntradaMaduracion(fechaEntrada);
     productionEntity.setFechaSalidaMaduracion(fechaSalida);
-    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
+    return modelMapper.map(productionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updatePintado(LocalDate fechaPintado, String idElaboracion) throws Exception {
-    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
@@ -266,11 +266,11 @@ public class ElaboracionesService {
 
     productionEntity.setFechaPintado(fechaPintado);
 
-    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
+    return modelMapper.map(productionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse updateControl(QualityControlRequest controlCalidadRequest, String idElaboracion) throws Exception {
-    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(idElaboracion);
+    Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findById(idElaboracion);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración");
     }
@@ -297,11 +297,11 @@ public class ElaboracionesService {
     qualityControlEntity.setElaboracion(productionEntity);
     productionEntity.setControlCalidad(qualityControlEntity);
     productionEntity.getLote().setEstado(Status.Terminado.name());
-    return modelMapper.map(elaboracionRepository.save(productionEntity), ProductionResponse.class);
+    return modelMapper.map(productionRepository.save(productionEntity), ProductionResponse.class);
   }
 
   public ProductionResponse deleteElaboracion(String id) {
-    Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findById(id);
+    Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findById(id);
     if (elaboracionEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró la elaboración para eliminar");
     }
@@ -313,7 +313,7 @@ public class ElaboracionesService {
     }
 
     try{
-      elaboracionRepository.delete(productionEntity);
+      productionRepository.delete(productionEntity);
       return modelMapper.map(productionEntity, ProductionResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -321,7 +321,7 @@ public class ElaboracionesService {
   }
 
   public ProductionReportResponse generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
-    List<ProductionEntity> elaboracionEntities = elaboracionRepository.findByFechaBetween(fechaInicio, fechaFin);
+    List<ProductionEntity> elaboracionEntities = productionRepository.findByFechaBetween(fechaInicio, fechaFin);
     if (elaboracionEntities.isEmpty()) {
       elaboracionEntities = new ArrayList<>();
     }

@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.repositories.compra;
+package com.tesis.queseria_la_charito.repositories.purchase;
 
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.purchase.ProviderEntity;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProveedorRepository extends JpaRepository<ProviderEntity, Long> {
-  List<ProviderEntity> findByInsumoAndMostrar(ItemEntity item, boolean mostrar);
-  Optional<ProviderEntity> findByIdAndMostrar(Long id, boolean mostrar);
+public interface ProviderRepository extends JpaRepository<ProviderEntity, Long> {
+  List<ProviderEntity> findBySupplyAndShow(ItemEntity item, boolean show);
+  Optional<ProviderEntity> findByIdAndShow(Long id, boolean show);
 }

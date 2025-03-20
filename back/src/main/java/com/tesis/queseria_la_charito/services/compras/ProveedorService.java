@@ -6,7 +6,7 @@ import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.purchase.ProviderEntity;
 import com.tesis.queseria_la_charito.models.AccountType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.compra.ProveedorRepository;
+import com.tesis.queseria_la_charito.repositories.purchase.ProviderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class ProveedorService {
   private ItemRepository itemRepository;
 
   @Autowired
-  private ProveedorRepository repository;
+  private ProviderRepository repository;
 
 
 

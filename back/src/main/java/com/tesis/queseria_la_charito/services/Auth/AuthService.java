@@ -5,8 +5,8 @@ import com.tesis.queseria_la_charito.dtos.request.RegisterRequest;
 import com.tesis.queseria_la_charito.dtos.response.AuthResponse;
 import com.tesis.queseria_la_charito.entities.user.RoleEntity;
 import com.tesis.queseria_la_charito.entities.user.UserEntity;
-import com.tesis.queseria_la_charito.repositories.usuario.RolRepository;
-import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
+import com.tesis.queseria_la_charito.repositories.user.RoleRepository;
+import com.tesis.queseria_la_charito.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,13 +19,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
   @Autowired
-  private RolRepository rolRepository;
+  private RoleRepository roleRepository;
 
   @Autowired
   private JwtService jwtService;
 
   @Autowired
-  private UsuarioRepository usuarioRepository;
+  private UserRepository usuarioRepository;
 
   @Autowired
   private AuthenticationManager authenticationManager;
@@ -46,7 +46,7 @@ public class AuthService {
   }
 
   public AuthResponse register(RegisterRequest request) {
-    RoleEntity rol = rolRepository.findByRol(request.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+    RoleEntity rol = roleRepository.findByRol(request.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
     String hashedPassword = passwordEncoder.encode(request.getPassword());
 

@@ -12,9 +12,9 @@ import com.tesis.queseria_la_charito.models.Status;
 import com.tesis.queseria_la_charito.models.Cheese;
 import com.tesis.queseria_la_charito.models.ItemType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.LoteRepository;
-import com.tesis.queseria_la_charito.repositories.ModificacionLoteRepository;
-import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
+import com.tesis.queseria_la_charito.repositories.batch.BatchRepository;
+import com.tesis.queseria_la_charito.repositories.batch.BatchModificationRepository;
+import com.tesis.queseria_la_charito.repositories.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +28,19 @@ public class LoteService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private LoteRepository loteRepository;
+    private BatchRepository batchRepository;
 
     @Autowired
-    private ModificacionLoteRepository modificacionLotesRepository;
+    private BatchModificationRepository modificacionLotesRepository;
 
     @Autowired
     private ItemRepository itemRepository;
 
     @Autowired
-    private ModificacionLoteRepository modificacionesLotesRepository;
+    private BatchModificationRepository modificacionesLotesRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository usuarioRepository;
 
 
     public List<BatchResponse> getAll(Long idItem, String estado) {
@@ -50,7 +50,7 @@ public class LoteService {
         }
 
         List<BatchResponse> listaLotesResponse = new ArrayList<>();
-        List<BatchEntity>   listaLotesEntity   = loteRepository.findByItemAndEstadoAndMostrar(itemEntityOptional.get(), estado, true);
+        List<BatchEntity>   listaLotesEntity   = batchRepository.findByItemAndEstadoAndMostrar(itemEntityOptional.get(), estado, true);
         if (listaLotesEntity.isEmpty()) {
             return new ArrayList<>();
         }
@@ -63,7 +63,7 @@ public class LoteService {
     }
 
     public BatchResponse getLoteById(String id) {
-        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(id);
+        Optional<BatchEntity> loteEntityOptional = batchRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró un lote con ese código");
         }
@@ -93,17 +93,17 @@ public class LoteService {
         }
 
         String inicialItem = batchEntity.getItem().getNombre().substring(0, 1).toUpperCase();
-        String cantidadLotes = String.valueOf(loteRepository.findAll().size());
+        String cantidadLotes = String.valueOf(batchRepository.findAll().size());
 
         batchEntity.setId(inicial + inicialItem + cantidadLotes);
 
-        return modelMapper.map(loteRepository.save(batchEntity), BatchResponse.class);
+        return modelMapper.map(batchRepository.save(batchEntity), BatchResponse.class);
     }
 
     public BatchResponse putLote(BatchRequest lote, String id) {
         BatchModificationEntity modificacionesLotesEntity = new BatchModificationEntity();
 
-        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(id);
+        Optional<BatchEntity> loteEntityOptional = batchRepository.findById(id);
         if(loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró ningún lote");
         }
@@ -133,11 +133,11 @@ public class LoteService {
         modificacionesLotesEntity.setLote(batchEntity);
 
         modificacionesLotesRepository.save(modificacionesLotesEntity);
-        return modelMapper.map(loteRepository.save(batchEntity), BatchResponse.class);
+        return modelMapper.map(batchRepository.save(batchEntity), BatchResponse.class);
     }
 
     public BatchResponse deleteLote(String id) {
-        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(id);
+        Optional<BatchEntity> loteEntityOptional = batchRepository.findById(id);
         if (loteEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró el lote");
         }
@@ -150,7 +150,7 @@ public class LoteService {
 
         try{
             batchEntity.setMostrar(false);
-            return modelMapper.map(loteRepository.save(batchEntity), BatchResponse.class);
+            return modelMapper.map(batchRepository.save(batchEntity), BatchResponse.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -162,7 +162,7 @@ public class LoteService {
         List<BatchEntity> lotesEntities = new ArrayList<>();
 
         if(item == null) {
-            lotesEntities = loteRepository.findAll();
+            lotesEntities = batchRepository.findAll();
             if (lotesEntities.isEmpty()) {
                 return new ArrayList<>();
             }
@@ -172,7 +172,7 @@ public class LoteService {
                 throw new EntityNotFoundException("No se ha encontrado el item");
             }
 
-            lotesEntities = loteRepository.findByItem(itemEntity.get());
+            lotesEntities = batchRepository.findByItem(itemEntity.get());
             if (lotesEntities.isEmpty()) {
                 return new ArrayList<>();
             }

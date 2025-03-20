@@ -20,11 +20,13 @@ import com.tesis.queseria_la_charito.models.Status;
 import com.tesis.queseria_la_charito.models.Cheese;
 import com.tesis.queseria_la_charito.models.CutType;
 import com.tesis.queseria_la_charito.repositories.*;
-import com.tesis.queseria_la_charito.repositories.despacho.DespachoRepository;
-import com.tesis.queseria_la_charito.repositories.despacho.DestinoRepository;
-import com.tesis.queseria_la_charito.repositories.despacho.DetalleDespachoRepository;
-import com.tesis.queseria_la_charito.repositories.despacho.VehiculoRepository;
-import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
+import com.tesis.queseria_la_charito.repositories.batch.BatchRepository;
+import com.tesis.queseria_la_charito.repositories.dispatch.DispatchRepository;
+import com.tesis.queseria_la_charito.repositories.dispatch.DestinationRepository;
+import com.tesis.queseria_la_charito.repositories.dispatch.DispatchDetailRepository;
+import com.tesis.queseria_la_charito.repositories.dispatch.VehicleRepository;
+import com.tesis.queseria_la_charito.repositories.production.ProductionRepository;
+import com.tesis.queseria_la_charito.repositories.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,28 +44,28 @@ public class DespachoService {
   private ModelMapper modelMapper;
 
   @Autowired
-  private DespachoRepository despachoRepository;
+  private DispatchRepository dispatchRepository;
 
   @Autowired
-  private LoteRepository loteRepository;
+  private BatchRepository batchRepository;
 
   @Autowired
-  private VehiculoRepository vehiculoRepository;
+  private VehicleRepository vehicleRepository;
 
   @Autowired
-  private DestinoRepository destinoRepository;
+  private DestinationRepository destinationRepository;
 
   @Autowired
   private ItemRepository itemRepository;
 
   @Autowired
-  private DetalleDespachoRepository detalleDespachoRepository;
+  private DispatchDetailRepository dispatchDetailRepository;
 
   @Autowired
-  private ElaboracionRepository elaboracionRepository;
+  private ProductionRepository productionRepository;
 
   @Autowired
-  private UsuarioRepository usuarioRepository;
+  private UserRepository usuarioRepository;
 
 
 //  TODO: Ver de cambiar el tipo de retorno
@@ -75,7 +77,7 @@ public class DespachoService {
       throw new EntityNotFoundException("No se ha encontrado el usuario");
     }
 
-    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findByUsuarioAndEstadoNot(usuarioEntityOptional.get(), DispatchStatus.Despachado.name());
+    Optional<DispatchEntity> despachoEntityOptional = dispatchRepository.findByUsuarioAndEstadoNot(usuarioEntityOptional.get(), DispatchStatus.Despachado.name());
     if (despachoEntityOptional.isEmpty()) {
       return new ArrayList<>();
     }
@@ -87,7 +89,7 @@ public class DespachoService {
   }
 
   public List<DispatchResponse> getAll(LocalDate fecha, Long destinoId) {
-    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(destinoId);
+    Optional<DestinationEntity> destinoEntityOptional = destinationRepository.findById(destinoId);
     if (destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el destino");
     }
@@ -95,9 +97,9 @@ public class DespachoService {
     List<DispatchEntity>   lstDespachosEntities;
     List<DispatchResponse> lstDespachoResponse = new ArrayList<>();
     if(fecha != null) {
-      lstDespachosEntities = despachoRepository.findByDestinoAndFecha(destinoEntityOptional.get(), fecha);
+      lstDespachosEntities = dispatchRepository.findByDestinoAndFecha(destinoEntityOptional.get(), fecha);
     } else {
-      lstDespachosEntities = despachoRepository.findByDestino(destinoEntityOptional.get());
+      lstDespachosEntities = dispatchRepository.findByDestino(destinoEntityOptional.get());
     }
     if (lstDespachosEntities.isEmpty()) {
       return new ArrayList<>();
@@ -109,7 +111,7 @@ public class DespachoService {
   }
 
   public DispatchResponse getById(Long id) {
-    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = dispatchRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el despacho");
     }
@@ -134,13 +136,13 @@ public class DespachoService {
     userEntity.setIsDispatching(true);
     dispatchEntity.setUsuario(userEntity);
 
-    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(despachoRequest.getDestino());
+    Optional<DestinationEntity> destinoEntityOptional = destinationRepository.findById(despachoRequest.getDestino());
     if (destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el destino");
     }
     dispatchEntity.setDestino(destinoEntityOptional.get());
 
-    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findById(despachoRequest.getVehiculo());
+    Optional<VehicleEntity> vehiculoEntityOptional = vehicleRepository.findById(despachoRequest.getVehiculo());
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el vehículo");
     }
@@ -157,7 +159,7 @@ public class DespachoService {
     }
 
     ItemEntity        tipoQueso = tipoQuesoOptional.get();
-    List<BatchEntity> lotes     = loteRepository.findByItemAndEstadoAndMostrar(tipoQueso, Status.Terminado.name(), true);
+    List<BatchEntity> lotes     = batchRepository.findByItemAndEstadoAndMostrar(tipoQueso, Status.Terminado.name(), true);
     if (lotes.isEmpty()) {
       throw new RuntimeException("No hay ningún lote para despachar");
     }
@@ -176,7 +178,7 @@ public class DespachoService {
       BatchEntity          lote                 = lotes.get(contador);
       boolean               modificado            = false;
 
-      Optional<ProductionEntity> elaboracionEntityOptional = elaboracionRepository.findByLote(lote);
+      Optional<ProductionEntity> elaboracionEntityOptional = productionRepository.findByLote(lote);
       if (elaboracionEntityOptional.isEmpty()) {
         throw new EntityNotFoundException("No se encontró la elaboración del lote");
       }
@@ -234,13 +236,13 @@ public class DespachoService {
       contador ++;
     }
 
-    vehiculoRepository.save(vehicleEntity);
+    vehicleRepository.save(vehicleEntity);
     usuarioRepository.save(userEntity);
-    return modelMapper.map(despachoRepository.save(dispatchEntity), DispatchResponse.class);
+    return modelMapper.map(dispatchRepository.save(dispatchEntity), DispatchResponse.class);
   }
 
   public DispatchResponse put(DispatchUpdateRequest despachoRequest, Long id) {
-    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = dispatchRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
     }
@@ -250,7 +252,7 @@ public class DespachoService {
       throw new RuntimeException("No se puede modificar un despacho que está entregado o en proceso");
     }
 
-    Optional<VehicleEntity> vehiculoEntityOptional = vehiculoRepository.findById(despachoRequest.getIdVehiculo());
+    Optional<VehicleEntity> vehiculoEntityOptional = vehicleRepository.findById(despachoRequest.getIdVehiculo());
     if (vehiculoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el vehículo");
     }
@@ -260,17 +262,17 @@ public class DespachoService {
     }
     dispatchEntity.setVehiculo(vehiculoEntityOptional.get());
 
-    Optional<DestinationEntity> destinoEntityOptional = destinoRepository.findById(despachoRequest.getIdDestino());
+    Optional<DestinationEntity> destinoEntityOptional = destinationRepository.findById(despachoRequest.getIdDestino());
     if (destinoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el destino");
     }
     dispatchEntity.setDestino(destinoEntityOptional.get());
 
-    return modelMapper.map(despachoRepository.save(dispatchEntity), DispatchResponse.class);
+    return modelMapper.map(dispatchRepository.save(dispatchEntity), DispatchResponse.class);
   }
 
   public DispatchResponse delete(Long id) {
-    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = dispatchRepository.findById(id);
     if (despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
     }
@@ -284,12 +286,12 @@ public class DespachoService {
       dispatchEntity.getUsuario().setIsDispatching(false);
       usuarioRepository.save(dispatchEntity.getUsuario());
       dispatchEntity.getVehiculo().setDisponible(true);
-      vehiculoRepository.save(dispatchEntity.getVehiculo());
+      vehicleRepository.save(dispatchEntity.getVehiculo());
     }
 
     if (!dispatchEntity.getLstDetallesDespacho().isEmpty()) {
       dispatchEntity.getLstDetallesDespacho().forEach(detalle -> {
-        Optional<BatchEntity> loteEntityOptional = loteRepository.findById(detalle.getLote().getId());
+        Optional<BatchEntity> loteEntityOptional = batchRepository.findById(detalle.getLote().getId());
         if (loteEntityOptional.isEmpty()) {
           throw new EntityNotFoundException("No se ha encontrado el lote del detalle");
         }
@@ -303,8 +305,8 @@ public class DespachoService {
             loteEntityOptional.get().setUnidades(loteEntityOptional.get().getUnidades() + detalle.getCantidadCuartos());
           }
 
-          loteRepository.save(loteEntityOptional.get());
-          detalleDespachoRepository.delete(detalle);
+          batchRepository.save(loteEntityOptional.get());
+          dispatchDetailRepository.delete(detalle);
         } else {
           if (loteEntityOptional.get().getUnidades() > 0) {
             throw new IllegalStateException("No se puede eliminar ya que uno de los lotes que se usaron aún posee unidades");
@@ -314,7 +316,7 @@ public class DespachoService {
     }
 
     try{
-      despachoRepository.delete(dispatchEntity);
+      dispatchRepository.delete(dispatchEntity);
       return modelMapper.map(dispatchEntity, DispatchResponse.class);
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -331,7 +333,7 @@ public class DespachoService {
     informeDespachoResponse.setCantidadTotalEnterosCremoso(0);
     informeDespachoResponse.setTotalUnidadesDespachadas(0);
 
-    List<DestinationEntity> destinoEntities = destinoRepository.findAll();
+    List<DestinationEntity> destinoEntities = destinationRepository.findAll();
     if (destinoEntities.isEmpty()) {
       destinoEntities = new ArrayList<>();
     }
@@ -348,7 +350,7 @@ public class DespachoService {
       detalleInformeDespacho.setCantidadCuartosCremoso(0);
       detalleInformeDespacho.setCantidadEnterosCremoso(0);
 
-      List<DispatchEntity> despachoEntities = despachoRepository.findByDestinoAndFechaBetween(destinationEntity, fechaInicio, fechaFin);
+      List<DispatchEntity> despachoEntities = dispatchRepository.findByDestinoAndFechaBetween(destinationEntity, fechaInicio, fechaFin);
       for (DispatchEntity dispatchEntity : despachoEntities) {
         informeDespachoResponse.setCantidadDespachos(informeDespachoResponse.getCantidadDespachos() + 1);
         informeDespachoResponse.setTotalUnidadesDespachadas(informeDespachoResponse.getTotalUnidadesDespachadas() + dispatchEntity.getCantidadTotal());
@@ -392,7 +394,7 @@ public class DespachoService {
   }
 
   public DispatchResponse changeEstado(Long id) {
-    Optional<DispatchEntity> despachoEntityOptional = despachoRepository.findById(id);
+    Optional<DispatchEntity> despachoEntityOptional = dispatchRepository.findById(id);
     if(despachoEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se ha encontrado el despacho");
     }
@@ -410,10 +412,10 @@ public class DespachoService {
       userEntity.setIsDispatching(false);
 
       usuarioRepository.save(userEntity);
-      vehiculoRepository.save(vehicleEntity);
+      vehicleRepository.save(vehicleEntity);
     }
 
 
-    return modelMapper.map(despachoRepository.save(dispatchEntity), DispatchResponse.class);
+    return modelMapper.map(dispatchRepository.save(dispatchEntity), DispatchResponse.class);
   }
 }

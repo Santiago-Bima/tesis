@@ -4,8 +4,8 @@ import com.tesis.queseria_la_charito.dtos.request.user.UserRequest;
 import com.tesis.queseria_la_charito.dtos.response.user.UserResponse;
 import com.tesis.queseria_la_charito.entities.user.RoleEntity;
 import com.tesis.queseria_la_charito.entities.user.UserEntity;
-import com.tesis.queseria_la_charito.repositories.usuario.RolRepository;
-import com.tesis.queseria_la_charito.repositories.usuario.UsuarioRepository;
+import com.tesis.queseria_la_charito.repositories.user.RoleRepository;
+import com.tesis.queseria_la_charito.repositories.user.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -20,10 +20,10 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
   @Autowired
-  private UsuarioRepository usuarioRepository;
+  private UserRepository usuarioRepository;
 
   @Autowired
-  private RolRepository rolRepository;
+  private RoleRepository roleRepository;
 
   @Autowired
   private ModelMapper modelMapper;
@@ -40,7 +40,7 @@ public class UsuarioService {
     userEntity.setPassword(usuario.getPassword());
     userEntity.setIsDispatching(false);
 
-    RoleEntity rol = rolRepository.findByRol(usuario.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+    RoleEntity rol = roleRepository.findByRol(usuario.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
     userEntity.setRol(rol);
 
     return modelMapper.map(usuarioRepository.save(userEntity), UserResponse.class);

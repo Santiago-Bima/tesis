@@ -12,9 +12,9 @@ import com.tesis.queseria_la_charito.entities.purchase.ReceiptDetailEntity;
 import com.tesis.queseria_la_charito.entities.purchase.ProviderEntity;
 import com.tesis.queseria_la_charito.models.ItemType;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.compra.CompraRepository;
-import com.tesis.queseria_la_charito.repositories.compra.DetalleCompraRepository;
-import com.tesis.queseria_la_charito.repositories.compra.ProveedorRepository;
+import com.tesis.queseria_la_charito.repositories.purchase.PurchaseRepository;
+import com.tesis.queseria_la_charito.repositories.purchase.PurchaseDetailRepository;
+import com.tesis.queseria_la_charito.repositories.purchase.ProviderRepository;
 import com.tesis.queseria_la_charito.services.lotes.LoteService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -35,13 +35,13 @@ public class CompraService {
   private LoteService loteService;
 
   @Autowired
-  private CompraRepository compraRepository;
+  private PurchaseRepository purchaseRepository;
 
   @Autowired
-  private DetalleCompraRepository detalleCompraRepository;
+  private PurchaseDetailRepository purchaseDetailRepository;
 
   @Autowired
-  private ProveedorRepository proveedorRepository;
+  private ProviderRepository providerRepository;
 
   @Autowired
   private ItemRepository itemRepository;
@@ -49,14 +49,14 @@ public class CompraService {
 
 
   public List<ReceipResponse> getAll(LocalDate fecha) {
-    List<ReceiptEntity> receiptEntityList = compraRepository.findAllByFecha(fecha.plusDays(1));
+    List<ReceiptEntity> receiptEntityList = purchaseRepository.findAllByFecha(fecha.plusDays(1));
     if (receiptEntityList.isEmpty()) {
       return new ArrayList<>();
     }
     List<ReceipResponse> comprobanteCompraResponses = new ArrayList<>();
 
     for(ReceiptEntity receiptEntity : receiptEntityList) {
-      List<ReceiptDetailEntity>  detalleComprobanteEntities  = detalleCompraRepository.findAllByComprobante(receiptEntity);
+      List<ReceiptDetailEntity>  detalleComprobanteEntities  = purchaseDetailRepository.findAllByComprobante(receiptEntity);
       List<ReceipDetailResponse> detalleComprobanteResponses = new ArrayList<>();
       for(ReceiptDetailEntity detalle : detalleComprobanteEntities) {
         detalleComprobanteResponses.add(modelMapper.map(detalle, ReceipDetailResponse.class));
@@ -80,7 +80,7 @@ public class CompraService {
       detalleComprobante.setCantidad(detalle.getCantidad());
       detalleComprobante.setSubtotal(detalle.getSubtotal());
 
-      Optional<ProviderEntity> proveedorEntityOptional = proveedorRepository.findByIdAndMostrar(detalle.getIdProveedor(), true);
+      Optional<ProviderEntity> proveedorEntityOptional = providerRepository.findByIdAndMostrar(detalle.getIdProveedor(), true);
       if (proveedorEntityOptional.isEmpty()) {
         throw new EntityNotFoundException("No se ha encontrado el proveedor");
       }
@@ -101,7 +101,7 @@ public class CompraService {
     receiptEntity.setFecha(comprobante.getDate());
     receiptEntity.setListaDetalles(detalleComprobanteEntities);
 
-    return modelMapper.map(compraRepository.save(receiptEntity), ReceipResponse.class);
+    return modelMapper.map(purchaseRepository.save(receiptEntity), ReceipResponse.class);
   }
 
   public List<ReceipReportResponse> generateInforme(LocalDate fechaInicio, LocalDate fechaFin) {
@@ -112,7 +112,7 @@ public class CompraService {
     for (ItemEntity item : itemResponseList) {
       ReceipReportResponse informe = new ReceipReportResponse();
 
-      List<ReceiptDetailEntity>  detalleComprobanteEntities  = detalleCompraRepository.findAllByProveedorInsumoAndComprobanteFechaBetween(item, fechaInicio, fechaFin);
+      List<ReceiptDetailEntity>  detalleComprobanteEntities  = purchaseDetailRepository.findAllByProveedorInsumoAndComprobanteFechaBetween(item, fechaInicio, fechaFin);
       List<ReceipDetailResponse> detalleComprobanteResponses = new ArrayList<>();
 
       int total = 0;

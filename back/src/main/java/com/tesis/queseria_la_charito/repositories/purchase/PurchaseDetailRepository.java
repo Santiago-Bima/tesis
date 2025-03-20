@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.repositories.compra;
+package com.tesis.queseria_la_charito.repositories.purchase;
 
 import com.tesis.queseria_la_charito.entities.ItemEntity;
 import com.tesis.queseria_la_charito.entities.purchase.ReceiptEntity;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface DetalleCompraRepository extends JpaRepository<ReceiptDetailEntity, Long> {
-  List<ReceiptDetailEntity> findAllByComprobante(ReceiptEntity comprobanteCompra);
-  List<ReceiptDetailEntity> findAllByProveedorInsumoAndComprobanteFechaBetween(ItemEntity item, LocalDate fechaInicio, LocalDate fechaFin);
+public interface PurchaseDetailRepository extends JpaRepository<ReceiptDetailEntity, Long> {
+  List<ReceiptDetailEntity> findAllByReceipt(ReceiptEntity receipt);
+  List<ReceiptDetailEntity> findAllByProviderSupplyAndReceiptDateBetween(ItemEntity item, LocalDate startDate, LocalDate finalDate);
 }

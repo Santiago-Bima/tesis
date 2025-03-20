@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TipoQuesoRepository extends JpaRepository<CheeseTypeEntity, Long> {
+public interface CheeseTypeRepository extends JpaRepository<CheeseTypeEntity, Long> {
 }

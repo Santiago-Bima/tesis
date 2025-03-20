@@ -8,10 +8,10 @@ import com.tesis.queseria_la_charito.entities.formula.CheeseTypeEntity;
 import com.tesis.queseria_la_charito.entities.formula.FormulaDetailEntity;
 import com.tesis.queseria_la_charito.entities.formula.FormulaEntity;
 import com.tesis.queseria_la_charito.entities.ItemEntity;
-import com.tesis.queseria_la_charito.repositories.formula.DetalleFormulaRepository;
+import com.tesis.queseria_la_charito.repositories.formula.FormulaDetailRepository;
 import com.tesis.queseria_la_charito.repositories.formula.FormulaRepository;
 import com.tesis.queseria_la_charito.repositories.ItemRepository;
-import com.tesis.queseria_la_charito.repositories.formula.TipoQuesoRepository;
+import com.tesis.queseria_la_charito.repositories.formula.CheeseTypeRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -31,17 +31,17 @@ public class FormulaService {
     private FormulaRepository formulaRepository;
 
     @Autowired
-    private DetalleFormulaRepository detalleFormulaRepository;
+    private FormulaDetailRepository formulaDetailRepository;
 
     @Autowired
-    private TipoQuesoRepository tipoQuesoRepository;
+    private CheeseTypeRepository cheeseTypeRepository;
 
     @Autowired
     private ItemRepository itemRepository;
 
 
     public List<FormulaResponse> getFormulasByProducto(Long tipoProductoId) {
-        Optional<CheeseTypeEntity> productoEntityOptional = tipoQuesoRepository.findById(tipoProductoId);
+        Optional<CheeseTypeEntity> productoEntityOptional = cheeseTypeRepository.findById(tipoProductoId);
         if (productoEntityOptional.isEmpty()){
             throw new EntityNotFoundException();
         }
@@ -51,7 +51,7 @@ public class FormulaService {
         List<FormulaEntity>   listaFormulasEntity   = formulaRepository.findAllByTipoQueso(cheeseTypeEntity);
 
         for (FormulaEntity formulaEntity : listaFormulasEntity){
-            List<FormulaDetailEntity>   listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity);
+            List<FormulaDetailEntity>   listaDetallesEntity   = formulaDetailRepository.findAllByFormula(formulaEntity);
             List<FormulaDetailResponse> listaDetallesResponse = new ArrayList<>();
             FormulaResponse             formulaResponse       = modelMapper.map(formulaEntity, FormulaResponse.class);
             for (FormulaDetailEntity detalleEntity : listaDetallesEntity){
@@ -70,7 +70,7 @@ public class FormulaService {
         }
         FormulaResponse formulaResponse = modelMapper.map(formulaEntity.get(), FormulaResponse.class);
 
-        List<FormulaDetailEntity>   listaDetallesEntity   = detalleFormulaRepository.findAllByFormula(formulaEntity.get());
+        List<FormulaDetailEntity>   listaDetallesEntity   = formulaDetailRepository.findAllByFormula(formulaEntity.get());
         List<FormulaDetailResponse> listaDetallesResponse = new ArrayList<>();
 
         for (FormulaDetailEntity detalleEntity : listaDetallesEntity){
@@ -87,7 +87,7 @@ public class FormulaService {
             throw new EntityExistsException("Ya existe una fórmula con el mismo código");
         }
 
-        Optional<CheeseTypeEntity> tipoQuesoEntityOptional = tipoQuesoRepository.findById(formulaRequest.getTipoQueso());
+        Optional<CheeseTypeEntity> tipoQuesoEntityOptional = cheeseTypeRepository.findById(formulaRequest.getTipoQueso());
         if (tipoQuesoEntityOptional.isEmpty()){
             throw new EntityNotFoundException("No se encontró el tipo de producto");
         }
@@ -120,7 +120,7 @@ public class FormulaService {
         FormulaEntity formulaEntity = formulaEntityAntigua.get();
         formulaEntity.setCantidadLeche(formulaRequest.getCantidadLeche());
 
-        Optional<CheeseTypeEntity> tipoQuesoEntityOptional = tipoQuesoRepository.findById(formulaRequest.getTipoQueso());
+        Optional<CheeseTypeEntity> tipoQuesoEntityOptional = cheeseTypeRepository.findById(formulaRequest.getTipoQueso());
         if (tipoQuesoEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("No se encontró el tipo de producto");
         }
