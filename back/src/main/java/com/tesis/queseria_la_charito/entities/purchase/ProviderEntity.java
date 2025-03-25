@@ -44,7 +44,7 @@ public class ProviderEntity {
   private Integer measuredQuantity;
 
   @Column(name = "measurement_unit")
-  private String measurement_unit;
+  private String measurementUnit;
 
   @Column(name = "cost")
   private Integer cost;

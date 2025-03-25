@@ -3,7 +3,7 @@ package com.tesis.queseria_la_charito.controllers.purchase;
 import com.tesis.queseria_la_charito.dtos.request.purchase.ReceipRequest;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipResponse;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ReceipReportResponse;
-import com.tesis.queseria_la_charito.services.compras.CompraService;
+import com.tesis.queseria_la_charito.services.purchase.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("comprobantes")
 public class ReceipController {
   @Autowired
-  private CompraService service;
+  private PurchaseService service;
 
 
   @PreAuthorize("hasRole('ROLE_Subgerente')")

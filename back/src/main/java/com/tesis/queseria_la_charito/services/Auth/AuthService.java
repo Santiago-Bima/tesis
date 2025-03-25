@@ -25,7 +25,7 @@ public class AuthService {
   private JwtService jwtService;
 
   @Autowired
-  private UserRepository usuarioRepository;
+  private UserRepository userRepository;
 
   @Autowired
   private AuthenticationManager authenticationManager;
@@ -37,7 +37,7 @@ public class AuthService {
   public AuthResponse login(LoginRequest request) {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-    UserDetails user = usuarioRepository.findByUsername(request.getUsername()).orElseThrow();
+    UserDetails user = userRepository.findByUsername(request.getUsername()).orElseThrow();
 
     String token = jwtService.getToken(user);
     return AuthResponse.builder()
@@ -46,7 +46,7 @@ public class AuthService {
   }
 
   public AuthResponse register(RegisterRequest request) {
-    RoleEntity rol = roleRepository.findByRol(request.getRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+    RoleEntity role = roleRepository.findByRole(request.getRole()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
     String hashedPassword = passwordEncoder.encode(request.getPassword());
 
@@ -54,10 +54,10 @@ public class AuthService {
         .username(request.getUsername())
         .password(hashedPassword)
         .isDispatching(false)
-        .mostrar(true)
-        .rol(rol).build();
+        .show(true)
+        .role(role).build();
 
-    usuarioRepository.save(user);
+    userRepository.save(user);
 
     return AuthResponse.builder().token(jwtService.getToken(user)).build();
   }

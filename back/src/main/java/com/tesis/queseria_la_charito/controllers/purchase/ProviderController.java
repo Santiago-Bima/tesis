@@ -2,7 +2,7 @@ package com.tesis.queseria_la_charito.controllers.purchase;
 
 import com.tesis.queseria_la_charito.dtos.request.purchase.ProviderRequest;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ProviderResponse;
-import com.tesis.queseria_la_charito.services.compras.ProveedorService;
+import com.tesis.queseria_la_charito.services.purchase.ProveedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

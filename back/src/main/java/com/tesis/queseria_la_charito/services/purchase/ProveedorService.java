@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.compras;
+package com.tesis.queseria_la_charito.services.purchase;
 
 import com.tesis.queseria_la_charito.dtos.request.purchase.ProviderRequest;
 import com.tesis.queseria_la_charito.dtos.response.purchase.ProviderResponse;
