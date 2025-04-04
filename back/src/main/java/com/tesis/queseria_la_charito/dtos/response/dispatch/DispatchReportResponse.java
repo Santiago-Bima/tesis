@@ -35,5 +35,5 @@ public class DispatchReportResponse {
   private Integer totalQuarterCremosoDispatched;
 
   @JsonProperty("detallesDespacho")
-  List<ReportDetailDespacho> lstDetails;
+  List<ReportDetailDispatch> lstDetails;
 }

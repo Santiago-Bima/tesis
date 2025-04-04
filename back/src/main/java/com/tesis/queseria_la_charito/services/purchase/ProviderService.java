@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProveedorService {
+public class ProviderService {
   @Autowired
   private ModelMapper modelMapper;
 

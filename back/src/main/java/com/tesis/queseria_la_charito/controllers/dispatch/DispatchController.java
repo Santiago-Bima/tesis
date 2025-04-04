@@ -4,7 +4,7 @@ import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchRequest;
 import com.tesis.queseria_la_charito.dtos.request.dispatch.DispatchUpdateRequest;
 import com.tesis.queseria_la_charito.dtos.response.dispatch.DispatchResponse;
 import com.tesis.queseria_la_charito.dtos.response.dispatch.DispatchReportResponse;
-import com.tesis.queseria_la_charito.services.despachos.DespachoService;
+import com.tesis.queseria_la_charito.services.dispatch.DispatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/despachos")
 public class DispatchController {
   @Autowired
-  private DespachoService service;
+  private DispatchService service;
 
   @PreAuthorize("hasRole('ROLE_Subgerente'")
   @GetMapping("")
@@ -40,7 +40,7 @@ public class DispatchController {
 
   @PreAuthorize("hasAnyRole('ROLE_Gerente'")
   @GetMapping("/informes")
-  DispatchReportResponse generateReport(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return service.generateInforme(fechaInicio, fechaFin); }
+  DispatchReportResponse generateReport(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) { return service.generateReport(fechaInicio, fechaFin); }
 
   @PreAuthorize("hasRole('ROLE_Operario'")
   @GetMapping("/mi-despacho/{username}")

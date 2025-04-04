@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportDetailDespacho {
+public class ReportDetailDispatch {
   @JsonProperty("destino")
   private DestinationResponse destination;
 

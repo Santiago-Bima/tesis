@@ -1,4 +1,4 @@
-package com.tesis.queseria_la_charito.services.despachos;
+package com.tesis.queseria_la_charito.services.dispatch;
 
 import com.tesis.queseria_la_charito.dtos.response.dispatch.VehicleResponse;
 import com.tesis.queseria_la_charito.entities.dispatch.VehicleEntity;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class VehiculoService {
+public class VehicleService {
   @Autowired
   private ModelMapper modelMapper;
 
@@ -24,51 +24,51 @@ public class VehiculoService {
 
 
   public List<VehicleResponse> getAll() {
-    List<VehicleResponse> lstVehiculosResponse = new ArrayList<>();
-    List<VehicleEntity>   lstVehiculosEntities = vehicleRepository.findAll();
+    List<VehicleResponse> lstVehiclesResponse = new ArrayList<>();
+    List<VehicleEntity>   lstVehiclesEntities = vehicleRepository.findAll();
 
-    if (lstVehiculosEntities.isEmpty()) {
+    if (lstVehiclesEntities.isEmpty()) {
       return new ArrayList<>();
     }
 
-    lstVehiculosEntities.forEach(entity -> {
-      lstVehiculosResponse.add(modelMapper.map(entity, VehicleResponse.class));
+    lstVehiclesEntities.forEach(entity -> {
+      lstVehiclesResponse.add(modelMapper.map(entity, VehicleResponse.class));
     });
 
-    return lstVehiculosResponse;
+    return lstVehiclesResponse;
   }
 
   public VehicleResponse getById(Long id) {
-    Optional<VehicleEntity> vehiculoEntityOptional = vehicleRepository.findById(id);
-    if (vehiculoEntityOptional.isEmpty()) {
+    Optional<VehicleEntity> vehicleEntityOptional = vehicleRepository.findById(id);
+    if (vehicleEntityOptional.isEmpty()) {
       throw new EntityExistsException("No se ha encontrado el vehículo");
     }
 
-    return modelMapper.map(vehiculoEntityOptional.get(), VehicleResponse.class);
+    return modelMapper.map(vehicleEntityOptional.get(), VehicleResponse.class);
   }
 
-  public VehicleResponse post(String matricula) {
-    Optional<VehicleEntity> vehiculoEntityOptional = vehicleRepository.findByMatricula(matricula);
-    if (vehiculoEntityOptional.isPresent()) {
+  public VehicleResponse post(String plate) {
+    Optional<VehicleEntity> vehicleEntityOptional = vehicleRepository.findByPlate(plate);
+    if (vehicleEntityOptional.isPresent()) {
       throw new EntityExistsException("Ya existe un vehículo con la misma matrícula");
     }
 
     VehicleEntity vehicleEntity = new VehicleEntity();
     vehicleEntity.setDisponible(true);
-    vehicleEntity.setMatricula(matricula);
+    vehicleEntity.setPlate(plate);
 
     return modelMapper.map(vehicleRepository.save(vehicleEntity), VehicleResponse.class);
   }
 
   public VehicleResponse delete(Long id) {
-    Optional<VehicleEntity> vehiculoEntityOptional = vehicleRepository.findById(id);
-    if(vehiculoEntityOptional.isEmpty()) {
+    Optional<VehicleEntity> vehicleEntityOptional = vehicleRepository.findById(id);
+    if(vehicleEntityOptional.isEmpty()) {
       throw new EntityNotFoundException("No se encontró el vehículo");
     }
 
-    VehicleEntity vehicleEntity = vehiculoEntityOptional.get();
+    VehicleEntity vehicleEntity = vehicleEntityOptional.get();
 
-    if(!vehicleEntity.getLstDespachos().isEmpty()){
+    if(!vehicleEntity.getLstDispatches().isEmpty()){
       throw new IllegalStateException("No se puede eliminar el item porque tiene registros de despachos existentes");
     }
 
@@ -81,12 +81,12 @@ public class VehiculoService {
   }
 
   public VehicleResponse put(Long id) {
-    Optional<VehicleEntity> vehiculoEntityOptional = vehicleRepository.findById(id);
-    if (vehiculoEntityOptional.isEmpty()) {
+    Optional<VehicleEntity> vehicleEntityOptional = vehicleRepository.findById(id);
+    if (vehicleEntityOptional.isEmpty()) {
       throw new EntityExistsException("No se ha encontrado el vehículo");
     }
 
-    VehicleEntity vehicleEntity = vehiculoEntityOptional.get();
+    VehicleEntity vehicleEntity = vehicleEntityOptional.get();
     vehicleEntity.setDisponible(!vehicleEntity.getDisponible());
 
     return modelMapper.map(vehicleRepository.save(vehicleEntity), VehicleResponse.class);
